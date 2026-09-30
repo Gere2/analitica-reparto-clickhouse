@@ -12,6 +12,7 @@ from datetime import datetime
 from decimal import Decimal
 
 import clickhouse_connect
+from clickhouse_connect.driver.exceptions import DatabaseError, OperationalError
 from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
@@ -47,12 +48,15 @@ def cliente():
 
 def insertar(filas, intentos=3):
     """Reintenta con backoff exponencial y jitter. Es seguro reintentar porque
-    event_id y ts vienen del cliente: un duplicado lo elimina ReplacingMergeTree."""
+    event_id y ts vienen del cliente: un duplicado lo elimina ReplacingMergeTree.
+
+    Solo se reintentan fallos de red (OperationalError). Un error del servidor
+    (permisos, tipos) no se arregla reintentando: se propaga para que se vea."""
     for intento in range(intentos):
         try:
             cliente().insert("eventos_app", filas, column_names=COLUMNAS)
             return True
-        except Exception as error:  # noqa: BLE001 (cualquier fallo de red o del servidor)
+        except OperationalError as error:
             app.logger.warning("insert fallido (intento %s): %s", intento + 1, error)
             time.sleep((2 ** intento) * 0.2 + random.uniform(0, 0.2))
     return False
@@ -99,7 +103,12 @@ def evento():
         return jsonify(error=str(error)), 400
 
     lote = list(pendientes) + [fila]
-    if insertar(lote):
+    try:
+        guardado = insertar(lote)
+    except DatabaseError as error:
+        app.logger.error("ClickHouse rechazó el insert: %s", error)
+        return jsonify(error="ClickHouse rechazó el evento (ver logs de la app)"), 500
+    if guardado:
         pendientes.clear()
         return jsonify(ok=True), 201
     pendientes.append(fila)

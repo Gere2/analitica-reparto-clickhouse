@@ -53,7 +53,13 @@ ORDER BY (hora, origen, seccion, dispositivo, distrito);
 
 -- Ojo: solo ve lo insertado DESPUÉS de crearse. Por eso va en el init, antes de cargar datos.
 -- uniq ignora duplicados, así que un reintento no infla el número de sesiones.
-CREATE MATERIALIZED VIEW IF NOT EXISTS reparto.mv_embudo_hora TO reparto.embudo_hora AS
+-- SQL SECURITY DEFINER: la vista se ejecuta con los permisos de quien la creó (admin).
+-- Sin esto se ejecuta con los de quien inserta, y app_writer (que solo puede INSERT)
+-- recibe ACCESS_DENIED... pero la fila YA se ha guardado en eventos_app: no hay
+-- atomicidad entre la tabla y su vista (ClickHouse no es ACID entre tablas).
+CREATE MATERIALIZED VIEW IF NOT EXISTS reparto.mv_embudo_hora TO reparto.embudo_hora
+DEFINER = CURRENT_USER SQL SECURITY DEFINER
+AS
 SELECT
     toStartOfHour(ts)      AS hora,
     origen,
