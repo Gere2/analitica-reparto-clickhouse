@@ -48,15 +48,16 @@ ejecutar: `docker compose down -v && docker compose up -d` (**borra los datos**)
 
 ## Reparto de tareas (propuesta)
 
-- [ ] 🐳 Docker + ClickHouse: cargar MT-LIFT y el censo (`docs/DATOS.md`, pendientes)
+- [x] 🐳 Criteo cargado (`scripts/cargar_criteo.sh`)
+- [ ] 🐳 MT-LIFT (esperando acceso) y censo de Madrid (`docs/DATOS.md`)
 - [ ] 📱 App: restaurantes reales del censo y recorrido completo
 - [ ] 📊 Grafana: panel del embudo, búsquedas y promociones
 - [ ] 📝 Memoria y presentación (`docs/TEORIA-APLICADA.md` como guion)
 
 ## Demo
 
-1. `SELECT count()` sobre los 5,5 M de registros reales de Meituan.
-2. Tasa de clic y de conversión por promoción.
+1. `SELECT count()` sobre los registros reales de promociones (hoy Criteo, 14 M; MT-LIFT, 5,5 M, cuando llegue el acceso).
+2. Tasa de visita y conversión del grupo tratado frente al de control, y el *uplift* de la campaña.
 3. Recorrido en directo en la app: buscar «pizza», filtrar, abrir un restaurante, añadir y abandonar.
 4. Ver ese clic en ClickHouse y en el panel de Grafana.
 5. Embudo por sección: dónde se pierden más sesiones.

@@ -2,8 +2,39 @@
 -- Abrir un cliente:  docker compose exec clickhouse clickhouse client --user admin --password
 -- (pide la contraseña; así no queda en el historial)
 
--- 1. Volumen real de Meituan (cuando esté cargado, ver docs/DATOS.md)
--- SELECT count() FROM reparto.mtlift_promos;
+-- 1. Volumen real de promociones: Criteo (provisional hasta tener MT-LIFT, ver docs/DATOS.md)
+--    Esperado: 13.979.592 filas
+SELECT count() FROM reparto.criteo_uplift;
+
+-- 1b. Promociones (Criteo). Validación con las cifras publicadas por Criteo:
+--     85 % tratados, 4,70 % de visitas y 0,29 % de conversión en total.
+-- 1b-A. Grupo tratado frente a control: tasas de visita y conversión
+SELECT
+    if(treatment = 1, 'tratado', 'control') AS grupo,
+    count() AS usuarios,
+    round(100 * avg(visit), 3)       AS visita_pct,
+    round(100 * avg(conversion), 3)  AS conversion_pct,
+    round(100 * sum(conversion) / sum(visit), 2) AS conversion_tras_visita_pct
+FROM reparto.criteo_uplift
+GROUP BY grupo
+ORDER BY grupo DESC;
+
+-- 1b-B. Uplift: cuánto sube cada métrica por ver la campaña
+SELECT
+    round(100 * (avgIf(visit, treatment = 1) - avgIf(visit, treatment = 0)), 3)           AS uplift_visita_pp,
+    round(100 * (avgIf(visit, treatment = 1) / avgIf(visit, treatment = 0) - 1), 1)       AS uplift_visita_relativo_pct,
+    round(100 * (avgIf(conversion, treatment = 1) - avgIf(conversion, treatment = 0)), 3) AS uplift_conversion_pp,
+    round(100 * (avgIf(conversion, treatment = 1) / avgIf(conversion, treatment = 0) - 1), 1) AS uplift_conversion_relativo_pct
+FROM reparto.criteo_uplift;
+
+-- 1b-C. Embudo del grupo tratado: se muestra el anuncio → visita → compra
+SELECT
+    countIf(treatment = 1)                          AS tratados,
+    countIf(treatment = 1 AND exposure = 1)         AS anuncio_mostrado,
+    countIf(treatment = 1 AND exposure = 1 AND visit = 1)                    AS visitan,
+    countIf(treatment = 1 AND exposure = 1 AND visit = 1 AND conversion = 1) AS compran
+FROM reparto.criteo_uplift;
+
 
 -- 2. Cuántos eventos tenemos, separando reales y simulados
 SELECT origen, count() AS eventos, uniq(session_id) AS sesiones
