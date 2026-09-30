@@ -1,0 +1,81 @@
+services:
+  app:
+    build:
+      context: ./app
+    image: reparto-app:latest
+    environment:
+      - CLICKHOUSE_HOST=clickhouse          # resuelve por nombre de servicio
+      - CLICKHOUSE_PORT=8123
+      - CLICKHOUSE_DB=${CLICKHOUSE_DB:-reparto}
+      - CLICKHOUSE_USER=app_writer          # solo puede insertar eventos
+      - CLICKHOUSE_PASSWORD=${APP_WRITER_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      clickhouse:
+        condition: service_healthy          # esperar a que acepte consultas, no solo a que arranque
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    restart: unless-stopped
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.8
+    environment:
+      - CLICKHOUSE_DB=${CLICKHOUSE_DB:-reparto}
+      - CLICKHOUSE_USER=${CLICKHOUSE_ADMIN_USER:-admin}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_ADMIN_PASSWORD}
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1   # permite CREATE USER / GRANT desde SQL
+      # Los lee clickhouse/init/02_usuarios.sh para crear los usuarios con permisos mínimos
+      - APP_WRITER_PASSWORD=${APP_WRITER_PASSWORD}
+      - GRAFANA_READER_PASSWORD=${GRAFANA_READER_PASSWORD}
+    ports:
+      - "8123:8123"                          # HTTP (consultas desde el navegador o curl)
+      - "9000:9000"                          # protocolo nativo (clickhouse-client, Grafana)
+    volumes:
+      - ch_data:/var/lib/clickhouse          # los datos sobreviven a `docker compose down`
+      - ./clickhouse/init:/docker-entrypoint-initdb.d:ro   # solo se ejecuta con el volumen vacío
+      - ./datos:/datos:ro                    # CSV de MT-LIFT y del censo (no van a git)
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G                         # con menos, la carga de 5,5 M filas puede fallar
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:12.3.0
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_PLUGINS_PREINSTALL=grafana-clickhouse-datasource
+      - GRAFANA_READER_PASSWORD=${GRAFANA_READER_PASSWORD}   # la usa el provisioning del datasource
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    restart: unless-stopped
+
+volumes:
+  ch_data:
+  grafana_data:

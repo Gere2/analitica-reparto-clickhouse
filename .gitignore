@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+
+# Los datasets pesan cientos de MB: cada uno los descarga (ver docs/DATOS.md)
+datos/*
+!datos/.gitkeep

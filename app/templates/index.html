@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reparto · demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    button { display: block; width: 100%; margin: .4rem 0; padding: .8rem; font-size: 1rem; cursor: pointer; }
+    #log { font-family: monospace; font-size: .85rem; white-space: pre-wrap; background: #f4f4f4; padding: .8rem; }
+    .nota { color: #666; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <h1>🍕 Reparto (demo)</h1>
+  <p class="nota">Esqueleto: cada botón es un paso del recorrido y envía un evento a ClickHouse.
+    Los restaurantes son de ejemplo hasta cargar el censo de Madrid.</p>
+
+  <button data-seccion="inicio">Abrir la app</button>
+  <button data-seccion="busqueda" data-busqueda="pizza">Buscar «pizza»</button>
+  <button data-seccion="filtros" data-filtros="envio_gratis">Filtro: envío gratis</button>
+  <button data-seccion="restaurante" data-restaurante="1">Abrir restaurante de ejemplo</button>
+  <button data-seccion="menu" data-restaurante="1">Ver menú</button>
+  <button data-seccion="carrito" data-accion="anadir" data-restaurante="1" data-plato="10" data-importe="11.50">Añadir pizza (11,50 €)</button>
+  <button data-seccion="pago" data-accion="pagar" data-restaurante="1" data-importe="11.50">Pagar</button>
+  <button id="nueva">Nueva sesión</button>
+
+  <h3>Eventos enviados</h3>
+  <div id="log"></div>
+
+  <script>
+    const log = document.getElementById('log');
+    function sesion() {
+      let id = null;
+      try { id = sessionStorage.getItem('session_id'); } catch (e) {}
+      if (!id) { id = crypto.randomUUID(); try { sessionStorage.setItem('session_id', id); } catch (e) {} }
+      return id;
+    }
+    const dispositivo = /Mobi/.test(navigator.userAgent) ? 'movil' : 'escritorio';
+
+    async function enviar(b) {
+      const d = b.dataset;
+      const evento = {
+        event_id: crypto.randomUUID(),     // lo genera el cliente: reintentos idempotentes
+        ts: new Date().toISOString(),
+        session_id: sesion(),
+        seccion: d.seccion,
+        accion: d.accion || 'ver',
+        restaurante_id: Number(d.restaurante || 0),
+        plato_id: Number(d.plato || 0),
+        busqueda: d.busqueda || '',
+        filtros: d.filtros ? [d.filtros] : [],
+        importe: Number(d.importe || 0),
+        dispositivo,
+        distrito: 'Centro',
+      };
+      const r = await fetch('/evento', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(evento) });
+      log.textContent = `${r.status} ${evento.seccion}/${evento.accion}\n` + log.textContent;
+    }
+
+    document.querySelectorAll('button[data-seccion]').forEach(b => b.addEventListener('click', () => enviar(b)));
+    document.getElementById('nueva').addEventListener('click', () => {
+      try { sessionStorage.removeItem('session_id'); } catch (e) {}
+      log.textContent = '— nueva sesión —\n' + log.textContent;
+    });
+  </script>
+</body>
+</html>
