@@ -44,7 +44,9 @@ Hay datasets reales, dashboard, integración Python, CRUD, modelo columnar y med
 
 **Clickstream Lab: de millones de eventos a un dashboard con ClickHouse.**
 
-OTTO como demostración principal de escala e ingesta; Ele.me como caso real de recomendaciones de comida a domicilio; REES46 como ampliación temporal; Glovo como contexto de catálogo español; tabla derivada como prueba de estrés opcional.
+**Nueva dirección indicada por el profesor y añadida por el grupo:** definir una plataforma ficticia de comida a domicilio, con una infraestructura analítica para sus eventos. El recorrido de navegación y una carga masiva pueden ser simulados y deben identificarse como tales. Un contrato de eventos y adaptadores permitirían incorporar datos reales futuros sin cambiar todas las consultas y paneles. Véase [PLATAFORMA-FICTICIA.md](PLATAFORMA-FICTICIA.md).
+
+La plataforma completa y el contrato común todavía no están implementados. La infraestructura y los datasets actuales son la base de trabajo: OTTO demuestra escala e ingesta; Ele.me aporta recomendaciones reales del sector; REES46 amplía las dimensiones temporales; Glovo aporta catálogo español; la tabla derivada sirve como estrés opcional. Sus resultados no acreditan todavía el rendimiento de la futura plataforma ficticia.
 
 Próximas decisiones:
 
@@ -53,5 +55,6 @@ Próximas decisiones:
 3. Ensayar una demo breve de ingesta, dashboard y comparación de consultas; CRUD en tabla de ensayo.
 4. Probar la instalación desde cero en otro equipo, con una ruta de volumen reducido si hace falta.
 5. Valorar después dos nodos o una comparación de claves de orden. Ya hay volumen suficiente para la clase; descargar más datos no es un requisito pendiente del proyecto.
+6. Definir la plataforma ficticia, su contrato de eventos, la carga simulada y los adaptadores para fuentes futuras. Validar la infraestructura con datos semirreales y con los datasets públicos disponibles, manteniendo su procedencia.
 
 Los datos son históricos. El replay demuestra ingesta actual de eventos antiguos; los botones de la página producen las únicas acciones nuevas de la demo. No hay conexión en vivo con Uber Eats, Glovo ni Ele.me.

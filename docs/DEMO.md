@@ -1,5 +1,9 @@
 # Guion de demo en directo: 10 minutos
 
+## Dirección para la próxima demo
+
+La [plataforma ficticia de comida a domicilio](PLATAFORMA-FICTICIA.md) permitiría mostrar: recorrido de un usuario → eventos y carga simulada → dashboard → comparación de consultas sobre el mismo conjunto. Ese recorrido integrado **todavía no está implementado**. La secuencia de abajo es la demo que se puede ejecutar ahora con las tablas actuales; los tiempos de OTTO no se atribuyen al futuro generador de la plataforma.
+
 ## Antes de entrar en clase
 
 Completar las cargas siguiendo [INSTALACION.md](INSTALACION.md). Tener abiertos el [panel OTTO](http://127.0.0.1:8000/), el [panel REES46](http://127.0.0.1:8000/rees46.html), el [panel de escala](http://127.0.0.1:8000/scale.html), las [diapositivas](http://127.0.0.1:8000/otto-presentacion.html) y dos terminales. Guardar `data/query-benchmark.json` tras correr `python3 scripts/benchmark.py` y ejecutar `python3 scripts/check.py` para verificar el conjunto. No descargar ni cargar decenas de GB durante la exposición.

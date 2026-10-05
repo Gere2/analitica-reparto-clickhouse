@@ -2,6 +2,8 @@
 
 Proyecto BD2 de analítica de comportamiento. La pregunta central es **cómo guardar, consultar y visualizar flujos de eventos masivos**. Incluye fuentes históricas de navegación y recomendaciones de comida a domicilio, más una prueba de estrés derivada, identificadas por separado.
 
+**Dirección acordada para desarrollar:** una plataforma ficticia de comida a domicilio, inspirada en Uber Eats/Glovo, cuya infraestructura analítica pueda recibir eventos simulados ahora y datos reales compatibles en el futuro. El [diseño propuesto](docs/PLATAFORMA-FICTICIA.md) define el recorrido, la procedencia y los criterios de aceptación. Esa plataforma y su contrato común todavía no están implementados; las cargas y mediciones de este README corresponden al sistema actual.
+
 **Para el equipo:** [estado del proyecto y decisiones pendientes](docs/ESTADO-EQUIPO.md). Esta versión usa `compose.yaml`, la API Python `dashboard.py` y los paneles de `web/`. El repositorio conserva también archivos de la implementación anterior con Flask/Grafana; para ejecutar esta versión, seguir [INSTALACION.md](docs/INSTALACION.md) y usar explícitamente `docker compose -f compose.yaml up -d`.
 
 | Fuente | Qué representa | Volumen |

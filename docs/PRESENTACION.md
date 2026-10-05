@@ -4,6 +4,8 @@
 
 **Tesis:** ClickHouse permite consultar y visualizar grandes tablas de eventos; el diseño físico, el agregado incremental y la procedencia de los datos se pueden medir y explicar.
 
+**Nuevo encuadre para la siguiente versión:** presentar una plataforma ficticia de comida a domicilio y diseñar su infraestructura analítica para eventos masivos, con navegación y tráfico simulados, y adaptadores para datos reales futuros. El diseño está en [PLATAFORMA-FICTICIA.md](PLATAFORMA-FICTICIA.md). Las diapositivas actuales muestran la implementación anterior a esa integración: actualizar el recorrido cuando se implemente y mida. Los benchmarks existentes siguen siendo de OTTO/REES46/Ele.me, no de la plataforma ficticia.
+
 Resultados verificados en este equipo: **628.425.832 eventos reales** de dos fuentes, **1.083.580.480 filas derivadas** y una comparación de **5,89 s frente a 0,21 s** para la misma pregunta diaria. Véase [RESULTADOS.md](RESULTADOS.md) para condiciones y límites.
 
 [Diapositivas navegables](http://127.0.0.1:8000/otto-presentacion.html) (flechas y `F` para pantalla completa). [Demo reproducible](DEMO.md).
