@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a25">
+  <meta name="description" content="216 millones de eventos reales de OTTO en ClickHouse: clics históricos reproducidos y acciones nuevas en vivo.">
+  <title>Clickstream Lab · OTTO y ClickHouse</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/otto.css"><script src="/otto.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">C<span>•</span></span><span>CLICKSTREAM <strong>LAB</strong><small>BD2 · ClickHouse</small></span></div>
+      <nav class="top-actions" aria-label="Otras vistas"><a class="dataset-link" href="/eleme.html">Ele.me ↗</a><a class="dataset-link" href="/scale.html">Escala</a><a class="dataset-link" href="/rees46.html">Marketplace</a><a class="dataset-link" href="/meituan.html">Meituan</a><a class="dataset-link" href="/glovo.html">Glovo</a><span class="data-pill"><span class="live-dot"></span>OTTO · EVENTOS REALES</span></nav>
+    </header>
+    <main>
+      <section class="intro otto-intro"><div>
+        <p class="eyebrow">OBSERVATORIO DE CLICS · COMERCIO ELECTRÓNICO</p>
+        <h1>Millones de clics.<br><em>Ahora, en movimiento.</em></h1>
+        <p class="lead">Explora cómo ClickHouse agrega un archivo masivo mientras recibe eventos históricos reproducidos de forma continua. Tus acciones en esta página se registran por separado.</p>
+      </div><div class="intro-side"><span>216,7 M<br>EVENTOS</span><p>Volumen publicado del conjunto de entrenamiento OTTO. El contador inferior muestra cuántos se han cargado realmente aquí.</p></div></section>
+      <div id="status" class="status" role="status" aria-live="polite">Conectando con ClickHouse…</div>
+      <div class="source-bands"><span><i class="key archive-key"></i>Archivo OTTO: comportamiento real histórico</span><span><i class="key replay-key"></i>Reproducción: inserciones durante la demo</span><span><i class="key live-key"></i>Clics de esta página: nuevos y en vivo</span></div>
+      <section class="kpi-grid" aria-label="Volumen del archivo OTTO">
+        <article class="kpi accent"><span class="kpi-label">EVENTOS CARGADOS</span><strong id="k-events">—</strong><small>Filas reales en ClickHouse</small></article>
+        <article class="kpi"><span class="kpi-label">CLICS REALES</span><strong id="k-clicks">—</strong><small>Tipo <code>clicks</code></small></article>
+        <article class="kpi"><span class="kpi-label">CARRITOS</span><strong id="k-carts">—</strong><small>Tipo <code>carts</code></small></article>
+        <article class="kpi"><span class="kpi-label">PEDIDOS</span><strong id="k-orders">—</strong><small>Tipo <code>orders</code></small></article>
+      </section>
+      <section class="grid-main"><article class="panel">
+        <div class="panel-head"><div><p class="panel-kicker">VENTANA DESLIZANTE · ÚLTIMOS 30 SEGUNDOS</p><h2>Ingestión en directo</h2></div><span class="rate" id="rate">0 eventos/s</span></div>
+        <p class="panel-sub">Son eventos históricos de OTTO insertados ahora por el reproductor Python.</p>
+        <div id="timeline" class="live-chart" aria-label="Eventos reproducidos cada dos segundos"></div>
+        <div class="stream-stats"><span><b id="s-events">0</b> eventos / 30 s</span><span><b id="s-sessions">0</b> sesiones aprox. / 30 s</span><span><b id="s-total">0</b> reproducidos en total</span></div>
+      </article><article class="panel"><p class="panel-kicker">EMBUDO DE LA REPRODUCCIÓN</p><h2>De mirar a comprar</h2><p class="panel-sub">Distribución de eventos de los últimos 30 segundos. No equivale a una tasa de conversión de usuarios.</p><div id="funnel" class="funnel"></div></article></section>
+      <section class="grid-secondary"><article class="panel"><p class="panel-kicker">ÚLTIMOS 30 SEGUNDOS</p><h2>Productos más activos</h2><p class="panel-sub">OTTO publica identificadores anónimos; no hay nombres, precios ni categorías.</p><div id="top-products" class="bars"></div></article>
+      <article class="panel action-panel"><p class="panel-kicker">EVENTOS GENUINAMENTE NUEVOS</p><h2>Haz un clic</h2><p class="panel-sub">Cada botón genera un nuevo evento en <code>live_clicks</code>. Esta cifra nunca se suma al archivo OTTO.</p><div class="action-buttons"><button type="button" data-section="inicio" data-action="abrir">Abrir inicio</button><button type="button" data-section="productos" data-action="explorar">Explorar producto</button><button type="button" data-section="cesta" data-action="anadir">Añadir a cesta</button></div><div class="click-total"><strong id="live-count">0</strong><span>clics nuevos registrados</span></div><ul id="recent-live" class="recent-live" aria-label="Últimos clics de esta página"></ul></article></section>
+      <aside class="method-note"><span>LECTURA CORRECTA</span><p>El archivo contiene clics reales de una tienda alemana; la reproducción comprime el tiempo histórico para mostrar ingesta y consultas continuas. Los clics de los botones sí suceden ahora. No son datos de Uber Eats, Glovo ni España.</p></aside>
+    </main><footer><span>BD2 · ClickHouse · Fuente: <a href="https://github.com/otto-de/recsys-dataset">OTTO Recommender Systems Dataset</a></span><a href="/otto-presentacion.html">Presentación ↗</a></footer>
+  </div>
+</body>
+</html>

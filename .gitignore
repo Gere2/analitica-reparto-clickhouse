@@ -1,9 +1,15 @@
-.env
+data/*
+!data/query-benchmark.json
+!data/scale-benchmark.json
+!data/eleme-benchmark.json
 __pycache__/
 *.pyc
 .venv/
 .DS_Store
-
-# Los datasets pesan cientos de MB: cada uno los descarga (ver docs/DATOS.md)
+.env
+.env.*
+!.env.example
+docs/tianchi-registro.png
+docs/tianchi-acuerdo.png
 datos/*
 !datos/.gitkeep
