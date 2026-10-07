@@ -1,5 +1,7 @@
 # Presentación: 20 minutos + demo de 10 minutos
 
+**Avance actual de 5 minutos:** [AVANCE-PRESENTACION.md](AVANCE-PRESENTACION.md). Este documento conserva el guion anterior de la exposición final y requiere adaptación al nuevo alcance de Delivery Atlas.
+
 **Título:** Clickstream Lab: analítica de cientos de millones de eventos reales y prueba de mil millones de filas con ClickHouse.
 
 **Tesis:** ClickHouse permite consultar y visualizar grandes tablas de eventos; el diseño físico, el agregado incremental y la procedencia de los datos se pueden medir y explicar.

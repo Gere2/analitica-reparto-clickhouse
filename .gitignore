@@ -13,3 +13,7 @@ docs/tianchi-registro.png
 docs/tianchi-acuerdo.png
 datos/*
 !datos/.gitkeep
+.presentation-build/
+.codex-finalizer/
+.chart-data-*/
+tmp/

@@ -1,6 +1,6 @@
 # Plataforma ficticia de comida a domicilio: alcance y diseño
 
-Estado: **diseño propuesto; pendiente de implementación y medición**. Añadido el 5 de octubre de 2026 a partir de la orientación del profesor transmitida por el grupo.
+Estado a 7 de octubre: **infraestructura v1 implementada; miniapp y dashboard específico pendientes**. [API, contrato y SQL aplicado](INFRAESTRUCTURA-ATLAS.md), [responsabilidades del equipo](PLAN-EQUIPO.md). El documento de abajo conserva el diseño inicial del 5 de octubre como referencia de alcance; los pendientes de aquella fecha se contrastan con la guía v1.
 
 ## Objetivo
 

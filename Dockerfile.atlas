@@ -1,0 +1,7 @@
+FROM python:3.12-slim
+WORKDIR /workspace
+COPY atlas ./atlas
+COPY sql/atlas.sql ./sql/atlas.sql
+COPY web ./web
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 HOST=0.0.0.0 PORT=8001
+CMD ["python", "-m", "atlas.server"]

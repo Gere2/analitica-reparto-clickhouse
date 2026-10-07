@@ -1,10 +1,28 @@
-# Clickstream Lab — ClickHouse a escala de cientos de millones y mil millones de filas
+# Delivery Atlas — infraestructura analítica de una plataforma de reparto
 
-Proyecto BD2 de analítica de comportamiento. La pregunta central es **cómo guardar, consultar y visualizar flujos de eventos masivos**. Incluye fuentes históricas de navegación y recomendaciones de comida a domicilio, más una prueba de estrés derivada, identificadas por separado.
+Proyecto BD2 para diseñar la infraestructura analítica de una plataforma ficticia de comida a domicilio. El objetivo es recibir eventos de navegación masivos, conservar su procedencia y alimentar un dashboard con ClickHouse. La implementación actual, llamada Clickstream Lab en el panel OTTO, aporta el laboratorio de datos y rendimiento sobre el que desarrollamos ese caso.
 
-**Dirección acordada para desarrollar:** una plataforma ficticia de comida a domicilio, inspirada en Uber Eats/Glovo, cuya infraestructura analítica pueda recibir eventos simulados ahora y datos reales compatibles en el futuro. El [diseño propuesto](docs/PLATAFORMA-FICTICIA.md) define el recorrido, la procedencia y los criterios de aceptación. Esa plataforma y su contrato común todavía no están implementados; las cargas y mediciones de este README corresponden al sistema actual.
+**Actualización del 7 de octubre:** la infraestructura v1 de la plataforma ficticia ya tiene contrato validado, cola duradera, publicación por lotes, SQL aplicado en `delivery_atlas`, endpoints de consulta y generador reproducible. La miniapp y su dashboard específico son las siguientes entregas. [Reparto para Jere, Anuar y Echenique](docs/PLAN-EQUIPO.md) y [guía completa de infraestructura](docs/INFRAESTRUCTURA-ATLAS.md).
 
-**Para el equipo:** [estado del proyecto y decisiones pendientes](docs/ESTADO-EQUIPO.md). Esta versión usa `compose.yaml`, la API Python `dashboard.py` y los paneles de `web/`. El repositorio conserva también archivos de la implementación anterior con Flask/Grafana; para ejecutar esta versión, seguir [INSTALACION.md](docs/INSTALACION.md) y usar explícitamente `docker compose -f compose.yaml up -d`.
+**Para repartir el trabajo hoy:** [guía del equipo en PDF](output/pdf/Delivery-Atlas-Guia-Equipo.pdf). [Pruebas de la nueva base](docs/RESULTADOS-ATLAS.md): un millón de eventos sintéticos verificados, reintentos y recuperación tras reinicio. El agregado exacto conserva el resultado, pero aún no mejora la velocidad del detalle en esta prueba.
+
+### Empezar con la nueva plataforma, sin descargar datasets grandes
+
+```bash
+docker compose -f compose.yaml --profile atlas up -d --build --wait
+python3 -m unittest discover -s tests -v
+python3 scripts/check_atlas.py
+python3 scripts/atlas.py generate --events 10000 --batch 1000 --seed 42
+python3 scripts/atlas.py status
+```
+
+API en `http://127.0.0.1:8001`, SQL en [sql/atlas.sql](sql/atlas.sql), filtros en `/api/summary`. 202 confirma recepción en cola; la publicación en ClickHouse llega después. El laboratorio histórico y sus cifras se describen abajo y conservan su base `delivery`.
+
+**Estructura de la base de datos:** [mapa del laboratorio y evolución](docs/ESTRUCTURA-BD.md). `sql/propuesta_delivery.sql` conserva el primer diseño; la implementación v1 usa `sql/atlas.sql` con un agregado de IDs únicos para manejar reintentos.
+
+**Avance de 5 minutos, en inglés:** [presentación simplificada navegable](http://127.0.0.1:8000/avance-bd.html), [PowerPoint editable](presentaciones/Delivery-Atlas-Simple-EN.pptx) y [chuleta bilingüe en PDF](output/pdf/Delivery-Atlas-Cheat-Sheet-Simple-EN-ES.pdf). El recorrido presenta el proyecto, ClickHouse, las fuentes de datos, la propuesta de ingesta y esquema, una prueba de velocidad y los próximos pasos. También hay [notas editables](docs/NOTAS-PRESENTADOR.md). La [revisión frente a los apuntes del profesor](docs/REVISION-TEORIA.md) explica qué encaja y qué falta.
+
+**Para el equipo:** [estado del proyecto y decisiones pendientes](docs/ESTADO-EQUIPO.md). El laboratorio histórico usa `compose.yaml`, la API Python `dashboard.py` y sus paneles de `web/`; la nueva infraestructura Atlas usa el perfil `atlas` del mismo Compose y `atlas/server.py`. El repositorio conserva también archivos de la implementación anterior con Flask/Grafana; seguir [INSTALACION.md](docs/INSTALACION.md) para elegir la ruta correcta.
 
 | Fuente | Qué representa | Volumen |
 |---|---|---:|
@@ -46,7 +64,7 @@ ClickHouse 25.8 corre en un nodo Docker. Los datos se guardan en tablas `MergeTr
 ## Puesta en marcha
 
 ```bash
-docker compose up -d
+docker compose -f compose.yaml up -d
 python3 scripts/eleme.py init
 python3 scripts/otto.py download
 python3 scripts/otto.py load

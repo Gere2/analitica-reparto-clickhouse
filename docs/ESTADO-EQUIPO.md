@@ -1,5 +1,15 @@
 # Estado del proyecto para el equipo
 
+## Actualización del 7 de octubre de 2026
+
+Se ha implementado la infraestructura v1 en `delivery_atlas`: SQL, contrato, API Python en Docker, cola persistente SQLite, publicador y generador. La miniapp de reparto y el dashboard específico siguen pendientes. El reparto es **Jere: base e ingesta; Anuar: miniapp; Echenique: dashboard y reproducción**. Leer [PLAN-EQUIPO.md](PLAN-EQUIPO.md) y [INFRAESTRUCTURA-ATLAS.md](INFRAESTRUCTURA-ATLAS.md).
+
+El SQL aplicado es `sql/atlas.sql`, con `ReplacingMergeTree` en el detalle y conjuntos de IDs en `AggregatingMergeTree` para los recuentos lógicos. La cola admite reintentos con el mismo ID y contenido; un cambio de contenido devuelve conflicto. La API está en el puerto 8001. El laboratorio histórico conserva su base y sus paneles.
+
+**Guía para los tres:** [PDF del equipo](../output/pdf/Delivery-Atlas-Guia-Equipo.pdf). Se verificó un millón de eventos sintéticos, reintentos y recuperación tras paradas ordenadas. Detalle y agregado coinciden, pero el agregado no fue más rápido en la prueba nueva. [Resultados y condiciones](RESULTADOS-ATLAS.md).
+
+Las secciones siguientes son la fotografía del 5 de octubre, anterior a esta implementación. Sus cifras describen las fuentes históricas y no se reutilizan como benchmarks de la base nueva.
+
 Actualización: 5 de octubre de 2026. Este documento describe lo implementado y separa las propuestas que aún debe decidir el grupo.
 
 ## Qué está hecho
@@ -40,11 +50,13 @@ Para esta versión usar `compose.yaml` y [INSTALACION.md](INSTALACION.md). Se co
 
 Hay datasets reales, dashboard, integración Python, CRUD, modelo columnar y mediciones. Las guías cubren instalación, arquitectura, consistencia, escalado y reflexión crítica. Se ha ejecutado un nodo: la replicación y el reparto entre nodos están explicados, no demostrados. Falta comprobar que ClickHouse encaja con la tecnología asignada en la sección «Personas»: utiliza SQL y debe presentarse como motor analítico columnar.
 
-## Propuesta de alcance, pendiente de decisión del equipo
+## Dirección del proyecto y decisiones pendientes
 
-**Clickstream Lab: de millones de eventos a un dashboard con ClickHouse.**
+**Delivery Atlas: infraestructura analítica de una plataforma ficticia de comida a domicilio.**
 
 **Nueva dirección indicada por el profesor y añadida por el grupo:** definir una plataforma ficticia de comida a domicilio, con una infraestructura analítica para sus eventos. El recorrido de navegación y una carga masiva pueden ser simulados y deben identificarse como tales. Un contrato de eventos y adaptadores permitirían incorporar datos reales futuros sin cambiar todas las consultas y paneles. Véase [PLATAFORMA-FICTICIA.md](PLATAFORMA-FICTICIA.md).
+
+El [mapa de la base de datos](ESTRUCTURA-BD.md) explica el laboratorio actual y el modelo propuesto. La [presentación de avance y sus notas](AVANCE-PRESENTACION.md) están en inglés, duran 5 minutos y priorizan estructura y estado. La [revisión de la teoría](REVISION-TEORIA.md) identifica como próximos ajustes la idempotencia, las métricas de ingesta y la reproducción completa del entorno.
 
 La plataforma completa y el contrato común todavía no están implementados. La infraestructura y los datasets actuales son la base de trabajo: OTTO demuestra escala e ingesta; Ele.me aporta recomendaciones reales del sector; REES46 amplía las dimensiones temporales; Glovo aporta catálogo español; la tabla derivada sirve como estrés opcional. Sus resultados no acreditan todavía el rendimiento de la futura plataforma ficticia.
 

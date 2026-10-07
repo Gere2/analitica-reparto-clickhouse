@@ -1,5 +1,7 @@
 # Instalación reproducible
 
+Para desarrollar la plataforma ficticia sin descargar los datasets históricos, seguir [INFRAESTRUCTURA-ATLAS.md](INFRAESTRUCTURA-ATLAS.md). Las instrucciones siguientes corresponden al laboratorio de grandes datasets.
+
 ## Requisitos
 
 - Docker Desktop u OrbStack con `docker compose`.
@@ -12,8 +14,8 @@
 ## 1. Arrancar ClickHouse
 
 ```bash
-docker compose up -d
-docker compose ps
+docker compose -f compose.yaml up -d
+docker compose -f compose.yaml ps
 ```
 
 El contenedor `bd2-clickhouse` debe figurar como `healthy`. La configuración local usa ClickHouse 25.8, base `delivery`, usuario/contraseña de demostración `demo` y HTTP en `127.0.0.1:8124`.
@@ -88,7 +90,7 @@ GROUP BY table ORDER BY table;
 
 ## Problemas frecuentes
 
-- **El dashboard no conecta:** comprobar `docker compose ps`, el puerto 8124 y el proceso `python3 dashboard.py`. Si el puerto 8000 está ocupado: `PORT=8001 python3 dashboard.py`.
+- **El dashboard no conecta:** comprobar `docker compose -f compose.yaml ps`, el puerto 8124 y el proceso `python3 dashboard.py`. Si el puerto 8000 está ocupado: `PORT=8001 python3 dashboard.py`.
 - **Falta espacio:** ejecutar solo OTTO y el rollup; ya permiten demostrar 216,7 millones de eventos reales. No borrar datos necesarios antes de la presentación.
 - **Carga REES46 interrumpida:** `python3 scripts/rees46.py status` indica los meses terminados. Probar `python3 scripts/rees46.py load --resume-partial`; si la salida indica que el lote incompleto no se puede reanudar, usar `--replace-partial` para reconstruir únicamente ese mes. `load --reset` borra y reconstruye toda la tabla.
 - **Escenario de escala interrumpido:** `python3 scripts/scale.py --replace-partial` elimina y rehace solo el escenario incompleto. Si una mutación no puede concluir por falta de memoria, `python3 scripts/scale.py --reset` reconstruye la tabla de prueba completa.

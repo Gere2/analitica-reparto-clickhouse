@@ -1,0 +1,139 @@
+{
+  "load": {
+    "run_id": "f1a78bc7-67f2-5a8a-af17-a6d9ca6bbfc9",
+    "start": "2026-10-06T10:00:00.000+00:00",
+    "seed": 42,
+    "events": 1000000,
+    "batch": 5000,
+    "target_rate": 0,
+    "accepted": 1000000,
+    "duplicates": 0,
+    "submission_seconds": 323.5853,
+    "submitted_events_per_second": 3090.38,
+    "logical_payload_sha256": "f72c4f25f2f1e0e69cf4c8f8597d187f558826cf88355bc8e9860287bfde3cfa",
+    "source_kind": "synthetic",
+    "published_status": {
+      "accepted": 1000001,
+      "duplicates": 1,
+      "requests": 202,
+      "conflicts": 1,
+      "rejected_requests": 1,
+      "publication_errors": 1,
+      "pending": 0,
+      "published": 1000001,
+      "max_pending": 200000,
+      "publisher_error": null
+    },
+    "assumptions": "Catálogo y sesiones ficticios. Cada sesión tiene cinco acciones sin abandono. No es conversión real. Horas simuladas, no clics observados."
+  },
+  "verified_generated_events": 1000000,
+  "checks": {
+    "checked_at": "2026-10-07T13:18:48.966698+00:00",
+    "run_id": "e93919eb-4f64-4a89-b08b-07e19d338f67",
+    "http_retry": {
+      "received": 1,
+      "accepted": 0,
+      "duplicates": 1,
+      "state": "already_accepted"
+    },
+    "conflict_status": 409,
+    "invalid_status": 400,
+    "physical_rows_for_test": 3,
+    "logical_events_for_test": 2,
+    "ambiguous_acknowledgement_replayed": true,
+    "detail_matches_rollup": true,
+    "scope": "Prueba local del recorrido y reintentos, no garantía de entrega exactamente una vez."
+  },
+  "recovery": {
+    "checked_at": "2026-10-07T13:27:36.335000+00:00",
+    "event_id": "3e9cefe3-6485-4d5d-9533-a69fb1d0f3c7",
+    "accepted_during_database_outage": true,
+    "pending_before_api_restart": 1,
+    "logical_count_after_recovery": 1,
+    "retry_after_restart": {
+      "received": 1,
+      "accepted": 0,
+      "duplicates": 1,
+      "state": "already_accepted"
+    },
+    "final_status": {
+      "accepted": 1000002,
+      "duplicates": 2,
+      "requests": 204,
+      "conflicts": 1,
+      "rejected_requests": 1,
+      "publication_errors": 2,
+      "pending": 0,
+      "published": 1000002,
+      "max_pending": 200000,
+      "publisher_error": null
+    },
+    "scope": "Parada ordenada de servicios locales y persistencia de volúmenes. No prueba pérdida de disco ni caída abrupta del sistema."
+  },
+  "benchmark": {
+    "detail": {
+      "median_wall_seconds": 0.4983974170027068,
+      "runs": [
+        {
+          "wall_seconds": 1.6322710829990683,
+          "elapsed": 1.540547984,
+          "rows_read": 1331610,
+          "bytes_read": 69951387
+        },
+        {
+          "wall_seconds": 0.4983974170027068,
+          "elapsed": 0.443051263,
+          "rows_read": 1331610,
+          "bytes_read": 69951387
+        },
+        {
+          "wall_seconds": 0.3915714589966228,
+          "elapsed": 0.318076034,
+          "rows_read": 1331610,
+          "bytes_read": 69951387
+        }
+      ]
+    },
+    "rollup": {
+      "median_wall_seconds": 0.7026235419980367,
+      "runs": [
+        {
+          "wall_seconds": 1.1825622089963872,
+          "elapsed": 1.017703877,
+          "rows_read": 31,
+          "bytes_read": 10604
+        },
+        {
+          "wall_seconds": 0.7026235419980367,
+          "elapsed": 0.656755588,
+          "rows_read": 31,
+          "bytes_read": 10604
+        },
+        {
+          "wall_seconds": 0.38331033299618866,
+          "elapsed": 0.361361761,
+          "rows_read": 31,
+          "bytes_read": 10604
+        }
+      ]
+    },
+    "checked_at": "2026-10-07T13:25:18.294530+00:00",
+    "logical_events": 1000002,
+    "groups": 16,
+    "same_result": true,
+    "version": "25.8.33.6",
+    "query_cache": false,
+    "scope": "Tres consultas por alternativa en el nodo local. No compara motores ni capacidad de producción.",
+    "queries": {
+      "detail": "SELECT event_date,city_id,section,event_type,source_kind,count() AS events FROM delivery_atlas.app_events FINAL GROUP BY event_date,city_id,section,event_type,source_kind ORDER BY event_date,city_id,section,event_type,source_kind",
+      "rollup": "SELECT event_date,city_id,section,event_type,source_kind,events FROM delivery_atlas.app_daily_counts ORDER BY event_date,city_id,section,event_type,source_kind"
+    }
+  },
+  "historical_counts_rechecked": {
+    "otto_archive": 216716096,
+    "rees46_events": 411709736,
+    "eleme_samples": 2170299,
+    "glovo_products": 2887444,
+    "otto_scale_benchmark": 1083580480
+  }
+}
