@@ -17,3 +17,6 @@ datos/*
 .codex-finalizer/
 .chart-data-*/
 tmp/
+.vercel/
+shared-public/
+.vercel

@@ -2,7 +2,7 @@
 
 Proyecto BD2 para diseñar la infraestructura analítica de una plataforma ficticia de comida a domicilio. El objetivo es recibir eventos de navegación masivos, conservar su procedencia y alimentar un dashboard con ClickHouse. La implementación actual, llamada Clickstream Lab en el panel OTTO, aporta el laboratorio de datos y rendimiento sobre el que desarrollamos ese caso.
 
-**Actualización del 7 de octubre:** la infraestructura v1 de la plataforma ficticia ya tiene contrato validado, cola duradera, publicación por lotes, SQL aplicado en `delivery_atlas`, endpoints de consulta y generador reproducible. La miniapp y su dashboard específico son las siguientes entregas. [Reparto para Jere, Anuar y Echenique](docs/PLAN-EQUIPO.md) y [guía completa de infraestructura](docs/INFRAESTRUCTURA-ATLAS.md).
+**Actualización del 7 de octubre:** la plataforma ficticia ya tiene contrato validado, cola duradera, publicación por lotes, SQL aplicado en `delivery_atlas`, generador reproducible y dashboard de operación. La miniapp comercial es la siguiente entrega. [Plan para Jere, Anuar y Echenique](docs/PLAN-EQUIPO.md) y [guía completa de infraestructura](docs/INFRAESTRUCTURA-ATLAS.md).
 
 **Para repartir el trabajo hoy:** [guía del equipo en PDF](output/pdf/Delivery-Atlas-Guia-Equipo.pdf). [Pruebas de la nueva base](docs/RESULTADOS-ATLAS.md): un millón de eventos sintéticos verificados, reintentos y recuperación tras reinicio. El agregado exacto conserva el resultado, pero aún no mejora la velocidad del detalle en esta prueba.
 
@@ -92,3 +92,7 @@ python3 scripts/crud_demo.py
 La ruta corta ejecuta solo OTTO, rollup y dashboard. La ruta completa necesita espacio y tiempo adicionales; véase [INSTALACION.md](docs/INSTALACION.md). El ZIP OTTO procede de un [espejo público](https://huggingface.co/datasets/hazemessam/otto-recsys) y se verifica por SHA-256 y por los tres recuentos publicados por OTTO. Los siete CSV.gz REES46 se descargan del publicador y se comprueban por tamaño, descompresión y filas cargadas por mes.
 
 **Material de clase:** [guía de instalación](docs/INSTALACION.md), [demo de 10 minutos](docs/DEMO.md), [guion de 20 minutos](docs/PRESENTACION.md), [fundamentos y límites](docs/FUNDAMENTOS.md), [resultados medidos](docs/RESULTADOS.md) y [diapositivas navegables](http://127.0.0.1:8000/otto-presentacion.html).
+
+## Compartir el dashboard
+
+La configuración de Vercel y el gateway de lectura están preparados. La base de datos y el simulador siguen locales. Consultar [la guía de compartición](docs/COMPARTIR-VERCEL.md) para arranque del túnel, variables privadas, despliegue y parada.

@@ -8,6 +8,7 @@ const states={created:'Creado',preparing:'Preparando',picked_up:'Recogido',en_ro
 let selected='',lastData=null,lastSimulation={},refreshTimer=null,fetching=false,controlling=false,manualEvent=null;
 let navigationFetching=false,navigationAt=0,navigationOrigin='';
 const session=crypto.randomUUID();
+const readOnly=Boolean(document.querySelector('meta[name="atlas-readonly"]'));
 async function request(path,body){
   const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),15000);
   try{
@@ -18,7 +19,7 @@ async function request(path,body){
 function project(lat,lon){return [28+(Number(lon)+3.718)/.037*744,450-(Number(lat)-40.400)/.030*420];}
 function svgNode(tag,attrs){const node=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([key,value])=>node.setAttribute(key,value));return node;}
 function showError(message){$('error').hidden=!message;$('error').textContent=message;}
-function buttons(){ $('start').disabled=controlling||lastSimulation.running;$('stop').disabled=controlling||!lastSimulation.running;$('fleet').disabled=controlling||lastSimulation.running; }
+function buttons(){ if(readOnly)return; $('start').disabled=controlling||lastSimulation.running;$('stop').disabled=controlling||!lastSimulation.running;$('fleet').disabled=controlling||lastSimulation.running; }
 function selectCourier(id){selected=id;$('courier').value=id;if(lastData)renderMap(lastData);}
 function renderMap(data){
   const couriers=data.couriers||[];
@@ -106,8 +107,7 @@ async function control(action){
   catch(error){showError(error.message);}
   finally{controlling=false;buttons();await poll();}
 }
-$('start').addEventListener('click',()=>control('start'));
-$('stop').addEventListener('click',()=>control('stop'));
+if(!readOnly){$('start').addEventListener('click',()=>control('start'));$('stop').addEventListener('click',()=>control('stop'));}
 $('courier').addEventListener('change',()=>selectCourier($('courier').value));
 $('origin').addEventListener('change',()=>loadNavigation(true));
 $('manual').addEventListener('click',async()=>{
