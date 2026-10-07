@@ -95,4 +95,4 @@ La ruta corta ejecuta solo OTTO, rollup y dashboard. La ruta completa necesita e
 
 ## Compartir el dashboard
 
-La configuración de Vercel y el gateway de lectura están preparados. La base de datos y el simulador siguen locales. Consultar [la guía de compartición](docs/COMPARTIR-VERCEL.md) para arranque del túnel, variables privadas, despliegue y parada.
+**Demo pública de solo lectura:** https://delivery-atlas-demo.vercel.app. La base de datos y el simulador siguen locales: el tracking se actualiza mientras el ordenador de Jere, Docker y el túnel permanezcan activos. Consultar [la guía de compartición](docs/COMPARTIR-VERCEL.md) para arranque, variables privadas, despliegue y parada.

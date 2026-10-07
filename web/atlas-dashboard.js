@@ -62,6 +62,7 @@ function renderMap(data){
     if(selected!==selectedAtRequest||lastData?.run_id!==runAtRequest)return;
     const points=history.rows.filter(p=>p.order_id===row.order_id).map(p=>project(p.latitude,p.longitude).join(','));
     $('route').setAttribute('points',points.join(' '));
+    $('rate-note').textContent='El gráfico se consulta desde el histórico GPS en ClickHouse.';
   }).catch(()=>{$('rate-note').textContent='No se pudo consultar el recorrido. Se reintentará en la siguiente actualización.';});
 }
 function renderOperations(data){

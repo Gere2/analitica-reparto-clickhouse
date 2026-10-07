@@ -13,6 +13,7 @@ from uuid import UUID
 ROUTES = {'simulation', 'operations', 'status', 'track', 'summary', 'inventory', 'catalog'}
 CACHE = OrderedDict()
 LOCK = threading.Lock()
+READ_LOCKS = {endpoint: threading.Lock() for endpoint in ROUTES}
 TOKEN = os.environ.get('ATLAS_SHARE_TOKEN', '')
 BACKEND = os.environ.get('ATLAS_SHARE_BACKEND', 'http://atlas:8001').rstrip('/')
 
@@ -66,12 +67,15 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(400, {'error': 'Consulta no disponible'})
         try:
             # Coalesce concurrent viewers into one local query per cache window.
-            with LOCK:
+            with READ_LOCKS[endpoint]:
                 ttl = 60 if endpoint in {'inventory', 'catalog'} else 10 if endpoint == 'summary' else 1.5
-                cached = CACHE.get(path)
+                with LOCK:
+                    cached = CACHE.get(path)
                 if cached and time.monotonic() - cached[0] < ttl:
                     body = cached[1]
-                    CACHE.move_to_end(path)
+                    with LOCK:
+                        if path in CACHE:
+                            CACHE.move_to_end(path)
                 else:
                     with urlopen(BACKEND + path, timeout=10) as response:
                         payload = response.read(2 * 1024 * 1024 + 1)
@@ -82,9 +86,10 @@ class Handler(BaseHTTPRequestHandler):
                         body = {k: body[k] for k in ('pending', 'published', 'publisher_phase') if k in body}
                     if endpoint == 'simulation':
                         body = {k: body[k] for k in ('running', 'fleet', 'interval_seconds', 'run_id') if k in body}
-                    CACHE[path] = (time.monotonic(), body)
-                    while len(CACHE) > 128:
-                        CACHE.popitem(last=False)
+                    with LOCK:
+                        CACHE[path] = (time.monotonic(), body)
+                        while len(CACHE) > 128:
+                            CACHE.popitem(last=False)
             self.send_json(200, body)
         except Exception:
             self.send_json(503, {'error': 'El ordenador de Jere no responde. Se reintentará.'})

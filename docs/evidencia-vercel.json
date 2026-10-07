@@ -1,0 +1,62 @@
+{
+  "url": "https://delivery-atlas-demo.vercel.app",
+  "target": "production",
+  "commit": "193974d",
+  "checked_at": "2026-10-07T15:22:04.203073+00:00",
+  "samples": [
+    {
+      "snapshot_at": "2026-10-07 15:22:19.206",
+      "couriers": 12,
+      "event_time": "2026-10-07 15:22:09.737",
+      "latitude": 40.4209716,
+      "longitude": -3.7004438,
+      "source_kind": "synthetic"
+    },
+    {
+      "snapshot_at": "2026-10-07 15:22:41.105",
+      "couriers": 12,
+      "event_time": "2026-10-07 15:22:36.662",
+      "latitude": 40.4209716,
+      "longitude": -3.7020877,
+      "source_kind": "synthetic"
+    }
+  ],
+  "initial_observation": "First check returned HTTP 503; browser polling subsequently recovered.",
+  "simulation": {
+    "status": 200,
+    "seconds": 5.837,
+    "failed_attempts": []
+  },
+  "operations": {
+    "status": 200,
+    "seconds": 3.351,
+    "failed_attempts": []
+  },
+  "status": {
+    "status": 200,
+    "seconds": 1.589,
+    "failed_attempts": []
+  },
+  "inventory": {
+    "status": 200,
+    "seconds": 10.915,
+    "failed_attempts": []
+  },
+  "catalog": {
+    "status": 200,
+    "seconds": 4.397,
+    "failed_attempts": []
+  },
+  "summary?city_id=madrid&source_kind=synthetic": {
+    "status": 200,
+    "seconds": 0.686,
+    "failed_attempts": []
+  },
+  "track?run_id=9f3787c4-f022-4df6-b71e-6c06f5d9ab26&courier_id=0d918c8c-9de8-50a3-9ecc-332c7d7dace9": {
+    "status": 200,
+    "seconds": 0.402,
+    "failed_attempts": []
+  },
+  "track_rows": 240,
+  "write_rejected": 405
+}

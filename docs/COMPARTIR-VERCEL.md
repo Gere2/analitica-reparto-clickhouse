@@ -1,5 +1,7 @@
 # Compartir Delivery Atlas en Vercel
 
+**Publicado:** https://delivery-atlas-demo.vercel.app. Verificación: [evidencia del flujo público](evidencia-vercel.json). Las siete rutas respondieron, avanzaron las horas/posiciones simuladas y una escritura devolvió 405. Hubo un 503 inicial; el panel recuperó la conexión mediante sus reintentos. No se garantiza disponibilidad ni demora: la primera comprobación pública observó varios segundos de antigüedad. El acceso compartido separa los bloqueos de consultas por endpoint, para que una carga lenta del inventario no bloquee el seguimiento.
+
 ## Arquitectura de esta demo
 
 ```text
