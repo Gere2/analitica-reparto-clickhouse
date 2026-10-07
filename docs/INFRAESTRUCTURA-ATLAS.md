@@ -1,5 +1,7 @@
 # Infraestructura Delivery Atlas v1
 
+**Ampliación de esta versión:** el contrato de navegación v1 se conserva y se añaden pedidos/GPS en `sql/atlas_operations.sql`, un catálogo de demo y el dashboard de seguimiento. La raíz del puerto 8001 sirve ahora ese dashboard. Documentación vigente de las nuevas rutas, campos y procedencia: [DATOS-Y-TRACKING.md](DATOS-Y-TRACKING.md). La miniapp comercial continúa pendiente.
+
 Fecha: 7 de octubre de 2026. Implementación: `compose.yaml`, `Dockerfile.atlas`, `atlas/` y `sql/atlas.sql`. El laboratorio anterior conserva su base `delivery`. La propuesta anterior `delivery_proposal` no es la base aplicada por esta versión.
 
 ## 1. Explicación corta para el equipo

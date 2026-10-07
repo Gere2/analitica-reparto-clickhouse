@@ -2,6 +2,8 @@
 
 ## Actualización del 7 de octubre de 2026
 
+**Ampliación posterior del mismo día:** Jere pidió continuar con Rayo hasta que se incorpore el equipo. Se añadió tracking sintético de Madrid, tablas de posiciones/estados, catálogo de demo y dashboard operativo en el puerto 8001. Véase [DATOS-Y-TRACKING.md](DATOS-Y-TRACKING.md): es el estado vigente. El reparto y PDF descritos más abajo son la propuesta previa, no tareas que estemos esperando.
+
 Se ha implementado la infraestructura v1 en `delivery_atlas`: SQL, contrato, API Python en Docker, cola persistente SQLite, publicador y generador. La miniapp de reparto y el dashboard específico siguen pendientes. El reparto es **Jere: base e ingesta; Anuar: miniapp; Echenique: dashboard y reproducción**. Leer [PLAN-EQUIPO.md](PLAN-EQUIPO.md) y [INFRAESTRUCTURA-ATLAS.md](INFRAESTRUCTURA-ATLAS.md).
 
 El SQL aplicado es `sql/atlas.sql`, con `ReplacingMergeTree` en el detalle y conjuntos de IDs en `AggregatingMergeTree` para los recuentos lógicos. La cola admite reintentos con el mismo ID y contenido; un cambio de contenido devuelve conflicto. La API está en el puerto 8001. El laboratorio histórico conserva su base y sus paneles.

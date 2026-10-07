@@ -2,6 +2,8 @@
 
 Fecha: 7 de octubre de 2026. Equipo: Jere, Anuar y Echenique.
 
+**Cambio posterior de alcance:** Jere indicó continuar de momento con Rayo y repartir cuando los compañeros se incorporen. El reparto de abajo es una propuesta para ese momento, no trabajo que estemos esperando. Ya se implementa el dashboard operativo y tracking sintético de Madrid. Estado vigente: [DATOS-Y-TRACKING.md](DATOS-Y-TRACKING.md). La guía PDF anterior describe la primera entrega de infraestructura.
+
 ## Qué estamos construyendo
 
 Una plataforma ficticia de comida a domicilio para demostrar cómo ClickHouse recibe y analiza muchos eventos. Una acción en la aplicación produce un registro; la API Python lo valida, lo guarda y permite consultarlo desde un dashboard. No operamos repartos ni cobros reales.

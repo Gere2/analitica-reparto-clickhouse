@@ -12,6 +12,10 @@ from urllib.parse import parse_qs, urlparse
 from atlas.clickhouse import ClickHouse
 from atlas.contract import validate, KINDS, ACTIONS
 from atlas.store import Store, Conflict, Full
+from atlas.operations import validate_operation
+from atlas.simulation import Simulator
+from atlas.catalog import seed_demo_catalog
+from uuid import UUID
 
 MAX_BATCH = 5000
 MAX_BODY = 5 * 1024 * 1024
@@ -22,14 +26,26 @@ class Publisher:
         self.store, self.ch = store, ch
         self.stop = threading.Event()
         self.error = None
+        self.phase='idle'
+        self.phase_started=time.monotonic()
+        self.last_publish_seconds=None
+        self.last_batch=0
         self.thread = threading.Thread(target=self.run, daemon=True)
 
     def once(self):
+        begin=time.monotonic()
+        self.phase,self.phase_started='reading_queue',begin
         rows = self.store.pending(MAX_BATCH)
         if not rows:
+            self.phase='idle'
             return False
+        self.phase,self.phase_started='clickhouse_insert',time.monotonic()
+        self.last_batch=len(rows)
         self.ch.publish([payload for _, payload in rows])
+        self.phase,self.phase_started='marking_published',time.monotonic()
         self.store.published([seq for seq, _ in rows])
+        self.last_publish_seconds=round(time.monotonic()-begin,3)
+        self.phase='idle'
         self.error = None
         return True
 
@@ -40,10 +56,11 @@ class Publisher:
                 self.stop.wait(0.3 if worked else 1)
             except Exception as error:
                 self.error = str(error)[:300]
+                self.phase='retry_wait'
                 self.store.count('publication_errors')
                 self.stop.wait(2)
 
-def make_handler(store, ch, publisher):
+def make_handler(store, ch, publisher, simulator):
     class Handler(BaseHTTPRequestHandler):
         def send_json(self, data, status=200):
             raw = json.dumps(data, ensure_ascii=False).encode()
@@ -57,7 +74,8 @@ def make_handler(store, ch, publisher):
             self.wfile.write(raw)
 
         def do_POST(self):
-            if urlparse(self.path).path != '/api/events':
+            route=urlparse(self.path).path
+            if route not in {'/api/events','/api/operations','/api/simulation/start','/api/simulation/stop'}:
                 return self.send_json({'error':'Ruta desconocida'}, 404)
             self.connection.settimeout(15)
             try:
@@ -68,6 +86,19 @@ def make_handler(store, ch, publisher):
                 if len(raw) != size:
                     raise ValueError('Cuerpo incompleto')
                 data = json.loads(raw)
+                if route=='/api/simulation/start':
+                    if not isinstance(data,dict) or set(data)-{'fleet','interval','seed'}:
+                        raise ValueError('Configuración de simulación desconocida.')
+                    return self.send_json(simulator.start(**data),202)
+                if route=='/api/simulation/stop':
+                    if data!={}:raise ValueError('Enviar {} para parar.')
+                    return self.send_json(simulator.stop())
+                if route=='/api/operations':
+                    if not isinstance(data,dict) or set(data)!={'kind','events'} or not isinstance(data['events'],list) or not 1<=len(data['events'])<=MAX_BATCH:
+                        raise ValueError('Enviar {kind,events} con 1 a 5000 eventos.')
+                    events=[validate_operation(data['kind'],e) for e in data['events']]
+                    result=store.accept(events)
+                    return self.send_json(result,202 if result['accepted'] else 200)
                 if not isinstance(data, dict) or set(data) != {'events'} or not isinstance(data['events'], list) or not 1 <= len(data['events']) <= MAX_BATCH:
                     raise ValueError('Enviar {events: [...]} con 1 a 5000 eventos.')
                 events = [validate(e) for e in data['events']]
@@ -90,7 +121,42 @@ def make_handler(store, ch, publisher):
                     ch.query('SELECT 1')
                     return self.send_json({'ok': True, 'publisher_error':publisher.error})
                 if parsed.path == '/api/status':
-                    return self.send_json(dict(store.status(), publisher_error=publisher.error))
+                    return self.send_json(dict(store.status(), publisher_error=publisher.error,
+                        publisher_phase=publisher.phase,publisher_phase_seconds=round(time.monotonic()-publisher.phase_started,3),
+                        last_batch=publisher.last_batch,last_publish_seconds=publisher.last_publish_seconds))
+                if parsed.path=='/api/simulation':
+                    return self.send_json(simulator.snapshot())
+                if parsed.path in {'/api/operations','/api/track'}:
+                    filters=parse_qs(parsed.query,keep_blank_values=True)
+                    allowed={'run_id'} if parsed.path=='/api/operations' else {'run_id','courier_id'}
+                    if set(filters)-allowed or any(len(v)!=1 for v in filters.values()):
+                        raise ValueError('Filtro desconocido o repetido.')
+                    run=filters.get('run_id',[simulator.snapshot().get('run_id')])[0]
+                    if not run:
+                        return self.send_json({'couriers':[],'orders':[],'metrics':{},'positions_by_5s':[],
+                            'run_id':None,'source_kind':'synthetic','snapshot_at':None})
+                    run=str(UUID(run))
+                    if parsed.path=='/api/track':
+                        courier=str(UUID(filters.get('courier_id',[''])[0]))
+                        return self.send_json({'run_id':run,'courier_id':courier,'rows':ch.history(run,courier)})
+                    return self.send_json(ch.operations(run))
+                if parsed.path=='/api/catalog':
+                    if not ch.query('EXISTS TABLE delivery.glovo_products')[0]['result']:
+                        return self.send_json({'rows':[],'meaning':'Catálogo Glovo no cargado en este ordenador. La simulación no lo necesita.'})
+                    return self.send_json({'meaning':'Muestra del catálogo publicado de Glovo; sin clics ni GPS.',
+                        'rows':ch.query("SELECT source_row,city_code,store_name,product_name,collection_section "
+                            "FROM delivery.glovo_products WHERE country_code='ES' AND city_code='MAD' "
+                            "ORDER BY store_name,source_row LIMIT 40")})
+                if parsed.path=='/api/demo-catalog':
+                    return self.send_json({'restaurants':ch.query('SELECT * EXCEPT version FROM delivery_atlas.demo_restaurants FINAL ORDER BY restaurant_id'),
+                        'products':ch.query('SELECT * EXCEPT version FROM delivery_atlas.demo_products FINAL ORDER BY product_id'),
+                        'meaning':'Restaurantes, coordenadas y precios ficticios. Los nombres de productos conservan su procedencia por campo.'})
+                if parsed.path=='/api/inventory':
+                    # Metadata, not expensive repeated full counts of all historical tables.
+                    return self.send_json({'rows':ch.query("SELECT database,name,engine,total_rows,"
+                        "formatReadableSize(total_bytes) AS disk FROM system.tables WHERE database IN "
+                        "('delivery','delivery_atlas') AND engine NOT IN ('MaterializedView','View') ORDER BY database,name"),
+                        'meaning':'Filas físicas estimadas del catálogo de ClickHouse; fuentes distintas.'})
                 if parsed.path == '/api/summary':
                     multi = parse_qs(parsed.query, keep_blank_values=True)
                     if set(multi)-{'from','to','city_id','source_kind','event_type'} or any(len(v)!=1 for v in multi.values()):
@@ -111,12 +177,7 @@ def make_handler(store, ch, publisher):
                         'toString(session_id) AS session_id,toString(event_time) AS event_time, '
                         'toString(ingested_at) AS ingested_at,event_type,city_id,source,source_kind '
                         'FROM delivery_atlas.app_events FINAL ORDER BY ingested_at DESC LIMIT 30')})
-                if parsed.path == '/':
-                    return self.send_json({'project':'Delivery Atlas', 'state':'Infraestructura v1',
-                        'routes':['/health','/api/status','/api/summary','/api/recent','POST /api/events'],
-                        'guide':'docs/INFRAESTRUCTURA-ATLAS.md',
-                        'team':{'Jere':'Base e ingesta','Anuar':'Miniapp','Echenique':'Dashboard y reproducción'}})
-                target = (ROOT/'web'/parsed.path.lstrip('/')).resolve()
+                target = (ROOT/'web'/('atlas-dashboard.html' if parsed.path=='/' else parsed.path.lstrip('/'))).resolve()
                 if not target.is_relative_to(ROOT/'web') or not target.is_file():
                     return self.send_json({'error':'Ruta desconocida'}, 404)
                 content = target.read_bytes()
@@ -139,19 +200,23 @@ def make_handler(store, ch, publisher):
 def main():
     ch = ClickHouse()
     ch.init()
+    seed_demo_catalog(ch)
     store = Store(os.environ.get('ATLAS_QUEUE_PATH', str(ROOT/'data/atlas/outbox.sqlite')),
-                  int(os.environ.get('ATLAS_MAX_PENDING', '200000')))
+                  int(os.environ.get('ATLAS_MAX_PENDING', '200000')),persistent=True)
     publisher = Publisher(store, ch)
-    server = ThreadingHTTPServer((os.environ.get('HOST','127.0.0.1'), int(os.environ.get('PORT','8001'))), make_handler(store,ch,publisher))
+    simulator=Simulator(store)
+    server = ThreadingHTTPServer((os.environ.get('HOST','127.0.0.1'), int(os.environ.get('PORT','8001'))), make_handler(store,ch,publisher,simulator))
     publisher.thread.start()
     signal.signal(signal.SIGTERM, lambda *_: threading.Thread(target=server.shutdown, daemon=True).start())
     print('Delivery Atlas: API y publicador listos', flush=True)
     try:
         server.serve_forever()
     finally:
+        simulator.stop()
         publisher.stop.set()
         publisher.thread.join(5)
         server.server_close()
+        store.close()
 
 if __name__ == '__main__':
     main()

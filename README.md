@@ -6,6 +6,10 @@ Proyecto BD2 para diseñar la infraestructura analítica de una plataforma ficti
 
 **Para repartir el trabajo hoy:** [guía del equipo en PDF](output/pdf/Delivery-Atlas-Guia-Equipo.pdf). [Pruebas de la nueva base](docs/RESULTADOS-ATLAS.md): un millón de eventos sintéticos verificados, reintentos y recuperación tras reinicio. El agregado exacto conserva el resultado, pero aún no mejora la velocidad del detalle en esta prueba.
 
+**Ampliación de operación en directo:** [datos conservados, columnas, ingesta y tracking](docs/DATOS-Y-TRACKING.md). Dashboard en **http://127.0.0.1:8001/**, con control de flota simulada de Madrid, posiciones cada dos segundos, pedidos/estados/importe ficticio, navegación y catálogo. Nuevas tablas en `sql/atlas_operations.sql`. Jere y Rayo continúan la implementación; el reparto del PDF anterior queda como propuesta para cuando se incorpore el equipo.
+
+[Recorrido de demo y diagnóstico](docs/DEMO-TRACKING.md). Carga adicional comprobada: **100000 posiciones y 5965 estados sintéticos**, además de la navegación previa. El intervalo de dos segundos es una configuración: el panel muestra el retraso observado y no garantiza entrega instantánea.
+
 ### Empezar con la nueva plataforma, sin descargar datasets grandes
 
 ```bash

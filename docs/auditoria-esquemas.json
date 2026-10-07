@@ -1,0 +1,1073 @@
+{
+  "tables": [
+    {
+      "database": "delivery",
+      "name": "click_summary",
+      "engine": "MergeTree",
+      "total_rows": 517353,
+      "total_bytes": 5069181
+    },
+    {
+      "database": "delivery",
+      "name": "clicks",
+      "engine": "MergeTree",
+      "total_rows": 4021488,
+      "total_bytes": 14787485
+    },
+    {
+      "database": "delivery",
+      "name": "daily_clicks",
+      "engine": "SummingMergeTree",
+      "total_rows": 176195,
+      "total_bytes": 1184789
+    },
+    {
+      "database": "delivery",
+      "name": "daily_clicks_mv",
+      "engine": "MaterializedView",
+      "total_rows": null,
+      "total_bytes": null
+    },
+    {
+      "database": "delivery",
+      "name": "demo_events",
+      "engine": "MergeTree",
+      "total_rows": 1,
+      "total_bytes": 549
+    },
+    {
+      "database": "delivery",
+      "name": "eleme_samples",
+      "engine": "MergeTree",
+      "total_rows": 2170299,
+      "total_bytes": 8853378926
+    },
+    {
+      "database": "delivery",
+      "name": "eleme_staging",
+      "engine": "MergeTree",
+      "total_rows": 0,
+      "total_bytes": 0
+    },
+    {
+      "database": "delivery",
+      "name": "foods",
+      "engine": "MergeTree",
+      "total_rows": 179778,
+      "total_bytes": 1778919
+    },
+    {
+      "database": "delivery",
+      "name": "glovo_products",
+      "engine": "MergeTree",
+      "total_rows": 2887444,
+      "total_bytes": 135081223
+    },
+    {
+      "database": "delivery",
+      "name": "live_clicks",
+      "engine": "MergeTree",
+      "total_rows": 6,
+      "total_bytes": 661
+    },
+    {
+      "database": "delivery",
+      "name": "order_items",
+      "engine": "MergeTree",
+      "total_rows": 3445180,
+      "total_bytes": 17090007
+    },
+    {
+      "database": "delivery",
+      "name": "orders",
+      "engine": "MergeTree",
+      "total_rows": 1068495,
+      "total_bytes": 19041961
+    },
+    {
+      "database": "delivery",
+      "name": "otto_archive",
+      "engine": "MergeTree",
+      "total_rows": 216716096,
+      "total_bytes": 2824410729
+    },
+    {
+      "database": "delivery",
+      "name": "otto_daily_rollup",
+      "engine": "SummingMergeTree",
+      "total_rows": 87,
+      "total_bytes": 1000
+    },
+    {
+      "database": "delivery",
+      "name": "otto_daily_rollup_mv",
+      "engine": "MaterializedView",
+      "total_rows": null,
+      "total_bytes": null
+    },
+    {
+      "database": "delivery",
+      "name": "otto_replay",
+      "engine": "MergeTree",
+      "total_rows": 1200000,
+      "total_bytes": 14101353
+    },
+    {
+      "database": "delivery",
+      "name": "otto_scale_benchmark",
+      "engine": "MergeTree",
+      "total_rows": 1083580480,
+      "total_bytes": 13153780588
+    },
+    {
+      "database": "delivery",
+      "name": "rees46_events",
+      "engine": "MergeTree",
+      "total_rows": 411709736,
+      "total_bytes": 12572701380
+    },
+    {
+      "database": "delivery",
+      "name": "restaurants",
+      "engine": "MergeTree",
+      "total_rows": 29072,
+      "total_bytes": 234285
+    },
+    {
+      "database": "delivery_atlas",
+      "name": "app_daily_counts",
+      "engine": "View",
+      "total_rows": null,
+      "total_bytes": null
+    },
+    {
+      "database": "delivery_atlas",
+      "name": "app_daily_rollup",
+      "engine": "AggregatingMergeTree",
+      "total_rows": 32,
+      "total_bytes": 16065883
+    },
+    {
+      "database": "delivery_atlas",
+      "name": "app_daily_rollup_mv",
+      "engine": "MaterializedView",
+      "total_rows": null,
+      "total_bytes": null
+    },
+    {
+      "database": "delivery_atlas",
+      "name": "app_events",
+      "engine": "ReplacingMergeTree",
+      "total_rows": 1000003,
+      "total_bytes": 39307340
+    }
+  ],
+  "columns": [
+    {
+      "database": "delivery",
+      "table": "click_summary",
+      "name": "order_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery",
+      "table": "click_summary",
+      "name": "order_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "click_summary",
+      "name": "click_count",
+      "type": "UInt16"
+    },
+    {
+      "database": "delivery",
+      "table": "click_summary",
+      "name": "distinct_restaurants",
+      "type": "UInt16"
+    },
+    {
+      "database": "delivery",
+      "table": "click_summary",
+      "name": "last_clicked_restaurant_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "clicks",
+      "name": "order_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery",
+      "table": "clicks",
+      "name": "order_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "clicks",
+      "name": "position",
+      "type": "UInt16"
+    },
+    {
+      "database": "delivery",
+      "table": "clicks",
+      "name": "restaurant_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "daily_clicks",
+      "name": "order_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery",
+      "table": "daily_clicks",
+      "name": "restaurant_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "daily_clicks",
+      "name": "clicks",
+      "type": "UInt64"
+    },
+    {
+      "database": "delivery",
+      "table": "daily_clicks_mv",
+      "name": "order_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery",
+      "table": "daily_clicks_mv",
+      "name": "restaurant_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "daily_clicks_mv",
+      "name": "clicks",
+      "type": "UInt64"
+    },
+    {
+      "database": "delivery",
+      "table": "demo_events",
+      "name": "event_id",
+      "type": "UInt64"
+    },
+    {
+      "database": "delivery",
+      "table": "demo_events",
+      "name": "recorded_at",
+      "type": "DateTime"
+    },
+    {
+      "database": "delivery",
+      "table": "demo_events",
+      "name": "section",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "demo_events",
+      "name": "action",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "source_id",
+      "type": "FixedString(64)"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "source_file",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "source_row",
+      "type": "UInt64"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "sample_day",
+      "type": "UInt8"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "clicked",
+      "type": "UInt8"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "user_id",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "shop_id",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "item_id",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "city_id",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "district_id",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "category_id",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "request_hour",
+      "type": "UInt8"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "weekday",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "meal_period",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "request_time_raw",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "raw_features",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_samples",
+      "name": "loaded_at",
+      "type": "DateTime"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "source_id",
+      "type": "FixedString(64)"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "source_file",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "source_row",
+      "type": "UInt64"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "sample_day",
+      "type": "UInt8"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "clicked",
+      "type": "UInt8"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "user_id",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "shop_id",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "item_id",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "city_id",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "district_id",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "category_id",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "request_hour",
+      "type": "UInt8"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "weekday",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "meal_period",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "request_time_raw",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "raw_features",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "eleme_staging",
+      "name": "loaded_at",
+      "type": "DateTime"
+    },
+    {
+      "database": "delivery",
+      "table": "foods",
+      "name": "food_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "foods",
+      "name": "price",
+      "type": "Nullable(Float32)"
+    },
+    {
+      "database": "delivery",
+      "table": "foods",
+      "name": "category",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "glovo_products",
+      "name": "source_row",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "glovo_products",
+      "name": "country_code",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "glovo_products",
+      "name": "city_code",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "glovo_products",
+      "name": "store_name",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "glovo_products",
+      "name": "product_name",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "glovo_products",
+      "name": "collection_section",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "glovo_products",
+      "name": "product_description",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "glovo_products",
+      "name": "has_description",
+      "type": "UInt8"
+    },
+    {
+      "database": "delivery",
+      "table": "glovo_products",
+      "name": "aux_store",
+      "type": "UInt8"
+    },
+    {
+      "database": "delivery",
+      "table": "glovo_products",
+      "name": "hier",
+      "type": "UInt8"
+    },
+    {
+      "database": "delivery",
+      "table": "live_clicks",
+      "name": "click_id",
+      "type": "UUID"
+    },
+    {
+      "database": "delivery",
+      "table": "live_clicks",
+      "name": "clicked_at",
+      "type": "DateTime64(3, 'UTC')"
+    },
+    {
+      "database": "delivery",
+      "table": "live_clicks",
+      "name": "section",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "live_clicks",
+      "name": "action",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "order_items",
+      "name": "order_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery",
+      "table": "order_items",
+      "name": "order_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "order_items",
+      "name": "food_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "orders",
+      "name": "order_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "orders",
+      "name": "user_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "orders",
+      "name": "restaurant_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "orders",
+      "name": "area_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "orders",
+      "name": "price_band",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "orders",
+      "name": "ordered_at",
+      "type": "DateTime('Asia/Shanghai')"
+    },
+    {
+      "database": "delivery",
+      "table": "orders",
+      "name": "period_code",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "orders",
+      "name": "order_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_archive",
+      "name": "session_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_archive",
+      "name": "article_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_archive",
+      "name": "event_time",
+      "type": "DateTime64(3, 'UTC')"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_archive",
+      "name": "event_type",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_archive",
+      "name": "event_position",
+      "type": "UInt16"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_daily_rollup",
+      "name": "event_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_daily_rollup",
+      "name": "event_type",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_daily_rollup",
+      "name": "events",
+      "type": "UInt64"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_daily_rollup_mv",
+      "name": "event_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_daily_rollup_mv",
+      "name": "event_type",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_daily_rollup_mv",
+      "name": "events",
+      "type": "UInt64"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_replay",
+      "name": "session_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_replay",
+      "name": "article_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_replay",
+      "name": "event_time",
+      "type": "DateTime64(3, 'UTC')"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_replay",
+      "name": "event_type",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_replay",
+      "name": "event_position",
+      "type": "UInt16"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_replay",
+      "name": "ingested_at",
+      "type": "DateTime64(3, 'UTC')"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_scale_benchmark",
+      "name": "scenario",
+      "type": "UInt8"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_scale_benchmark",
+      "name": "session_id",
+      "type": "UInt64"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_scale_benchmark",
+      "name": "article_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_scale_benchmark",
+      "name": "event_time",
+      "type": "DateTime64(3, 'UTC')"
+    },
+    {
+      "database": "delivery",
+      "table": "otto_scale_benchmark",
+      "name": "event_type",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "rees46_events",
+      "name": "event_time",
+      "type": "DateTime('UTC')"
+    },
+    {
+      "database": "delivery",
+      "table": "rees46_events",
+      "name": "event_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery",
+      "table": "rees46_events",
+      "name": "event_type",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "rees46_events",
+      "name": "product_id",
+      "type": "UInt64"
+    },
+    {
+      "database": "delivery",
+      "table": "rees46_events",
+      "name": "category_id",
+      "type": "UInt64"
+    },
+    {
+      "database": "delivery",
+      "table": "rees46_events",
+      "name": "category_code",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "rees46_events",
+      "name": "brand",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery",
+      "table": "rees46_events",
+      "name": "price",
+      "type": "Decimal(12, 2)"
+    },
+    {
+      "database": "delivery",
+      "table": "rees46_events",
+      "name": "user_id",
+      "type": "UInt64"
+    },
+    {
+      "database": "delivery",
+      "table": "rees46_events",
+      "name": "user_session",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "restaurants",
+      "name": "restaurant_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "restaurants",
+      "name": "category",
+      "type": "String"
+    },
+    {
+      "database": "delivery",
+      "table": "restaurants",
+      "name": "area_id",
+      "type": "UInt32"
+    },
+    {
+      "database": "delivery",
+      "table": "restaurants",
+      "name": "score",
+      "type": "Nullable(Float32)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_counts",
+      "name": "source_kind",
+      "type": "Enum8('synthetic' = 1, 'demo_live' = 2, 'public_historical' = 3, 'historical_replay' = 4)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_counts",
+      "name": "event_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_counts",
+      "name": "city_id",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_counts",
+      "name": "section",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_counts",
+      "name": "event_type",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_counts",
+      "name": "events",
+      "type": "UInt64"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_rollup",
+      "name": "source_kind",
+      "type": "Enum8('synthetic' = 1, 'demo_live' = 2, 'public_historical' = 3, 'historical_replay' = 4)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_rollup",
+      "name": "event_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_rollup",
+      "name": "city_id",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_rollup",
+      "name": "section",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_rollup",
+      "name": "event_type",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_rollup",
+      "name": "event_ids",
+      "type": "AggregateFunction(uniqExact, UUID)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_rollup_mv",
+      "name": "source_kind",
+      "type": "Enum8('synthetic' = 1, 'demo_live' = 2, 'public_historical' = 3, 'historical_replay' = 4)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_rollup_mv",
+      "name": "event_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_rollup_mv",
+      "name": "city_id",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_rollup_mv",
+      "name": "section",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_rollup_mv",
+      "name": "event_type",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_daily_rollup_mv",
+      "name": "event_ids",
+      "type": "AggregateFunction(uniqExact, UUID)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "schema_version",
+      "type": "UInt16"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "event_id",
+      "type": "UUID"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "session_id",
+      "type": "UUID"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "event_time",
+      "type": "DateTime64(3, 'UTC')"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "event_date",
+      "type": "Date"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "ingested_at",
+      "type": "DateTime64(3, 'UTC')"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "event_type",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "section",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "city_id",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "user_id",
+      "type": "Nullable(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "restaurant_id",
+      "type": "Nullable(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "product_id",
+      "type": "Nullable(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "source",
+      "type": "LowCardinality(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "source_kind",
+      "type": "Enum8('synthetic' = 1, 'demo_live' = 2, 'public_historical' = 3, 'historical_replay' = 4)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "source_record_id",
+      "type": "Nullable(String)"
+    },
+    {
+      "database": "delivery_atlas",
+      "table": "app_events",
+      "name": "simulation_run_id",
+      "type": "Nullable(UUID)"
+    }
+  ]
+}

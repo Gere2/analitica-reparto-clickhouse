@@ -2,6 +2,8 @@
 
 ## Evolución del 7 de octubre
 
+La ampliación operativa añade `demo_restaurants` y `demo_products` (catálogo ficticio), `courier_positions` (histórico GPS) y `order_events` (histórico de estados). Las tablas `courier_latest_state` y `order_latest_state`, sus vistas materializadas y las vistas de lectura `courier_latest` / `order_latest` calculan el último estado según la hora del evento. El SQL aplicado está en `sql/atlas_operations.sql`; [la auditoría y el modelo de tracking](DATOS-Y-TRACKING.md) explican columnas, procedencia y límites. Los datos públicos permanecen en `delivery`; la operación simulada vive en `delivery_atlas`.
+
 La infraestructura v1 ya aplica `sql/atlas.sql` en la base independiente `delivery_atlas`. Usa `app_events` con `ReplacingMergeTree`, `app_daily_rollup` con estados `uniqExact` y una vista de lectura `app_daily_counts`. La cola persistente de la API permite recuperar publicaciones pendientes y reconocer reintentos con contenido inmutable. Consultar [la infraestructura aplicada](INFRAESTRUCTURA-ATLAS.md).
 
 El diseño de `delivery_proposal` descrito más abajo se conserva como propuesta inicial del 5 de octubre. No es el esquema utilizado por la API nueva. El agregado sencillo de contadores se ha sustituido en v1 por conjuntos de IDs para evitar doble conteo en reenvíos.

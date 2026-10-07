@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Delivery Atlas · Operación en directo</title><link rel="stylesheet" href="/atlas-dashboard.css"><script src="/atlas-dashboard.js" defer></script></head>
+<body>
+<div class="shell">
+<header><a class="brand" href="/">Delivery <strong>Atlas</strong></a><nav aria-label="Secciones"><a href="#tracking">Seguimiento</a><a href="#orders">Pedidos</a><a href="#sources">Datos y estructura</a></nav><span class="source-tag">Madrid · simulación</span></header>
+<main>
+<section class="heading"><div><h1>Reparto en directo</h1><p>Posiciones y pedidos ficticios, publicados en ClickHouse durante la demo.</p></div><div class="controls"><label>Repartidores<select id="fleet"><option>6</option><option selected>12</option><option>24</option><option>50</option></select></label><button id="start">Iniciar simulación</button><button class="secondary" id="stop" disabled>Parar</button></div></section>
+<p id="status" class="status" role="status">Conectando con la API…</p>
+<div id="error" class="error" role="alert" hidden></div>
+<dl class="metrics"><div><dt>Pedidos activos</dt><dd id="active">—</dd></div><div><dt>Entregados</dt><dd id="delivered">—</dd></div><div><dt>Cancelados</dt><dd id="cancelled">—</dd></div><div><dt>Fuera del plazo simulado</dt><dd id="late">—</dd></div><div><dt>Importe entregado · ficticio</dt><dd id="amount">—</dd></div><div><dt>Eventos en cola</dt><dd id="pending">—</dd></div></dl>
+<section class="tracking-grid" id="tracking" aria-label="Seguimiento de repartidores">
+<div class="map-panel"><div class="section-head"><h2>Posiciones de la flota</h2><span id="freshness">Sin posiciones</span></div><p class="caption">Plano de coordenadas de Madrid. Rutas esquemáticas; no representan calles reales.</p>
+<svg id="map" viewBox="0 0 800 480" role="img" aria-label="Plano de posiciones simuladas de repartidores en Madrid">
+<rect width="800" height="480" fill="#eef2ed"/>
+<g class="coordinate-grid"><path d="M100 0V480M250 0V480M400 0V480M550 0V480M700 0V480M0 80H800M0 180H800M0 280H800M0 380H800"/></g>
+<g class="map-labels"><text x="18" y="28">40,430° N</text><text x="18" y="462">40,400° N</text><text x="675" y="462">3,680° O</text><text x="18" y="245">MADRID</text></g>
+<polyline id="route" fill="none" stroke="#244e77" stroke-width="3" opacity=".65"/>
+<g id="destinations"></g><g id="markers"></g>
+<text id="map-empty" x="400" y="226" text-anchor="middle">Inicia la simulación para recibir posiciones.</text></svg>
+<div class="map-legend"><span><i class="blue"></i>Repartidor</span><span><i class="green"></i>Recogida</span><span><i class="orange"></i>Entrega</span><span>Selecciona un marcador o usa la lista.</span></div></div>
+<aside class="detail"><h2>Repartidor seleccionado</h2><label for="courier">Repartidor<select id="courier"><option value="">Sin datos</option></select></label><dl id="courier-detail"><dt>Estado</dt><dd>Esperando posiciones</dd></dl><h3>Posiciones por intervalos de 5 s</h3><div id="rate" class="rate" aria-label="Registros GPS en los últimos dos minutos"></div><p id="rate-note" class="caption">El gráfico se consulta desde el histórico GPS en ClickHouse.</p></aside>
+</section>
+<section class="section" id="orders"><div class="section-head"><h2>Pedidos de esta ejecución</h2><span id="order-count">Sin pedidos</span></div><p class="caption">Cada cambio conserva una foto completa del pedido. Estados, importes, plazos y direcciones son simulados.</p><div class="table-wrap"><table><thead><tr><th>Pedido</th><th>Restaurante ficticio</th><th>Estado</th><th>Importe</th><th>Creado</th><th>Plazo simulado</th></tr></thead><tbody id="orders-body"><tr><td colspan="6">Inicia la simulación para crear pedidos.</td></tr></tbody></table></div></section>
+<section class="section" id="navigation"><div class="section-head"><h2>Eventos de navegación</h2><label>Procedencia<select id="origin"><option value="synthetic">Simulados</option><option value="demo_live">Acciones manuales</option></select></label></div><p class="caption">Lectura del agregado de app_events. El generador de sesiones y la flota son escenarios distintos: estos recuentos no son conversión comercial.</p><div id="actions" class="actions"></div><p id="navigation-count" class="caption">Cargando eventos…</p><button id="manual" class="secondary">Registrar una búsqueda manual</button><span id="manual-status" role="status"></span></section>
+<section class="section" id="sources"><div class="section-head"><h2>Datos que conservamos</h2><span>Histórico y simulación separados</span></div><p class="caption">Cada fila tiene un significado distinto. Las cifras del inventario son filas físicas estimadas por ClickHouse; no se suman como usuarios ni clics.</p><div class="table-wrap"><table><thead><tr><th>Fuente / tabla</th><th>Filas físicas</th><th>En disco</th><th>Uso</th></tr></thead><tbody id="inventory-body"></tbody></table></div></section>
+<section class="section"><h2>Catálogo Glovo: muestra de Madrid</h2><p id="catalog-note" class="caption">Productos publicados, sin GPS ni pedidos. No atribuimos las rutas simuladas a estos negocios.</p><div id="catalog" class="catalog"></div></section>
+<section class="section schema"><h2>Cómo llega al panel</h2><ol><li>El simulador genera un evento con ID y hora.</li><li>La API valida y confirma una cola persistente.</li><li>El publicador inserta lotes en ClickHouse.</li><li>Las vistas combinan posiciones y estados más recientes.</li><li>El navegador consulta cada dos segundos.</li></ol><p class="caption">La frecuencia de consulta no garantiza dos segundos de demora. La antigüedad de la posición mide lo que realmente se ve. Un nodo ClickHouse y una API; la cola no es una réplica.</p></section>
+</main><footer><span>Delivery Atlas · BD2 · Datos de operación sintéticos</span><a href="http://127.0.0.1:8000/">Abrir laboratorio histórico</a></footer>
+</div></body></html>
