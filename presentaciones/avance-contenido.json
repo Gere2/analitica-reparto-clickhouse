@@ -1,0 +1,206 @@
+{
+  "title": "Delivery Atlas",
+  "subtitle": "Database structure and alignment with the course theory",
+  "duration": "Five-minute progress update",
+  "slides": [
+    {
+      "layout": "cover",
+      "title": "Delivery Atlas",
+      "subtitle": "ClickHouse event analytics\nfor a food delivery app",
+      "caption": "BD2 · Five-minute progress update · 5 October 2026",
+      "seconds": 30,
+      "notes": "We are building the analytics infrastructure for a fictional food delivery platform. It will store navigation events and display activity in a dashboard. Our current lab contains 628 million public events from OTTO and REES46, representing separate sources. Ele.me adds food recommendation samples, and Glovo provides a catalogue. The delivery mini app and its shared event contract are still pending. The cover is a conceptual illustration generated with AI.",
+      "sources": [
+        "docs/PLATAFORMA-FICTICIA.md",
+        "docs/ESTADO-EQUIPO.md"
+      ],
+      "minutes": 0.5
+    },
+    {
+      "layout": "table",
+      "title": "Current architecture and tables",
+      "intro": "Python API and one ClickHouse 25.8 node with persistent storage",
+      "headers": [
+        "Layer",
+        "Current components",
+        "Responsibility"
+      ],
+      "rows": [
+        [
+          "Input",
+          "Source files and web buttons",
+          "Historical data and new actions"
+        ],
+        [
+          "API and ingestion",
+          "dashboard.py and scripts",
+          "Validation and HTTP batches"
+        ],
+        [
+          "Detailed data",
+          "otto_archive / eleme_samples",
+          "Separate events and samples"
+        ],
+        [
+          "Daily rollup",
+          "otto_daily_rollup",
+          "Counts by day and event type"
+        ]
+      ],
+      "widths": [
+        225,
+        485,
+        410
+      ],
+      "caption": "Replay preserves event time and records ingestion time. The API returns JSON.",
+      "seconds": 45,
+      "notes": "This structure follows the frontend, backend and data layers in the course notes. Scripts load batches, and the Python API queries ClickHouse over HTTP. OTTO stores one row per event. Ele.me stores labelled recommendation samples and uses staging to validate complete files before publication. We keep sources separate. A materialized view feeds the OTTO daily rollup. Docker provides persistent storage and a health check. The API currently runs on the host, and the database has one node. Replay preserves the historical timestamp and records when each event enters the demo.",
+      "sources": [
+        "recursos/01_1_Components.md",
+        "recursos/01_3_Docker.md",
+        "sql/schema.sql",
+        "sql/eleme.sql",
+        "compose.yaml",
+        "dashboard.py"
+      ],
+      "minutes": 0.75
+    },
+    {
+      "layout": "schema",
+      "title": "Proposed platform event model",
+      "intro": "Not yet connected. Each row represents one app event.",
+      "headers": [
+        "Group",
+        "Main fields",
+        "Purpose"
+      ],
+      "rows": [
+        [
+          "Identity",
+          "event_id, session_id",
+          "Identify event and session"
+        ],
+        [
+          "Time",
+          "event_time, ingested_at",
+          "Event time and arrival time"
+        ],
+        [
+          "Action",
+          "event_type, section",
+          "Action and area of the app"
+        ],
+        [
+          "Context",
+          "city_id, restaurant_id, product_id",
+          "Dashboard filters"
+        ],
+        [
+          "Provenance",
+          "source_kind, simulation_run_id",
+          "Source and simulation run"
+        ]
+      ],
+      "widths": [
+        205,
+        555,
+        360
+      ],
+      "code": "ENGINE = MergeTree   PARTITION BY toYYYYMM(event_date)\nORDER BY (source_kind, event_date, city_id, event_type,\n          event_time, session_id)",
+      "seconds": 75,
+      "notes": "We propose app_events as the central table for the fictional platform. Each event has a stable ID, session, timestamps and context. source_kind distinguishes simulated traffic, new demo actions, historical data and replay. The design follows the access patterns: filtering by source, date, city and action. MergeTree stores columns in data parts. PARTITION BY groups months within the node. ORDER BY sorts the data and supports a sparse primary index, without enforcing uniqueness. A daily rollup will count events by dimension. The proposed sorting key still needs benchmarking. Safe retries require an ingestion protocol in addition to a UUID. The DDL exists, but it is not deployed or connected to the mini app.",
+      "sources": [
+        "sql/propuesta_delivery.sql",
+        "docs/ESTRUCTURA-BD.md",
+        "recursos/01_4_Cross_cutting_concerns.md",
+        "https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/mergetree"
+      ],
+      "minutes": 1.25
+    },
+    {
+      "layout": "benchmark",
+      "title": "Historical data vs daily rollup",
+      "intro": "OTTO: 216,716,096 events reduced to 87 day/type groups with the same result",
+      "code": "SELECT event_date, event_type,\n       sum(events)\nFROM delivery.otto_daily_rollup\nGROUP BY event_date, event_type",
+      "stat": "27.9× speedup",
+      "detail": "Median of 3 local runs\nSQL query cache disabled",
+      "caption": "Same query result in the same engine. These runs do not measure p99.",
+      "seconds": 50,
+      "notes": "This comparison demonstrates an advantage for our analytical workload. Grouping the historical OTTO table took 5.8908 seconds. Querying the daily rollup took 0.2113 seconds, a 27.9 times speedup. Both queries returned the same result: 87 combinations of day and event type. These are medians of three local runs with the SQL query cache disabled. A persistent rollup reduces reading and computation. SummingMergeTree can retain partial rows for the same key before merging, so the query uses sum with GROUP BY. This follows the scaling ladder in the course notes: optimize queries before adding nodes. These timings do not compare database engines or establish API capacity or latency percentiles.",
+      "sources": [
+        "data/query-benchmark.json",
+        "docs/RESULTADOS.md",
+        "scripts/benchmark.py",
+        "recursos/01_1_Components.md",
+        "https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/summingmergetree"
+      ],
+      "minutes": 0.8333333333333334
+    },
+    {
+      "layout": "table",
+      "title": "Current guarantees and limitations",
+      "intro": "The course distinguishes performance, consistency and availability",
+      "headers": [
+        "Concept",
+        "Current state",
+        "Required next step"
+      ],
+      "rows": [
+        [
+          "Availability",
+          "One node, persistent storage",
+          "Test failure and recovery"
+        ],
+        [
+          "Scalability",
+          "Local partitions by date",
+          "Explain sharding and replication"
+        ],
+        [
+          "Event delivery",
+          "POST without stable deduplication",
+          "Test retries with the same ID"
+        ],
+        [
+          "Measurement",
+          "Query timings and API caching",
+          "Measure ingestion, lag and p95/p99"
+        ]
+      ],
+      "widths": [
+        240,
+        430,
+        450
+      ],
+      "caption": "Columnar OLAP with SQL. CAP behaviour depends on topology and configuration.",
+      "seconds": 55,
+      "notes": "The course theory helps us state what we have demonstrated. A persistent volume preserves data when a container is recreated, but it does not provide high availability. Date partitions do not distribute data across machines. We currently have one node without replicas. A future replicated setup must explain its configuration and replica lag, rather than assign a single CP or AP label to ClickHouse. The click API generates IDs on the server, so a repeated POST can insert two rows. We need idempotent ingestion before counting events in the materialized view. Our benchmarks measure queries. We still need request latency, events per second and dashboard lag under load.",
+      "sources": [
+        "docs/REVISION-TEORIA.md",
+        "recursos/01_2_Concepts.md",
+        "recursos/01_4_Cross_cutting_concerns.md",
+        "dashboard.py",
+        "https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/replication"
+      ],
+      "minutes": 0.9166666666666666
+    },
+    {
+      "layout": "closing",
+      "title": "Next milestone",
+      "items": [
+        "Connect the mini app and traffic generator to app_events",
+        "Retry a submission without duplicating its event or rollup count",
+        "Measure the workload and reproduce the setup on another machine"
+      ],
+      "caption": "The data lab works. The integrated fictional platform is our next milestone.",
+      "seconds": 45,
+      "notes": "The next milestone is to connect the minimal app journey and a reproducible traffic generator to the proposed contract. Acceptance means navigating the app, ingesting its events, retrying a submission without double counting, and seeing the daily rollup in the dashboard. We will also measure lag and errors and reproduce the environment on another machine. The current lab already provides enough data volume. We will prioritize these guarantees before adding more datasets, Kafka or microservices. The dashboard is available if the lecturer would like to see the current implementation after this update.",
+      "sources": [
+        "docs/REVISION-TEORIA.md",
+        "docs/PLATAFORMA-FICTICIA.md",
+        "recursos/guia_bbdda.pdf"
+      ],
+      "minutes": 0.75
+    }
+  ]
+}

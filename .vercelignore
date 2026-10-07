@@ -1,0 +1,11 @@
+*
+!vercel.json
+!api
+!api/**
+!api/proxy.js
+!scripts
+!scripts/build_shared.mjs
+!web
+!web/atlas-dashboard.html
+!web/atlas-dashboard.css
+!web/atlas-dashboard.js

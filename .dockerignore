@@ -1,0 +1,14 @@
+.git
+.env*
+data
+datos
+recursos
+output
+tmp
+presentaciones
+.presentation-build
+.chart-data-*
+.codex-finalizer
+__pycache__
+**/__pycache__
+*.pyc

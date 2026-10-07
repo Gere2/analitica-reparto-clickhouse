@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a25">
+  <meta name="description" content="Explorador del catálogo real de Glovo en España, con datos oficiales FooDI-ML cargados en ClickHouse.">
+  <title>Glovo España · Radar Delivery</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/glovo.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">R<span>•</span></span><span>RADAR <strong>DELIVERY</strong><small>Laboratorio BD2 / ClickHouse</small></span></div>
+      <div class="top-actions"><a class="dataset-link" href="/">Clickstream Lab ↗</a><a class="dataset-link" href="/meituan.html">Meituan ↗</a><span class="data-pill"><span class="live-dot"></span> DATOS REALES · GLOVO</span></div>
+    </header>
+    <main>
+      <section class="intro glovo-intro">
+        <div>
+          <p class="eyebrow">CATÁLOGO GLOVO · ESPAÑA</p>
+          <h1>¿Qué se ofrece<br><em>en cada ciudad?</em></h1>
+          <p class="lead">Explora productos, tiendas y secciones del catálogo real publicado por Glovo. Cada filtro lanza consultas agregadas sobre ClickHouse.</p>
+        </div>
+        <div class="intro-side"><span>2,89 M<br>PRODUCTOS</span><p>Conjunto global FooDI-ML de 37 países. La vista inicial muestra solo los registros cuyo país es España.</p></div>
+      </section>
+
+      <form class="filters" id="glovo-filters">
+        <div class="filter-heading"><span class="filter-icon">↗</span><div><strong>Explorar el catálogo</strong><small>Datos históricos, sin fecha por producto</small></div></div>
+        <label>País<select id="country"><option value="ES">España</option><option value="ALL">Todos los países</option></select></label>
+        <label>Ciudad<select id="city"><option value="">Todas las ciudades</option></select></label>
+        <button type="submit">Actualizar <span aria-hidden="true">→</span></button>
+      </form>
+      <div class="status" id="glovo-status" role="status">Conectando con ClickHouse…</div>
+
+      <section class="kpi-grid" aria-label="Resumen del catálogo">
+        <article class="kpi"><span class="kpi-icon">▦</span><span class="kpi-label">PRODUCTOS</span><strong id="g-products">—</strong><small>Filas reales del catálogo</small></article>
+        <article class="kpi"><span class="kpi-icon">⌂</span><span class="kpi-label">TIENDAS</span><strong id="g-stores">—</strong><small>Nombres de tienda distintos</small></article>
+        <article class="kpi"><span class="kpi-icon">◎</span><span class="kpi-label">CIUDADES</span><strong id="g-cities">—</strong><small>Códigos de ciudad distintos</small></article>
+        <article class="kpi accent"><span class="kpi-icon">✎</span><span class="kpi-label">CON DESCRIPCIÓN</span><strong id="g-description">—</strong><small>Porcentaje de productos</small></article>
+      </section>
+
+      <section class="grid-main">
+        <article class="panel">
+          <div class="panel-head"><div><span class="panel-kicker">01 / GEOGRAFÍA</span><h2>Ciudades con más catálogo</h2></div></div>
+          <p class="panel-sub">Número de productos publicados por código de ciudad; no representa pedidos ni demanda.</p>
+          <div id="g-city-chart" class="bars glovo-bars" aria-label="Productos por ciudad"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><span class="panel-kicker">02 / MENÚ</span><h2>Secciones más frecuentes</h2></div></div>
+          <p class="panel-sub">Secciones escritas por las tiendas; no son categorías normalizadas.</p>
+          <div id="g-section-chart" class="bars glovo-bars" aria-label="Productos por sección"></div>
+        </article>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="panel-head"><div><span class="panel-kicker">03 / OFERTA</span><h2>Tiendas con más productos</h2></div><span class="table-caption">TOP 12 DEL FILTRO</span></div>
+        <div class="table-wrap"><table><thead><tr><th>Tienda</th><th>Productos</th><th>Ciudades</th><th>Secciones</th></tr></thead><tbody id="g-store-table"></tbody></table></div>
+      </section>
+
+      <aside class="method-note"><span>ALCANCE DEL DATO</span><p>FooDI-ML contiene productos que tuvieron imagen en la aplicación de Glovo, incluidos artículos no alimentarios. El CSV tiene 2.887.444 productos de 37 países; 415.137 tienen código de país ES. No contiene clics, pedidos, precios ni una fecha por producto. Los nombres de tienda no son identificadores únicos: las cifras de tiendas son nombres distintos, y las ciudades se muestran mediante los códigos publicados. No se cruzan estas cifras con las de Meituan.</p></aside>
+    </main>
+    <footer><span>RADAR DELIVERY <span class="footer-dot">•</span> PROYECTO BD2</span><a href="https://github.com/Glovo/foodi-ml-dataset" target="_blank" rel="noopener noreferrer">Fuente oficial: Glovo / FooDI-ML ↗</a></footer>
+  </div>
+</body>
+</html>

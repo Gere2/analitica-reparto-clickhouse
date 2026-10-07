@@ -1,0 +1,1005 @@
+{
+  "measured_at_utc": "2026-10-04T22:56:43.976300+00:00",
+  "counts": {
+    "otto_real": 216716096,
+    "rees46_real": 411709736,
+    "scale_derived": 1083580480
+  },
+  "environment": "local Docker ClickHouse 25.8; one node; query cache disabled; three warm runs for OTTO queries, one run for larger scans",
+  "queries": {
+    "otto_raw_daily": {
+      "runs": [
+        {
+          "seconds": 3.8221,
+          "rows_read": 216716096,
+          "bytes_read": 1950446530
+        },
+        {
+          "seconds": 8.4504,
+          "rows_read": 216716096,
+          "bytes_read": 1950446530
+        },
+        {
+          "seconds": 5.8908,
+          "rows_read": 216716096,
+          "bytes_read": 1950446530
+        }
+      ],
+      "median_seconds": 5.8908,
+      "result": [
+        {
+          "day": "2022-07-31",
+          "event_type": "carts",
+          "events": 22963
+        },
+        {
+          "day": "2022-07-31",
+          "event_type": "clicks",
+          "events": 320632
+        },
+        {
+          "day": "2022-07-31",
+          "event_type": "orders",
+          "events": 5517
+        },
+        {
+          "day": "2022-08-01",
+          "event_type": "carts",
+          "events": 589006
+        },
+        {
+          "day": "2022-08-01",
+          "event_type": "clicks",
+          "events": 6831593
+        },
+        {
+          "day": "2022-08-01",
+          "event_type": "orders",
+          "events": 189307
+        },
+        {
+          "day": "2022-08-02",
+          "event_type": "carts",
+          "events": 568078
+        },
+        {
+          "day": "2022-08-02",
+          "event_type": "clicks",
+          "events": 6768340
+        },
+        {
+          "day": "2022-08-02",
+          "event_type": "orders",
+          "events": 178407
+        },
+        {
+          "day": "2022-08-03",
+          "event_type": "carts",
+          "events": 615452
+        },
+        {
+          "day": "2022-08-03",
+          "event_type": "clicks",
+          "events": 7149865
+        },
+        {
+          "day": "2022-08-03",
+          "event_type": "orders",
+          "events": 197271
+        },
+        {
+          "day": "2022-08-04",
+          "event_type": "carts",
+          "events": 616921
+        },
+        {
+          "day": "2022-08-04",
+          "event_type": "clicks",
+          "events": 6872182
+        },
+        {
+          "day": "2022-08-04",
+          "event_type": "orders",
+          "events": 178318
+        },
+        {
+          "day": "2022-08-05",
+          "event_type": "carts",
+          "events": 549507
+        },
+        {
+          "day": "2022-08-05",
+          "event_type": "clicks",
+          "events": 6375072
+        },
+        {
+          "day": "2022-08-05",
+          "event_type": "orders",
+          "events": 158535
+        },
+        {
+          "day": "2022-08-06",
+          "event_type": "carts",
+          "events": 528986
+        },
+        {
+          "day": "2022-08-06",
+          "event_type": "clicks",
+          "events": 6236344
+        },
+        {
+          "day": "2022-08-06",
+          "event_type": "orders",
+          "events": 150215
+        },
+        {
+          "day": "2022-08-07",
+          "event_type": "carts",
+          "events": 659521
+        },
+        {
+          "day": "2022-08-07",
+          "event_type": "clicks",
+          "events": 7495445
+        },
+        {
+          "day": "2022-08-07",
+          "event_type": "orders",
+          "events": 197912
+        },
+        {
+          "day": "2022-08-08",
+          "event_type": "carts",
+          "events": 534356
+        },
+        {
+          "day": "2022-08-08",
+          "event_type": "clicks",
+          "events": 6097624
+        },
+        {
+          "day": "2022-08-08",
+          "event_type": "orders",
+          "events": 167554
+        },
+        {
+          "day": "2022-08-09",
+          "event_type": "carts",
+          "events": 686430
+        },
+        {
+          "day": "2022-08-09",
+          "event_type": "clicks",
+          "events": 7034180
+        },
+        {
+          "day": "2022-08-09",
+          "event_type": "orders",
+          "events": 268185
+        },
+        {
+          "day": "2022-08-10",
+          "event_type": "carts",
+          "events": 567717
+        },
+        {
+          "day": "2022-08-10",
+          "event_type": "clicks",
+          "events": 6560015
+        },
+        {
+          "day": "2022-08-10",
+          "event_type": "orders",
+          "events": 169026
+        },
+        {
+          "day": "2022-08-11",
+          "event_type": "carts",
+          "events": 564468
+        },
+        {
+          "day": "2022-08-11",
+          "event_type": "clicks",
+          "events": 6579846
+        },
+        {
+          "day": "2022-08-11",
+          "event_type": "orders",
+          "events": 167975
+        },
+        {
+          "day": "2022-08-12",
+          "event_type": "carts",
+          "events": 572516
+        },
+        {
+          "day": "2022-08-12",
+          "event_type": "clicks",
+          "events": 6848101
+        },
+        {
+          "day": "2022-08-12",
+          "event_type": "orders",
+          "events": 166627
+        },
+        {
+          "day": "2022-08-13",
+          "event_type": "carts",
+          "events": 589215
+        },
+        {
+          "day": "2022-08-13",
+          "event_type": "clicks",
+          "events": 7216925
+        },
+        {
+          "day": "2022-08-13",
+          "event_type": "orders",
+          "events": 168298
+        },
+        {
+          "day": "2022-08-14",
+          "event_type": "carts",
+          "events": 781290
+        },
+        {
+          "day": "2022-08-14",
+          "event_type": "clicks",
+          "events": 9472498
+        },
+        {
+          "day": "2022-08-14",
+          "event_type": "orders",
+          "events": 229552
+        },
+        {
+          "day": "2022-08-15",
+          "event_type": "carts",
+          "events": 656815
+        },
+        {
+          "day": "2022-08-15",
+          "event_type": "clicks",
+          "events": 7970569
+        },
+        {
+          "day": "2022-08-15",
+          "event_type": "orders",
+          "events": 203603
+        },
+        {
+          "day": "2022-08-16",
+          "event_type": "carts",
+          "events": 592757
+        },
+        {
+          "day": "2022-08-16",
+          "event_type": "clicks",
+          "events": 6916365
+        },
+        {
+          "day": "2022-08-16",
+          "event_type": "orders",
+          "events": 182147
+        },
+        {
+          "day": "2022-08-17",
+          "event_type": "carts",
+          "events": 601699
+        },
+        {
+          "day": "2022-08-17",
+          "event_type": "clicks",
+          "events": 6873277
+        },
+        {
+          "day": "2022-08-17",
+          "event_type": "orders",
+          "events": 180565
+        },
+        {
+          "day": "2022-08-18",
+          "event_type": "carts",
+          "events": 546852
+        },
+        {
+          "day": "2022-08-18",
+          "event_type": "clicks",
+          "events": 6328698
+        },
+        {
+          "day": "2022-08-18",
+          "event_type": "orders",
+          "events": 162312
+        },
+        {
+          "day": "2022-08-19",
+          "event_type": "carts",
+          "events": 567753
+        },
+        {
+          "day": "2022-08-19",
+          "event_type": "clicks",
+          "events": 6598029
+        },
+        {
+          "day": "2022-08-19",
+          "event_type": "orders",
+          "events": 164888
+        },
+        {
+          "day": "2022-08-20",
+          "event_type": "carts",
+          "events": 589519
+        },
+        {
+          "day": "2022-08-20",
+          "event_type": "clicks",
+          "events": 6990343
+        },
+        {
+          "day": "2022-08-20",
+          "event_type": "orders",
+          "events": 166671
+        },
+        {
+          "day": "2022-08-21",
+          "event_type": "carts",
+          "events": 700487
+        },
+        {
+          "day": "2022-08-21",
+          "event_type": "clicks",
+          "events": 8144018
+        },
+        {
+          "day": "2022-08-21",
+          "event_type": "orders",
+          "events": 218301
+        },
+        {
+          "day": "2022-08-22",
+          "event_type": "carts",
+          "events": 551883
+        },
+        {
+          "day": "2022-08-22",
+          "event_type": "clicks",
+          "events": 6533617
+        },
+        {
+          "day": "2022-08-22",
+          "event_type": "orders",
+          "events": 175207
+        },
+        {
+          "day": "2022-08-23",
+          "event_type": "carts",
+          "events": 594777
+        },
+        {
+          "day": "2022-08-23",
+          "event_type": "clicks",
+          "events": 6500254
+        },
+        {
+          "day": "2022-08-23",
+          "event_type": "orders",
+          "events": 155986
+        },
+        {
+          "day": "2022-08-24",
+          "event_type": "carts",
+          "events": 562392
+        },
+        {
+          "day": "2022-08-24",
+          "event_type": "clicks",
+          "events": 6226139
+        },
+        {
+          "day": "2022-08-24",
+          "event_type": "orders",
+          "events": 154638
+        },
+        {
+          "day": "2022-08-25",
+          "event_type": "carts",
+          "events": 487459
+        },
+        {
+          "day": "2022-08-25",
+          "event_type": "clicks",
+          "events": 5888866
+        },
+        {
+          "day": "2022-08-25",
+          "event_type": "orders",
+          "events": 139412
+        },
+        {
+          "day": "2022-08-26",
+          "event_type": "carts",
+          "events": 593630
+        },
+        {
+          "day": "2022-08-26",
+          "event_type": "clicks",
+          "events": 6523643
+        },
+        {
+          "day": "2022-08-26",
+          "event_type": "orders",
+          "events": 170568
+        },
+        {
+          "day": "2022-08-27",
+          "event_type": "carts",
+          "events": 628954
+        },
+        {
+          "day": "2022-08-27",
+          "event_type": "clicks",
+          "events": 7001240
+        },
+        {
+          "day": "2022-08-27",
+          "event_type": "orders",
+          "events": 181095
+        },
+        {
+          "day": "2022-08-28",
+          "event_type": "carts",
+          "events": 774788
+        },
+        {
+          "day": "2022-08-28",
+          "event_type": "clicks",
+          "events": 8367234
+        },
+        {
+          "day": "2022-08-28",
+          "event_type": "orders",
+          "events": 250859
+        }
+      ]
+    },
+    "otto_rollup_daily": {
+      "runs": [
+        {
+          "seconds": 0.2113,
+          "rows_read": 87,
+          "bytes_read": 1006
+        },
+        {
+          "seconds": 0.0096,
+          "rows_read": 87,
+          "bytes_read": 1006
+        },
+        {
+          "seconds": 0.6997,
+          "rows_read": 87,
+          "bytes_read": 1006
+        }
+      ],
+      "median_seconds": 0.2113,
+      "result": [
+        {
+          "day": "2022-07-31",
+          "event_type": "carts",
+          "events": 22963
+        },
+        {
+          "day": "2022-07-31",
+          "event_type": "clicks",
+          "events": 320632
+        },
+        {
+          "day": "2022-07-31",
+          "event_type": "orders",
+          "events": 5517
+        },
+        {
+          "day": "2022-08-01",
+          "event_type": "carts",
+          "events": 589006
+        },
+        {
+          "day": "2022-08-01",
+          "event_type": "clicks",
+          "events": 6831593
+        },
+        {
+          "day": "2022-08-01",
+          "event_type": "orders",
+          "events": 189307
+        },
+        {
+          "day": "2022-08-02",
+          "event_type": "carts",
+          "events": 568078
+        },
+        {
+          "day": "2022-08-02",
+          "event_type": "clicks",
+          "events": 6768340
+        },
+        {
+          "day": "2022-08-02",
+          "event_type": "orders",
+          "events": 178407
+        },
+        {
+          "day": "2022-08-03",
+          "event_type": "carts",
+          "events": 615452
+        },
+        {
+          "day": "2022-08-03",
+          "event_type": "clicks",
+          "events": 7149865
+        },
+        {
+          "day": "2022-08-03",
+          "event_type": "orders",
+          "events": 197271
+        },
+        {
+          "day": "2022-08-04",
+          "event_type": "carts",
+          "events": 616921
+        },
+        {
+          "day": "2022-08-04",
+          "event_type": "clicks",
+          "events": 6872182
+        },
+        {
+          "day": "2022-08-04",
+          "event_type": "orders",
+          "events": 178318
+        },
+        {
+          "day": "2022-08-05",
+          "event_type": "carts",
+          "events": 549507
+        },
+        {
+          "day": "2022-08-05",
+          "event_type": "clicks",
+          "events": 6375072
+        },
+        {
+          "day": "2022-08-05",
+          "event_type": "orders",
+          "events": 158535
+        },
+        {
+          "day": "2022-08-06",
+          "event_type": "carts",
+          "events": 528986
+        },
+        {
+          "day": "2022-08-06",
+          "event_type": "clicks",
+          "events": 6236344
+        },
+        {
+          "day": "2022-08-06",
+          "event_type": "orders",
+          "events": 150215
+        },
+        {
+          "day": "2022-08-07",
+          "event_type": "carts",
+          "events": 659521
+        },
+        {
+          "day": "2022-08-07",
+          "event_type": "clicks",
+          "events": 7495445
+        },
+        {
+          "day": "2022-08-07",
+          "event_type": "orders",
+          "events": 197912
+        },
+        {
+          "day": "2022-08-08",
+          "event_type": "carts",
+          "events": 534356
+        },
+        {
+          "day": "2022-08-08",
+          "event_type": "clicks",
+          "events": 6097624
+        },
+        {
+          "day": "2022-08-08",
+          "event_type": "orders",
+          "events": 167554
+        },
+        {
+          "day": "2022-08-09",
+          "event_type": "carts",
+          "events": 686430
+        },
+        {
+          "day": "2022-08-09",
+          "event_type": "clicks",
+          "events": 7034180
+        },
+        {
+          "day": "2022-08-09",
+          "event_type": "orders",
+          "events": 268185
+        },
+        {
+          "day": "2022-08-10",
+          "event_type": "carts",
+          "events": 567717
+        },
+        {
+          "day": "2022-08-10",
+          "event_type": "clicks",
+          "events": 6560015
+        },
+        {
+          "day": "2022-08-10",
+          "event_type": "orders",
+          "events": 169026
+        },
+        {
+          "day": "2022-08-11",
+          "event_type": "carts",
+          "events": 564468
+        },
+        {
+          "day": "2022-08-11",
+          "event_type": "clicks",
+          "events": 6579846
+        },
+        {
+          "day": "2022-08-11",
+          "event_type": "orders",
+          "events": 167975
+        },
+        {
+          "day": "2022-08-12",
+          "event_type": "carts",
+          "events": 572516
+        },
+        {
+          "day": "2022-08-12",
+          "event_type": "clicks",
+          "events": 6848101
+        },
+        {
+          "day": "2022-08-12",
+          "event_type": "orders",
+          "events": 166627
+        },
+        {
+          "day": "2022-08-13",
+          "event_type": "carts",
+          "events": 589215
+        },
+        {
+          "day": "2022-08-13",
+          "event_type": "clicks",
+          "events": 7216925
+        },
+        {
+          "day": "2022-08-13",
+          "event_type": "orders",
+          "events": 168298
+        },
+        {
+          "day": "2022-08-14",
+          "event_type": "carts",
+          "events": 781290
+        },
+        {
+          "day": "2022-08-14",
+          "event_type": "clicks",
+          "events": 9472498
+        },
+        {
+          "day": "2022-08-14",
+          "event_type": "orders",
+          "events": 229552
+        },
+        {
+          "day": "2022-08-15",
+          "event_type": "carts",
+          "events": 656815
+        },
+        {
+          "day": "2022-08-15",
+          "event_type": "clicks",
+          "events": 7970569
+        },
+        {
+          "day": "2022-08-15",
+          "event_type": "orders",
+          "events": 203603
+        },
+        {
+          "day": "2022-08-16",
+          "event_type": "carts",
+          "events": 592757
+        },
+        {
+          "day": "2022-08-16",
+          "event_type": "clicks",
+          "events": 6916365
+        },
+        {
+          "day": "2022-08-16",
+          "event_type": "orders",
+          "events": 182147
+        },
+        {
+          "day": "2022-08-17",
+          "event_type": "carts",
+          "events": 601699
+        },
+        {
+          "day": "2022-08-17",
+          "event_type": "clicks",
+          "events": 6873277
+        },
+        {
+          "day": "2022-08-17",
+          "event_type": "orders",
+          "events": 180565
+        },
+        {
+          "day": "2022-08-18",
+          "event_type": "carts",
+          "events": 546852
+        },
+        {
+          "day": "2022-08-18",
+          "event_type": "clicks",
+          "events": 6328698
+        },
+        {
+          "day": "2022-08-18",
+          "event_type": "orders",
+          "events": 162312
+        },
+        {
+          "day": "2022-08-19",
+          "event_type": "carts",
+          "events": 567753
+        },
+        {
+          "day": "2022-08-19",
+          "event_type": "clicks",
+          "events": 6598029
+        },
+        {
+          "day": "2022-08-19",
+          "event_type": "orders",
+          "events": 164888
+        },
+        {
+          "day": "2022-08-20",
+          "event_type": "carts",
+          "events": 589519
+        },
+        {
+          "day": "2022-08-20",
+          "event_type": "clicks",
+          "events": 6990343
+        },
+        {
+          "day": "2022-08-20",
+          "event_type": "orders",
+          "events": 166671
+        },
+        {
+          "day": "2022-08-21",
+          "event_type": "carts",
+          "events": 700487
+        },
+        {
+          "day": "2022-08-21",
+          "event_type": "clicks",
+          "events": 8144018
+        },
+        {
+          "day": "2022-08-21",
+          "event_type": "orders",
+          "events": 218301
+        },
+        {
+          "day": "2022-08-22",
+          "event_type": "carts",
+          "events": 551883
+        },
+        {
+          "day": "2022-08-22",
+          "event_type": "clicks",
+          "events": 6533617
+        },
+        {
+          "day": "2022-08-22",
+          "event_type": "orders",
+          "events": 175207
+        },
+        {
+          "day": "2022-08-23",
+          "event_type": "carts",
+          "events": 594777
+        },
+        {
+          "day": "2022-08-23",
+          "event_type": "clicks",
+          "events": 6500254
+        },
+        {
+          "day": "2022-08-23",
+          "event_type": "orders",
+          "events": 155986
+        },
+        {
+          "day": "2022-08-24",
+          "event_type": "carts",
+          "events": 562392
+        },
+        {
+          "day": "2022-08-24",
+          "event_type": "clicks",
+          "events": 6226139
+        },
+        {
+          "day": "2022-08-24",
+          "event_type": "orders",
+          "events": 154638
+        },
+        {
+          "day": "2022-08-25",
+          "event_type": "carts",
+          "events": 487459
+        },
+        {
+          "day": "2022-08-25",
+          "event_type": "clicks",
+          "events": 5888866
+        },
+        {
+          "day": "2022-08-25",
+          "event_type": "orders",
+          "events": 139412
+        },
+        {
+          "day": "2022-08-26",
+          "event_type": "carts",
+          "events": 593630
+        },
+        {
+          "day": "2022-08-26",
+          "event_type": "clicks",
+          "events": 6523643
+        },
+        {
+          "day": "2022-08-26",
+          "event_type": "orders",
+          "events": 170568
+        },
+        {
+          "day": "2022-08-27",
+          "event_type": "carts",
+          "events": 628954
+        },
+        {
+          "day": "2022-08-27",
+          "event_type": "clicks",
+          "events": 7001240
+        },
+        {
+          "day": "2022-08-27",
+          "event_type": "orders",
+          "events": 181095
+        },
+        {
+          "day": "2022-08-28",
+          "event_type": "carts",
+          "events": 774788
+        },
+        {
+          "day": "2022-08-28",
+          "event_type": "clicks",
+          "events": 8367234
+        },
+        {
+          "day": "2022-08-28",
+          "event_type": "orders",
+          "events": 250859
+        }
+      ]
+    },
+    "rees46_month": {
+      "runs": [
+        {
+          "seconds": 0.2378,
+          "rows_read": 42448764,
+          "bytes_read": 127346292
+        }
+      ],
+      "median_seconds": 0.2378,
+      "result": [
+        {
+          "event_type": "cart",
+          "events": 926516
+        },
+        {
+          "event_type": "purchase",
+          "events": 742849
+        },
+        {
+          "event_type": "view",
+          "events": 40779399
+        }
+      ]
+    },
+    "scale_scenarios": {
+      "runs": [
+        {
+          "seconds": 1.4357,
+          "rows_read": 1083580480,
+          "bytes_read": 866904056
+        }
+      ],
+      "median_seconds": 1.4357,
+      "result": [
+        {
+          "scenario": 0,
+          "events": 216716096
+        },
+        {
+          "scenario": 1,
+          "events": 216716096
+        },
+        {
+          "scenario": 2,
+          "events": 216716096
+        },
+        {
+          "scenario": 3,
+          "events": 216716096
+        },
+        {
+          "scenario": 4,
+          "events": 216716096
+        }
+      ]
+    }
+  },
+  "table_parts": [
+    {
+      "table": "otto_archive",
+      "rows": 216716096,
+      "bytes_on_disk": 2777740537
+    },
+    {
+      "table": "otto_daily_rollup",
+      "rows": 87,
+      "bytes_on_disk": 1000
+    },
+    {
+      "table": "otto_scale_benchmark",
+      "rows": 1083580480,
+      "bytes_on_disk": 13004116880
+    },
+    {
+      "table": "rees46_events",
+      "rows": 411709736,
+      "bytes_on_disk": 11865770700
+    }
+  ],
+  "explain_rees46_october_partition": "Expression ((Project names + Projection))\n  Aggregating\n    Expression (Before GROUP BY)\n      Expression ((WHERE + Change column names to column identifiers))\n        ReadFromMergeTree (delivery.rees46_events)\n        Indexes:\n          MinMax\n            Keys:\n              event_date\n            Condition: and((event_date in (-Inf, 18200]), (event_date in [18170, +Inf)))\n            Parts: 2/1235\n            Granules: 5183/50981\n          Partition\n            Keys:\n              toYYYYMM(event_date)\n            Condition: and((toYYYYMM(event_date) in (-Inf, 201911]), (toYYYYMM(event_date) in [201910, +Inf)))\n            Parts: 2/2\n            Granules: 5183/5183\n          PrimaryKey\n            Keys:\n              event_date\n            Condition: and((event_date in (-Inf, 18200]), (event_date in [18170, +Inf)))\n            Parts: 2/2\n            Granules: 5183/5183\n            Search Algorithm: binary search\n            Ranges: 2\n",
+  "measurement_notes": "Las fusiones de fondo de REES46 y de la tabla derivada estuvieron pausadas durante estas mediciones; no había fusiones activas al empezar. Se reactivan al terminar la verificación."
+}

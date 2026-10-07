@@ -1,0 +1,12 @@
+services:
+  share-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.share
+    env_file: data/sharing/gateway.env
+    environment:
+      ATLAS_SHARE_BACKEND: http://atlas:8001
+  share-tunnel:
+    image: cloudflare/cloudflared:2026.3.0
+    command: ["tunnel", "--no-autoupdate", "--protocol", "http2", "--url", "http://share-gateway:8080"]
+    depends_on: [share-gateway]

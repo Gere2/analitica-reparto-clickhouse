@@ -1,0 +1,97 @@
+{
+  "simulation": {
+    "status": 200,
+    "fields": [
+      "running",
+      "fleet",
+      "interval_seconds",
+      "run_id"
+    ]
+  },
+  "operations": {
+    "status": 200,
+    "fields": [
+      "couriers",
+      "orders",
+      "metrics",
+      "positions_by_5s",
+      "source_kind",
+      "run_id",
+      "truncated",
+      "snapshot_at"
+    ],
+    "courier_fields": [
+      "courier_id",
+      "order_id",
+      "city_id",
+      "latitude",
+      "longitude",
+      "speed_kmh",
+      "accuracy_m",
+      "event_time",
+      "ingested_at",
+      "age_ms",
+      "receipt_delay_ms"
+    ],
+    "order_fields": [
+      "order_id",
+      "courier_id",
+      "city_id",
+      "restaurant_id",
+      "status",
+      "amount_minor",
+      "currency",
+      "pickup_lat",
+      "pickup_lon",
+      "dropoff_lat",
+      "dropoff_lon",
+      "order_created_at",
+      "promised_delivery_at",
+      "event_time"
+    ]
+  },
+  "status": {
+    "status": 200,
+    "fields": [
+      "pending",
+      "published",
+      "publisher_phase"
+    ]
+  },
+  "summary?city_id=madrid&source_kind=synthetic": {
+    "status": 200,
+    "fields": [
+      "events",
+      "groups",
+      "rows",
+      "truncated",
+      "meaning"
+    ]
+  },
+  "inventory": {
+    "status": 200,
+    "fields": [
+      "rows",
+      "meaning"
+    ]
+  },
+  "catalog": {
+    "status": 200,
+    "fields": [
+      "meaning",
+      "rows"
+    ]
+  },
+  "track": {
+    "status": 200,
+    "row_fields": [
+      "latitude",
+      "longitude",
+      "order_id",
+      "event_time"
+    ]
+  },
+  "unauthenticated": 401,
+  "mutation": 405,
+  "unlisted": 400
+}

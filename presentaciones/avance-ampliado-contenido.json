@@ -1,0 +1,582 @@
+{
+  "title": "Delivery Atlas",
+  "subtitle": "Estructura de una base analítica para comida a domicilio",
+  "duration": "Avance del proyecto, 10–15 minutos",
+  "slides": [
+    {
+      "layout": "cover",
+      "title": "Delivery Atlas",
+      "subtitle": "Estructura de una base analítica\npara comida a domicilio",
+      "caption": "BD2 · Avance del proyecto · 5 de octubre de 2026",
+      "minutes": 0.5,
+      "notes": "Presentamos el avance de Delivery Atlas. El caso es una plataforma ficticia inspirada en aplicaciones de comida a domicilio. Vamos a centrarnos en la estructura de la base de datos y en el estado del trabajo. Tenemos un laboratorio operativo con ClickHouse y datasets públicos. El recorrido integrado de reparto sigue pendiente. La ilustración de portada es conceptual y generada con IA, no representa un despliegue real.",
+      "sources": [
+        "docs/ESTRUCTURA-BD.md",
+        "docs/PLATAFORMA-FICTICIA.md"
+      ]
+    },
+    {
+      "layout": "table",
+      "title": "El nuevo alcance del proyecto",
+      "intro": "Una plataforma ficticia con una infraestructura analítica preparada para eventos masivos",
+      "headers": [
+        "Parte",
+        "Función",
+        "Estado"
+      ],
+      "rows": [
+        [
+          "Infraestructura",
+          "Guardar y consultar eventos",
+          "Operativa con datasets"
+        ],
+        [
+          "Miniapp de reparto",
+          "Emitir acciones de navegación",
+          "Pendiente"
+        ],
+        [
+          "Generador de tráfico",
+          "Simular sesiones reproducibles",
+          "Diseño propuesto"
+        ],
+        [
+          "Adaptadores",
+          "Incorporar fuentes compatibles",
+          "Pendientes"
+        ]
+      ],
+      "widths": [
+        260,
+        510,
+        350
+      ],
+      "caption": "La siguiente entrega conectará la miniapp con el nuevo contrato de eventos",
+      "minutes": 0.8,
+      "notes": "El profesor nos permite inventar la plataforma. Eso nos da un recorrido coherente para demostrar la base de datos aunque no tengamos clics actuales de Uber Eats o Glovo. La infraestructura de almacenamiento y visualización existe, pero todavía trabaja con tablas de los datasets. La miniapp, el generador del nuevo contrato y los adaptadores son trabajo pendiente. El producto de la asignatura es esta infraestructura analítica. Los cobros y la asignación de repartidores quedan fuera del alcance.",
+      "sources": [
+        "docs/PLATAFORMA-FICTICIA.md"
+      ]
+    },
+    {
+      "layout": "table",
+      "title": "Arquitectura que funciona hoy",
+      "intro": "Un nodo ClickHouse 25.8, un volumen persistente y una API Python",
+      "headers": [
+        "Etapa",
+        "Componente",
+        "Responsabilidad"
+      ],
+      "rows": [
+        [
+          "1. Entrada",
+          "ZIP, CSV y botones web",
+          "Datos públicos y clics de la demo"
+        ],
+        [
+          "2. Ingesta",
+          "Scripts Python",
+          "Validación, lotes y trazabilidad"
+        ],
+        [
+          "3. Almacenamiento",
+          "ClickHouse / delivery",
+          "Históricos y agregados"
+        ],
+        [
+          "4. Consulta",
+          "dashboard.py",
+          "SQL mediante HTTP"
+        ],
+        [
+          "5. Visualización",
+          "Paneles de web/",
+          "Filtros, métricas y gráficos"
+        ]
+      ],
+      "widths": [
+        260,
+        380,
+        480
+      ],
+      "caption": "El replay conserva event_time y añade el momento de ingesta",
+      "minutes": 0.8,
+      "notes": "El flujo actual ya recorre la infraestructura completa. Los scripts leen archivos comprimidos y cargan lotes. ClickHouse conserva las tablas en un volumen Docker. La API Python consulta por HTTP y devuelve JSON al navegador. Los botones del panel envían acciones nuevas a live_clicks. El replay inserta sucesos antiguos con un reloj de ingesta actual. Tenemos un nodo local, sin réplicas ni tolerancia a fallos demostrada.",
+      "sources": [
+        "compose.yaml",
+        "dashboard.py",
+        "scripts/otto.py",
+        "scripts/eleme.py"
+      ]
+    },
+    {
+      "layout": "table",
+      "title": "Datos disponibles y su papel",
+      "intro": "Cada fuente mantiene su significado y su procedencia",
+      "headers": [
+        "Fuente",
+        "Volumen cargado",
+        "Uso en el proyecto"
+      ],
+      "rows": [
+        [
+          "OTTO",
+          "216.716.096 eventos",
+          "Clics, ingesta y agregación"
+        ],
+        [
+          "REES46",
+          "411.709.736 eventos",
+          "Siete meses y filtros de negocio"
+        ],
+        [
+          "Ele.me",
+          "2.170.299 muestras",
+          "Recomendaciones de comida"
+        ],
+        [
+          "Glovo",
+          "2.887.444 productos",
+          "Catálogo, incluido España"
+        ],
+        [
+          "Estrés OTTO",
+          "1.083.580.480 filas",
+          "Escenarios derivados"
+        ]
+      ],
+      "widths": [
+        230,
+        390,
+        500
+      ],
+      "caption": "Ele.me contiene 38.914 etiquetas positivas. Glovo aporta catálogo, sin clics",
+      "minutes": 0.9,
+      "notes": "OTTO contiene 194.720.954 clics explícitos dentro de sus 216.716.096 eventos. REES46 aporta vistas, carritos y compras de otro marketplace. Ambas fuentes suman 628.425.832 eventos de poblaciones diferentes. Ele.me es una plataforma china y solo hemos cargado el primer ZIP. Sus 2.170.299 filas son muestras del recomendador, con 38.914 etiquetas positivas. Glovo tiene 415.137 productos de España dentro del catálogo. No hay claves comunes que permitan atribuir clics de Ele.me a productos de Glovo. Los mil millones son cinco escenarios derivados de OTTO.",
+      "sources": [
+        "docs/RESULTADOS.md",
+        "docs/ELEME.md",
+        "docs/GLOVO.md",
+        "https://github.com/otto-de/recsys-dataset",
+        "https://data.rees46.com/",
+        "https://tianchi.aliyun.com/dataset/131047",
+        "https://github.com/Glovo/foodi-ml-dataset"
+      ]
+    },
+    {
+      "layout": "table",
+      "title": "Mapa de las tablas actuales",
+      "headers": [
+        "Tabla",
+        "Una fila representa",
+        "Papel"
+      ],
+      "rows": [
+        [
+          "otto_archive",
+          "Evento histórico",
+          "Archivo real"
+        ],
+        [
+          "otto_replay",
+          "Evento reproducido",
+          "Ingesta de la demo"
+        ],
+        [
+          "live_clicks",
+          "Clic nuevo del panel",
+          "Interacción actual"
+        ],
+        [
+          "otto_daily_rollup",
+          "Recuento parcial día/tipo",
+          "Agregado"
+        ],
+        [
+          "rees46_events",
+          "Vista, carrito o compra",
+          "Archivo real"
+        ],
+        [
+          "eleme_samples / staging",
+          "Muestra de recomendación",
+          "Publicación validada"
+        ],
+        [
+          "glovo_products",
+          "Muestra de producto",
+          "Catálogo"
+        ],
+        [
+          "otto_scale_benchmark",
+          "Copia en un escenario",
+          "Estrés derivado"
+        ]
+      ],
+      "widths": [
+        390,
+        420,
+        310
+      ],
+      "caption": "MergeTree en los históricos. SummingMergeTree en el agregado diario",
+      "minutes": 1.0,
+      "notes": "La primera decisión del modelo es el grano: qué significa una fila. Lo definimos antes de sumar tablas. Por eso cada fuente tiene su tabla. El agregado no contiene usuarios individuales, sino recuentos parciales por fecha y acción. Ele.me tiene una segunda tabla con el mismo esquema para validar archivos. demo_events es una tabla de ensayo para CRUD. Las tablas de restaurantes y pedidos del primer enfoque Meituan se conservan como material previo, pero no son el nuevo modelo de la plataforma ficticia. Estos nombres están en los SQL del proyecto.",
+      "sources": [
+        "sql/schema.sql",
+        "sql/eleme.sql",
+        "docs/ESTRUCTURA-BD.md"
+      ]
+    },
+    {
+      "layout": "schema",
+      "title": "Estructura de otto_archive",
+      "intro": "Una fila registra una acción dentro de una sesión",
+      "headers": [
+        "Campo",
+        "Tipo",
+        "Significado"
+      ],
+      "rows": [
+        [
+          "session_id",
+          "UInt32",
+          "Sesión anónima"
+        ],
+        [
+          "article_id",
+          "UInt32",
+          "Producto anónimo"
+        ],
+        [
+          "event_time",
+          "DateTime64(3, UTC)",
+          "Momento del evento"
+        ],
+        [
+          "event_type",
+          "LowCardinality(String)",
+          "clicks, carts u orders"
+        ],
+        [
+          "event_position",
+          "UInt16",
+          "Posición en la sesión"
+        ]
+      ],
+      "widths": [
+        290,
+        390,
+        440
+      ],
+      "code": "ENGINE = MergeTree\nPARTITION BY toYYYYMM(event_time)\nORDER BY (event_time, session_id, event_position)",
+      "minutes": 1.0,
+      "notes": "Son cinco campos porque ese es el contenido de la fuente. DateTime64 mantiene milisegundos y UTC. LowCardinality representa eficientemente valores repetidos del tipo de evento. La partición mensual divide el histórico. El orden físico empieza por tiempo, que aparece en las consultas del panel. La posición permite interpretar el orden dentro de la sesión. OTTO no publica nombre, precio ni categoría de los artículos. No completamos esos campos con datos de otras poblaciones.",
+      "sources": [
+        "sql/schema.sql",
+        "https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/mergetree"
+      ]
+    },
+    {
+      "layout": "table",
+      "title": "Ele.me: estructura y staging",
+      "intro": "Una muestra amplia que conserva el archivo y la fila de origen",
+      "headers": [
+        "Grupo",
+        "Campos",
+        "Función"
+      ],
+      "rows": [
+        [
+          "Procedencia",
+          "source_id, source_file, source_row",
+          "Rastrear el original"
+        ],
+        [
+          "Recomendación",
+          "user_id, shop_id, item_id, clicked",
+          "Contexto y etiqueta"
+        ],
+        [
+          "Segmentación",
+          "sample_day, city_id, request_hour",
+          "Filtros del panel"
+        ],
+        [
+          "Original completo",
+          "raw_features String",
+          "39 campos en JSON"
+        ]
+      ],
+      "widths": [
+        250,
+        560,
+        310
+      ],
+      "caption": "ZIP, validación de lotes en staging y MOVE PARTITION al completar el archivo",
+      "minutes": 1.0,
+      "notes": "El archivo es ancho porque contiene historiales y atributos. Conservamos sus 39 campos y proyectamos las columnas que necesita el dashboard. source_id identifica el contenido del archivo y su miembro, source_row conserva la fila. El cargador valida formato, rangos y CRC antes de publicar un archivo completo. source_id también es la partición para este corpus finito. Este diseño de publicación por archivo no es una recomendación de partición por evento para una aplicación continua. No hay vista materializada en Ele.me: MOVE PARTITION no activa una vista de inserción. La etiqueta negativa no demuestra una impresión y el 1,79 % no es el CTR de producción.",
+      "sources": [
+        "sql/eleme.sql",
+        "scripts/eleme.py",
+        "docs/ELEME.md"
+      ]
+    },
+    {
+      "layout": "table",
+      "title": "Decisiones del diseño físico",
+      "intro": "Particiones y orden tienen funciones distintas",
+      "headers": [
+        "Decisión",
+        "Elección actual",
+        "Motivo"
+      ],
+      "rows": [
+        [
+          "Motor",
+          "MergeTree",
+          "Datos por columnas y partes"
+        ],
+        [
+          "Partición OTTO",
+          "Mes del evento",
+          "Separar periodos completos"
+        ],
+        [
+          "Orden OTTO",
+          "Tiempo, sesión, posición",
+          "Lecturas temporales"
+        ],
+        [
+          "Partición Ele.me",
+          "Archivo identificado",
+          "Publicar y recuperar archivos"
+        ],
+        [
+          "Columnas tipadas",
+          "Acción, hora y ciudad",
+          "Consultar campos necesarios"
+        ]
+      ],
+      "widths": [
+        330,
+        400,
+        390
+      ],
+      "caption": "El índice primario es disperso. ORDER BY no impone unicidad",
+      "minutes": 1.1,
+      "notes": "ClickHouse guarda por columnas, de modo que una consulta puede leer solo las que necesita. MergeTree crea partes con cada ingesta y las fusiona en segundo plano. El ORDER BY establece el orden físico y, en estas tablas sin PRIMARY KEY aparte, el índice primario disperso. No equivale a una restricción UNIQUE. Una partición divide el almacenamiento y permite operaciones por grupos completos. El índice ayuda a descartar rangos cuando el filtro se alinea con su clave. Hay que verificar el plan con EXPLAIN indexes = 1. Todavía no hemos comparado órdenes alternativos con la misma carga.",
+      "sources": [
+        "sql/schema.sql",
+        "sql/eleme.sql",
+        "https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/mergetree"
+      ]
+    },
+    {
+      "layout": "benchmark",
+      "title": "El agregado diario reduce la lectura",
+      "intro": "La misma respuesta por fecha y tipo de evento",
+      "code": "SELECT event_date, event_type,\n       sum(events) AS eventos\nFROM delivery.otto_daily_rollup\nGROUP BY event_date, event_type\nORDER BY event_date, event_type",
+      "stat": "87 claves lógicas",
+      "detail": "Vista materializada con SummingMergeTree",
+      "caption": "Medianas locales de tres ejecuciones, caché SQL desactivada y respuestas iguales",
+      "minutes": 1.1,
+      "notes": "La vista materializada recibe bloques nuevos y agrega por día y tipo. Para las filas cargadas antes de crearla hicimos un backfill explícito. SummingMergeTree suma durante las fusiones, pero puede conservar varias filas físicas por clave. Por eso consultamos sum(events) con GROUP BY. El benchmark contrastó la misma respuesta: 5,8908 segundos leyendo 216.716.096 eventos frente a 0,2113 desde el agregado. Es una diferencia local de 27,9 veces y una reducción de filas y bytes leídos. No compara ClickHouse con PostgreSQL. Las 87 son claves lógicas y las estadísticas de esa medición informaron 87 filas leídas en el agregado.",
+      "sources": [
+        "scripts/benchmark.py",
+        "scripts/rollup.py",
+        "data/query-benchmark.json",
+        "docs/RESULTADOS.md",
+        "https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/summingmergetree",
+        "https://clickhouse.com/docs/concepts/features/materialized-views/incremental-materialized-view"
+      ]
+    },
+    {
+      "layout": "schema",
+      "title": "Modelo propuesto: app_events",
+      "intro": "Una acción de la plataforma ficticia con contexto y procedencia",
+      "headers": [
+        "Grupo",
+        "Campos",
+        "Función"
+      ],
+      "rows": [
+        [
+          "Identidad",
+          "event_id, session_id, schema_version",
+          "Reconocer y versionar"
+        ],
+        [
+          "Tiempo",
+          "event_time, ingested_at, event_date",
+          "Suceso e ingesta"
+        ],
+        [
+          "Acción",
+          "event_type, section",
+          "Navegación"
+        ],
+        [
+          "Contexto",
+          "user_id, city_id, restaurant_id, product_id",
+          "Segmentación"
+        ],
+        [
+          "Procedencia",
+          "source_kind, source, IDs de origen",
+          "Origen de los datos"
+        ]
+      ],
+      "widths": [
+        230,
+        620,
+        270
+      ],
+      "code": "PARTITION BY toYYYYMM(event_date)\nORDER BY (source_kind, event_date, city_id,\n          event_type, event_time, session_id)",
+      "minutes": 1.2,
+      "notes": "Este es el modelo de la próxima entrega. Hemos escrito un DDL propuesto en delivery_proposal para revisarlo sin modificar el servidor actual. event_id y session_id son UUID. El contrato distingue el tiempo del suceso y el de entrada. Los IDs de usuario, restaurante y producto pueden ser ausentes cuando no se conocen. source_kind separa synthetic, demo_live, public_historical e historical_replay. El orden propuesto favorece filtros por procedencia y fecha y después ciudad y tipo. Falta medirlo. Un UUID estable ayuda a detectar un reintento, pero MergeTree no elimina duplicados por declarar ese campo. La API debe resolverlos antes de publicar en el agregado.",
+      "sources": [
+        "sql/propuesta_delivery.sql",
+        "docs/ESTRUCTURA-BD.md",
+        "docs/PLATAFORMA-FICTICIA.md"
+      ]
+    },
+    {
+      "layout": "table",
+      "title": "La siguiente conexión de extremo a extremo",
+      "intro": "Un recorrido manual y un generador emitirán el mismo contrato",
+      "headers": [
+        "Paso",
+        "Diseño previsto",
+        "Comprobación"
+      ],
+      "rows": [
+        [
+          "Emisión",
+          "Buscar, abrir, añadir y pedir",
+          "Evento con ID estable"
+        ],
+        [
+          "Validación",
+          "Tipos, versión y procedencia",
+          "Rechazos y reintentos"
+        ],
+        [
+          "Publicación",
+          "Lotes en app_events",
+          "Recuento lógico sin duplicados"
+        ],
+        [
+          "Agregación",
+          "app_daily_rollup y vista",
+          "Misma respuesta que el histórico"
+        ],
+        [
+          "Visualización",
+          "Filtros por origen y tiempo",
+          "Ver una acción en el panel"
+        ]
+      ],
+      "widths": [
+        240,
+        500,
+        380
+      ],
+      "caption": "Un adaptador futuro necesita comprobar el significado y la cobertura de cada campo",
+      "minutes": 0.9,
+      "notes": "La infraestructura común recibirá eventos de la miniapp y de un generador con semilla y parámetros documentados. El generador produce tráfico simulado, identificado como tal. La publicación debe controlar saturación y reintentos. La vista diaria agregará eventos por procedencia, fecha, ciudad, sección y acción, pero no calcula sesiones únicas ni el embudo. Para incorporar una fuente real necesitaremos comprobar acciones, zona horaria, IDs y cobertura. Ele.me seguirá como muestras separadas mientras no exista una correspondencia válida con eventos del contrato. Declarar que estamos preparados para cualquier archivo sin adaptación sería incorrecto.",
+      "sources": [
+        "sql/propuesta_delivery.sql",
+        "docs/PLATAFORMA-FICTICIA.md"
+      ]
+    },
+    {
+      "layout": "demo",
+      "title": "Demo operativa del laboratorio",
+      "intro": "Archivo histórico, reproducción y clics nuevos en tablas separadas",
+      "items": [
+        "216,7 millones de eventos OTTO",
+        "Replay objetivo: 5.000 eventos/s",
+        "Botones que escriben en live_clicks",
+        "Filtros del panel Ele.me",
+        "CRUD Python en tabla de ensayo"
+      ],
+      "caption": "La captura corresponde al laboratorio actual. El recorrido de reparto sigue pendiente",
+      "minutes": 0.8,
+      "notes": "Podemos abrir el panel OTTO y mostrar el volumen, ejecutar el replay y pulsar un botón para observar una acción nueva. El ritmo objetivo del script es 5.000 por segundo y hay que observar la tasa efectiva del panel. La captura registra una ejecución local, no demuestra una garantía de servicio. Podemos abrir Ele.me para ver la distribución por horas y periodos de comida. El CRUD se ejecuta en demo_events. Esta demo ya existe, aunque su recorrido visual todavía no es una app completa de reparto. Si hace falta enseñar una cosa en directo, elegir un clic nuevo y comprobar su fila.",
+      "sources": [
+        "docs/DEMO.md",
+        "scripts/otto.py",
+        "scripts/crud_demo.py",
+        "dashboard.py"
+      ]
+    },
+    {
+      "layout": "table",
+      "title": "Estado y límites observados",
+      "headers": [
+        "Área",
+        "Evidencia actual",
+        "Límite o trabajo pendiente"
+      ],
+      "rows": [
+        [
+          "Datos y paneles",
+          "Cargas y recuentos verificados",
+          "Fuentes independientes"
+        ],
+        [
+          "Rendimiento",
+          "Consultas y agregado medidos",
+          "Resultados de este equipo"
+        ],
+        [
+          "Memoria",
+          "JSON Ele.me alcanzó 3,50 GiB",
+          "Dimensionar lectura y lotes"
+        ],
+        [
+          "Disponibilidad",
+          "Un nodo Docker persistente",
+          "Sin réplicas ejecutadas"
+        ],
+        [
+          "Nueva plataforma",
+          "Contrato y DDL propuestos",
+          "Miniapp y reintentos pendientes"
+        ]
+      ],
+      "widths": [
+        250,
+        460,
+        410
+      ],
+      "caption": "ClickHouse es un motor columnar OLAP que utiliza SQL",
+      "minutes": 0.9,
+      "notes": "La reflexión crítica parte de lo que hemos observado. La lectura ancha del JSON de Ele.me agotó el límite total de 3,50 GiB, incluso después de reducir bloques y búferes. La consulta sobre la columna tipada sí terminó, pero no tenemos un tiempo final del JSON ni un factor de aceleración entre esos métodos. La configuración limita las fusiones concurrentes para este equipo. Tenemos volumen y persistencia, pero no alta disponibilidad: si cae el único nodo, el panel deja de responder. El profesor debe confirmar el encaje de ClickHouse en la tecnología asignada porque es columnar OLAP y utiliza SQL. Las actualizaciones y borrados se enseñan como mutaciones, mientras el patrón principal es añadir eventos.",
+      "sources": [
+        "data/eleme-benchmark.json",
+        "docs/ELEME.md",
+        "docs/FUNDAMENTOS.md",
+        "compose.yaml",
+        "clickhouse-config.xml"
+      ]
+    },
+    {
+      "layout": "closing",
+      "title": "Próxima entrega",
+      "items": [
+        "Una acción de la miniapp llega al dashboard",
+        "Un reintento conserva un único evento lógico",
+        "La carga simulada conserva parámetros y procedencia",
+        "Histórico y agregado devuelven la misma respuesta"
+      ],
+      "caption": "Después mediremos volumen y latencia, y valoraremos otro orden físico o dos nodos",
+      "minutes": 0.8,
+      "notes": "Estos son los criterios concretos de la próxima entrega. Tenemos que conectar una acción manual con el nuevo esquema y comprobar un reintento deliberado. El generador debe ser reproducible y su manifiesto debe declarar las suposiciones. Antes de presumir de velocidad, compararemos la misma consulta y verificaremos resultados. También pediremos que un compañero reproduzca la ruta siguiendo las guías. Después podemos medir una carga masiva de la plataforma y explorar claves de orden o dos nodos. El propósito del avance es validar este modelo y el alcance con el profesor.",
+      "sources": [
+        "docs/PLATAFORMA-FICTICIA.md",
+        "docs/ESTRUCTURA-BD.md"
+      ]
+    }
+  ]
+}

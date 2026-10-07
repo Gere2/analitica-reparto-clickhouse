@@ -1,0 +1,10 @@
+import {mkdir, readFile, writeFile, copyFile} from 'node:fs/promises';
+await mkdir('shared-public', {recursive:true});
+let html = await readFile('web/atlas-dashboard.html','utf8');
+html = html.replace('<head>','<head><meta name="atlas-readonly" content="true">');
+html = html.replace('Posiciones y pedidos ficticios, publicados en ClickHouse durante la demo.','Demo compartida de solo lectura. Datos ficticios en ClickHouse; conexión al ordenador de Jere.');
+html = html.replace(/<div class="controls">.*?<\/div><\/section>/,'<p class="caption">La simulación se controla desde el laboratorio de Jere.</p></section>');
+html = html.replace('<button id="manual" class="secondary">Registrar una búsqueda manual</button>','<button id="manual" hidden disabled>Registrar una búsqueda manual</button>');
+html = html.replace('<a href="http://127.0.0.1:8000/">Abrir laboratorio histórico</a>','<span>Disponible mientras el laboratorio y el túnel estén activos</span>');
+await writeFile('shared-public/index.html',html);
+await Promise.all(['css','js'].map(ext=>copyFile('web/atlas-dashboard.'+ext,'shared-public/atlas-dashboard.'+ext)));
