@@ -58,5 +58,14 @@
     "failed_attempts": []
   },
   "track_rows": 240,
-  "write_rejected": 405
+  "write_rejected": 405,
+  "final_check": {
+    "status": 200,
+    "couriers": 12,
+    "snapshot_at": "2026-10-07 15:34:45.384",
+    "max_age_ms": 3796,
+    "checked_at": "2026-10-07T15:34:46.550495+00:00",
+    "deployment_commit": "5e4044a",
+    "deployment_url": "https://delivery-atlas-demo-5fuxmsp76.vercel.app"
+  }
 }
