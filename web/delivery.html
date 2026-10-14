@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Delivery Atlas · Pedir comida</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="stylesheet" href="/delivery.css">
+<script src="/delivery.js" defer></script>
+</head>
+<body>
+<div class="layout">
+  <div class="app" id="app">
+    <header class="top">
+      <button class="back" id="back" type="button" hidden aria-label="Volver">‹</button>
+      <a class="brand" href="/delivery.html">Delivery Atlas</a>
+      <label class="city">Entregar en
+        <select id="city" aria-label="Ciudad"></select>
+      </label>
+    </header>
+
+    <div id="notice" class="notice" role="alert" hidden></div>
+
+    <!-- Inicio: búsqueda, filtros y restaurantes -->
+    <main id="view-home" class="view">
+      <h1>¿Qué te apetece cenar?</h1>
+      <form id="search-form" class="search" role="search">
+        <input id="search" type="search" placeholder="Busca un restaurante o un plato" autocomplete="off" aria-label="Buscar">
+        <button type="submit">Buscar</button>
+      </form>
+      <div class="filters" role="group" aria-label="Filtros">
+        <button type="button" class="chip" data-filter="cheap" aria-pressed="false">Platos hasta 10 €</button>
+        <button type="button" class="chip" data-filter="near" aria-pressed="false">Más cerca de Sol</button>
+      </div>
+      <p id="result-note" class="note"></p>
+      <ul id="restaurants" class="restaurants" aria-live="polite"><li class="empty">Cargando restaurantes…</li></ul>
+    </main>
+
+    <!-- Restaurante y su menú -->
+    <main id="view-restaurant" class="view" hidden>
+      <div class="shop-head">
+        <span class="monogram" id="shop-mono"></span>
+        <div><h1 id="shop-name"></h1><p class="note" id="shop-meta"></p></div>
+      </div>
+      <ul id="menu" class="menu"></ul>
+    </main>
+
+    <!-- Carrito -->
+    <main id="view-cart" class="view" hidden>
+      <h1>Tu pedido</h1>
+      <p class="note" id="cart-shop"></p>
+      <ul id="cart-lines" class="cart-lines"></ul>
+      <div class="total"><span>Total</span><strong id="cart-total">0,00 €</strong></div>
+      <p class="note">Precios ficticios. No se cobra nada: el pedido se reparte en la simulación de Madrid.</p>
+      <button id="checkout" class="primary wide" type="button">Confirmar pedido</button>
+      <button id="abandon" class="ghost wide" type="button">Vaciar carrito y empezar de nuevo</button>
+    </main>
+
+    <!-- Seguimiento del pedido -->
+    <main id="view-order" class="view" hidden>
+      <h1 id="order-title">Pedido confirmado</h1>
+      <p class="note" id="order-meta"></p>
+      <ol class="steps" id="steps">
+        <li data-status="created">Pedido recibido</li>
+        <li data-status="preparing">En la cocina</li>
+        <li data-status="picked_up">Recogido por el repartidor</li>
+        <li data-status="en_route">De camino</li>
+        <li data-status="delivered">Entregado</li>
+      </ol>
+      <p class="note" id="order-live">Esperando a que ClickHouse publique el pedido…</p>
+      <a class="ghost wide link" href="/#orders" target="_blank" rel="noopener">Ver el pedido en el panel de operación</a>
+      <button id="again" class="primary wide" type="button">Hacer otro pedido</button>
+    </main>
+
+    <!-- Detalle de producto -->
+    <dialog id="product" class="sheet" aria-labelledby="product-name">
+      <form method="dialog">
+        <h2 id="product-name"></h2>
+        <p class="note" id="product-origin"></p>
+        <p class="price" id="product-price"></p>
+        <div class="sheet-actions">
+          <button value="cancel" class="ghost" type="submit">Cerrar</button>
+          <button id="add" class="primary" type="button">Añadir al carrito</button>
+        </div>
+      </form>
+    </dialog>
+
+    <button id="cart-bar" class="cart-bar" type="button" hidden>
+      <span id="cart-count">0 productos</span><strong>Ver pedido</strong><span id="cart-bar-total">0,00 €</span>
+    </button>
+  </div>
+
+  <aside class="tape" aria-label="Eventos enviados a la API">
+    <div class="tape-head">
+      <h2>Eventos de esta sesión</h2>
+      <p>Cada acción se envía a <code>/api/events</code>. «En cola» es el 202 de la API; ClickHouse lo publica poco después.</p>
+      <p class="session">Sesión <span id="session-id">—</span></p>
+    </div>
+    <ol id="tape" class="tape-list"><li class="empty">Todavía no has hecho nada.</li></ol>
+  </aside>
+</div>
+</body>
+</html>

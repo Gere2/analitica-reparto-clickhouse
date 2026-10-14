@@ -38,7 +38,7 @@ class ClickHouse:
                 time.sleep(.25*(attempt+1))
 
     def init(self):
-        for name in ('atlas.sql','atlas_operations.sql','atlas_agents.sql'):
+        for name in ('atlas.sql','atlas_operations.sql','atlas_agents.sql','atlas_miniapp.sql'):
             sql = (Path(__file__).resolve().parents[1]/'sql'/name).read_text()
             sql = '\n'.join(line for line in sql.splitlines() if not line.lstrip().startswith('--'))
             for statement in sql.split(';'):

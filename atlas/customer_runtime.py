@@ -5,7 +5,7 @@ import time
 from datetime import datetime,timezone,timedelta
 import random
 import logging
-from uuid import uuid4
+from uuid import UUID,uuid4
 from atlas.commerce import CommerceEngine
 from atlas.customer_agent import OllamaAgent,PolicyAgent,TrafficAgent
 from atlas.store import Full
@@ -50,6 +50,19 @@ class CustomerRuntime:
             accepted=self.store.accept(rows)
             self.engine=candidate;self.state['accepted']+=accepted['accepted']
             return True
+
+    def manual_checkout(self,request):
+        """Manual miniapp purchase joins this run: the same courier/GPS loop delivers it.
+        Uses commit(): the order exists in memory only after SQLite accepted its rows."""
+        with self.lock:
+            if self.cancel.is_set() or not self.state['running']:
+                raise LookupError('No hay una ejecución de clientes activa.')
+            committed=self.commit(lambda engine:engine.manual_checkout(request,datetime.now(timezone.utc)))
+            # manual_checkout already validated the UUID; normalise case for the lookup.
+            order=self.engine.orders.get(str(UUID(request['order_id'])))
+            return {'state':'queued' if committed else 'already_accepted','run_id':self.engine.run_id,
+                'order_id':order['id'] if order else None,'amount_minor':order['amount'] if order else None,
+                'currency':'EUR'}
 
     def launch(self):
         self.commit(lambda engine:engine.advance(datetime.now(timezone.utc)))

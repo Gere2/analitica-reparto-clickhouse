@@ -140,6 +140,14 @@ class Simulator:
             self.thread.start()
             return dict(self.state)
 
+    def checkout(self,request):
+        """Manual miniapp purchase. Only the customers mode links checkout to delivery;
+        the legacy fleet has no commerce engine, so it is refused instead of faked."""
+        with self.lock:runtime=self.customer_runtime
+        if not runtime:
+            raise LookupError('No hay una ejecución de clientes activa.')
+        return runtime.manual_checkout(request)
+
     def stop(self):
         if self.customer_runtime:return self.customer_runtime.stop()
         with self.lock:

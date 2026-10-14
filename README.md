@@ -4,6 +4,8 @@ Proyecto BD2 para diseñar la infraestructura analítica de una plataforma ficti
 
 **Tráfico concurrente:** modo mixto con **200 clientes (3 IA + 197 simulados) y 80 repartidores**, hasta 500/150 desde los controles. Clientes por lotes, pausas variadas, compras enlazadas y resumen de actividad; [guía](docs/AGENTES-CLIENTES.md), prueba `python3 scripts/check_traffic.py` sobre el escenario activo.
 
+**Miniapp comercial (14/10):** http://127.0.0.1:8001/delivery.html. Una persona busca, filtra, abre un restaurante, llena el carrito y confirma. Cada acción va a `POST /api/events` (`demo_live`) y el checkout (`POST /api/checkout`) crea un pedido real de la simulación, que se reparte y se sigue por GPS. Requiere iniciar «Clientes y reparto» en el panel. [Guía, eventos y verificación](docs/MINIAPP.md).
+
 **Clientes con IA conectados al reparto (14/10):** [arranque, esquema y verificación](docs/AGENTES-CLIENTES.md). Qwen3 local decide acciones; el checkout crea el mismo pedido que se asigna y sigue en el mapa. Compras y posiciones ficticias, sin cobro. Activar los perfiles `atlas` y `ai`, descargar el modelo como indica la guía y abrir http://127.0.0.1:8001/.
 
 **Guía técnica para el equipo (14/10):** [PDF completo](output/pdf/Delivery-Atlas-Documento-Tecnico-Equipo.pdf) y [versión editable](docs/DOCUMENTO-TECNICO-EQUIPO.md). Explica tecnologías, arquitectura, contratos y columnas, ingesta, simulación, consultas, compartición y límites de las pruebas. Revisa el código actual; las mediciones incluidas corresponden al 7/10.

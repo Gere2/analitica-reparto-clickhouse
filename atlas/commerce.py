@@ -8,6 +8,8 @@ from atlas.simulation import iso,distance,interpolate,restaurant_location
 
 ZERO='00000000-0000-0000-0000-000000000000'
 ACTIONS={'search','open_restaurant','open_product','add_to_cart','remove_from_cart','checkout','abandon'}
+MANUAL_SOURCE='delivery-miniapp'
+MANUAL_FIELDS={'order_id','customer_id','session_id','checkout_event_id','event_time','restaurant_id','items'}
 
 
 class CommerceEngine:
@@ -144,6 +146,66 @@ class CommerceEngine:
             rows.append(self.order_event(order,at))
         return rows
 
+    def manual_checkout(self,request,at):
+        """Checkout from the human miniapp (web/delivery.*).
+
+        The browser sends identifiers and quantities only. Prices, restaurant and
+        amount come from the demo catalog loaded in this run, never from the client.
+        The purchase is a real manual action (demo_live); preparation, courier and
+        GPS remain synthetic, exactly like AI-customer orders.
+        Returns [] when the same order_id was already accepted (idempotent retry)."""
+        if not isinstance(request,dict) or set(request)!=MANUAL_FIELDS:
+            raise ValueError('Checkout: enviar '+', '.join(sorted(MANUAL_FIELDS))+'.')
+        ids={k:str(UUID(request[k])) for k in ('order_id','customer_id','session_id','checkout_event_id')
+             if isinstance(request[k],str)}
+        if len(ids)!=4:raise ValueError('Checkout: identificadores UUID requeridos.')
+        oid=ids['order_id']
+        if oid in self.orders:
+            if self.orders[oid].get('checkout_event_id')!=ids['checkout_event_id']:
+                raise ValueError('Ese order_id ya pertenece a otra compra.')
+            return []
+        shop=self.shops.get(request['restaurant_id'])
+        if not shop:raise ValueError('Restaurante desconocido en el catálogo de esta ejecución.')
+        items=request['items']
+        if not isinstance(items,list) or not 1<=len(items)<=20:
+            raise ValueError('La cesta debe tener entre 1 y 20 líneas.')
+        cart={}
+        for line in items:
+            if not isinstance(line,dict) or set(line)!={'product_id','quantity'}:
+                raise ValueError('Cada línea: {product_id, quantity}.')
+            p=self.products.get(line['product_id']);q=line['quantity']
+            if not p or p['restaurant_id']!=shop['restaurant_id']:
+                raise ValueError('Producto desconocido o de otro restaurante.')
+            if type(q) is not int or not 1<=q<=10 or p['product_id'] in cart:
+                raise ValueError('Cantidad entre 1 y 10 y sin productos repetidos.')
+            cart[p['product_id']]=q
+        if sum(cart.values())>20:raise ValueError('Máximo 20 unidades por pedido.')
+        # Mismo límite de pedidos abiertos que el checkout de los clientes simulados.
+        if sum(o['status'] not in {'delivered','cancelled'} for o in self.orders.values())>=max(100,len(self.customers)*2):
+            raise ValueError('La operación tiene demasiados pedidos pendientes.')
+        amount=sum(self.products[p]['price_minor']*q for p,q in cart.items())
+        city=shop.get('city_id') or 'madrid'
+        # Same contract as every navigation event; the client event_time is kept so a
+        # retried click keeps its digest. validate() rejects future or malformed times.
+        nav=validate({'schema_version':1,'event_id':ids['checkout_event_id'],'session_id':ids['session_id'],
+            'user_id':ids['customer_id'],'event_time':request['event_time'],'event_type':'order_submitted',
+            'section':'checkout','city_id':city,'restaurant_id':shop['restaurant_id'],'product_id':None,
+            'order_id':oid,'source':MANUAL_SOURCE,'source_kind':'demo_live','simulation_run_id':None})
+        rng=random.Random(oid);pickup=(shop['latitude'],shop['longitude'])
+        dropoff=(pickup[0]+rng.uniform(-.003,.003),pickup[1]+rng.uniform(-.004,.004))
+        order={'id':oid,'customer_id':ids['customer_id'],'restaurant_id':shop['restaurant_id'],'created':at,
+            'pickup':pickup,'dropoff':dropoff,'amount':amount,'status':'created','courier_id':None,
+            'assigned_at':None,'sequence':0,'last_marker':None,'manual':True,
+            'checkout_event_id':ids['checkout_event_id']}
+        self.orders[oid]=order
+        purchase={'_stream':'customer_orders','schema_version':1,'event_id':self.uid('purchase',oid),
+            'simulation_run_id':self.run_id,'order_id':oid,'customer_id':ids['customer_id'],
+            'session_id':ids['session_id'],'checkout_event_id':ids['checkout_event_id'],'event_time':iso(at),
+            'restaurant_id':shop['restaurant_id'],
+            'items':[[p,q,self.products[p]['price_minor']] for p,q in cart.items()],
+            'amount_minor':amount,'currency':'EUR','decision_mode':'manual','source_kind':'demo_live'}
+        return [nav,purchase,self.order_event(order,at)]
+
     def order_event(self,o,at):
         o['sequence']+=1;o['last_marker']=(o['status'],o['courier_id'])
         return validate_operation('order_events',{'schema_version':1,'event_id':self.uid('order-state',o['id'],o['sequence']),
@@ -178,7 +240,7 @@ class CommerceEngine:
                 if elapsed<30:position=interpolate(o['origin'],o['pickup'],elapsed/30)
                 else:position=interpolate(o['pickup'],o['dropoff'],(elapsed-35)/60)
                 courier['position']=position
-                if o['status']=='delivered':
+                if o['status']=='delivered' and not o.get('manual'):
                     c=self.customers[o['customer_id']];c['stage']='delivered';c['revision']+=1;c['ready_at']=at+timedelta(seconds=12)
                     rows.append(self.activity(c,at,'delivery_completed','El pedido confirmado por este cliente se ha entregado.','system'))
             if (o['status'],o['courier_id'])!=o['last_marker']:rows.append(self.order_event(o,at))

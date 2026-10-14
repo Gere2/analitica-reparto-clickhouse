@@ -75,7 +75,7 @@ def make_handler(store, ch, publisher, simulator):
 
         def do_POST(self):
             route=urlparse(self.path).path
-            if route not in {'/api/events','/api/operations','/api/simulation/start','/api/simulation/stop'}:
+            if route not in {'/api/events','/api/operations','/api/simulation/start','/api/simulation/stop','/api/checkout'}:
                 return self.send_json({'error':'Ruta desconocida'}, 404)
             self.connection.settimeout(15)
             try:
@@ -93,6 +93,15 @@ def make_handler(store, ch, publisher, simulator):
                 if route=='/api/simulation/stop':
                     if data!={}:raise ValueError('Enviar {} para parar.')
                     return self.send_json(simulator.stop())
+                if route=='/api/checkout':
+                    # Miniapp checkout: 202 queued, 200 retry of an accepted order,
+                    # 409 when no customers run can deliver it (nothing is created).
+                    try:
+                        result=simulator.checkout(data)
+                    except LookupError as error:
+                        return self.send_json({'error':str(error)+' Inicia «Clientes y reparto» en el panel (IA local o política local) y vuelve a confirmar.',
+                            'code':'no_customer_run'},409)
+                    return self.send_json(result,202 if result['state']=='queued' else 200)
                 if route=='/api/operations':
                     if not isinstance(data,dict) or set(data)!={'kind','events'} or not isinstance(data['events'],list) or not 1<=len(data['events'])<=MAX_BATCH:
                         raise ValueError('Enviar {kind,events} con 1 a 5000 eventos.')
