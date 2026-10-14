@@ -1,0 +1,35 @@
+{
+  "samples": [
+    {
+      "run_id": "9f3787c4-f022-4df6-b71e-6c06f5d9ab26",
+      "query_seconds": 0.177,
+      "couriers": 12,
+      "max_age_ms_at_query": 1761,
+      "snapshot_at": "2026-10-07 14:53:24.284",
+      "pending": 0,
+      "publisher_phase": "idle",
+      "last_publish_seconds": 0.093
+    },
+    {
+      "run_id": "9f3787c4-f022-4df6-b71e-6c06f5d9ab26",
+      "query_seconds": 0.204,
+      "couriers": 12,
+      "max_age_ms_at_query": 1910,
+      "snapshot_at": "2026-10-07 14:53:26.491",
+      "pending": 12,
+      "publisher_phase": "idle",
+      "last_publish_seconds": 0.361
+    },
+    {
+      "run_id": "9f3787c4-f022-4df6-b71e-6c06f5d9ab26",
+      "query_seconds": 0.855,
+      "couriers": 12,
+      "max_age_ms_at_query": 2279,
+      "snapshot_at": "2026-10-07 14:53:29.380",
+      "pending": 0,
+      "publisher_phase": "idle",
+      "last_publish_seconds": 0.752
+    }
+  ],
+  "scope": "Tres muestras locales después de ajustes y sin carga histórica concurrente. No SLA ni benchmark sostenido."
+}

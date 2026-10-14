@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "node scripts/build_shared.mjs",
+  "outputDirectory": "shared-public",
+  "functions": {"api/proxy.js": {"maxDuration": 30}},
+  "rewrites": [{"source": "/api/:endpoint", "destination": "/api/proxy?endpoint=:endpoint"}]
+}

@@ -1,0 +1,55 @@
+{
+  "source": "docs/NOTAS-PRESENTADOR.md",
+  "sourceSha256": "6f25a7aefd21aa6243b0a11bb7c1e855756e7a109502c134972379246a190a56",
+  "pdfSha256": "8763977ff3b82ffccb9b4b8f89a72efeb8c429b9a5a0d7ef9c9bea649f0303ac",
+  "slides": [
+    {
+      "title": "Delivery Atlas",
+      "time": "0:00–0:30 (30 seconds).",
+      "cue": "Introduce the project and distinguish the working data lab from the proposed app.",
+      "say": "Our project is Delivery Atlas, an analytics infrastructure for a fictional food delivery app inspired by Uber Eats and Glovo. We want to collect navigation events and show them in a dashboard. We already have a working ClickHouse lab with large public datasets. The delivery app itself is our next development step.",
+      "transition": "First, let me show you how the current system works.",
+      "qa": "**Are these Uber Eats data?**\n\nNo. The app is fictional. OTTO and REES46 provide historical e-commerce events. Ele.me provides food recommendation samples, and Glovo provides a catalogue."
+    },
+    {
+      "title": "Current architecture and tables",
+      "time": "0:30–1:15 (45 seconds).",
+      "cue": "Point to the table from input to daily rollup. Explain the role of each layer.",
+      "say": "The system has a web frontend, a Python API and one ClickHouse node running in Docker. Python scripts validate source files and load data in batches. The database stores detailed data in separate tables: OTTO contains events, while Ele.me contains labelled recommendation samples. We also keep daily counts in a rollup table for faster queries. The API queries ClickHouse and returns JSON to the dashboard. Our replay loads old events now, so we preserve both the original event time and the ingestion time.",
+      "transition": "This working lab is the basis for our proposed app event model.",
+      "qa": "**Why keep the datasets separate?**\n\nThey represent different populations and record types. They do not share valid user or product keys, so combining them into one journey would misrepresent the data."
+    },
+    {
+      "title": "Proposed platform event model",
+      "time": "1:15–2:30 (75 seconds).",
+      "cue": "Explain the field groups, then point to PARTITION BY and ORDER BY. Say clearly that this model is proposed.",
+      "say": "In the proposed model, each row represents one app event, such as opening a restaurant or adding a product to the cart. We store an event ID, a session ID, timestamps, the action and its context. The provenance fields distinguish simulated traffic, new demo actions and historical sources. ClickHouse stores data by columns, which suits analytical queries that read selected fields across many rows. MergeTree is the storage engine. PARTITION BY groups data by month within the node. ORDER BY sorts the data and supports a sparse primary index. We chose this order for filters by source, date, city and event type, but it still needs benchmarking. Neither the sorting key nor a UUID prevents duplicate submissions. The schema exists as SQL, but it is not deployed yet.",
+      "transition": "Our current lab already shows why a daily rollup can be useful.",
+      "qa": "**Is PARTITION BY the same as sharding?**\n\nNo. These partitions group data within the current node. Sharding distributes data across nodes. ORDER BY controls physical sorting and does not enforce uniqueness."
+    },
+    {
+      "title": "Historical data vs daily rollup",
+      "time": "2:30–3:20 (50 seconds).",
+      "cue": "Point to the two bars. Read the rounded times, then explain the method and the scope of the result.",
+      "say": "We compared two ways of answering the same question: how many OTTO events occurred each day, by event type? The historical table contains about 217 million events. Its query took about 5.89 seconds. The daily rollup returned the same answer in about 0.21 seconds, a 27.9 times speedup. It contains 87 combinations of day and event type. We used the median of three local runs with the SQL query cache disabled. This demonstrates the benefit of pre-aggregation for this query on our machine.",
+      "transition": "Performance is one part of the project. We also need to explain its guarantees.",
+      "qa": "**Does this prove ClickHouse is faster than PostgreSQL?**\n\nNo. Both queries ran in ClickHouse. The experiment compares historical data and a rollup for one query. It does not compare engines or measure p99 latency."
+    },
+    {
+      "title": "Current guarantees and limitations",
+      "time": "3:20–4:15 (55 seconds).",
+      "cue": "Use the table to explain the limitations as specific next tasks. Emphasize duplicates and recovery.",
+      "say": "The course theory helps us explain the limits of this version. We have one node and persistent storage, but no replicas or high availability. Local date partitions do not demonstrate horizontal scaling. Another issue is event delivery: retrying the current POST request can create duplicate rows. We need to test retries with a stable event ID and make sure the rollup does not count them twice. We also need to measure ingestion rate, dashboard delay and latency percentiles under load. These are the next steps for validating the infrastructure.",
+      "transition": "These limitations define our next milestone.",
+      "qa": "**What does idempotent ingestion mean?**\n\nSubmitting the same logical event again should not change the result beyond the first submission. We must verify both the detailed event count and the rollup count after retries."
+    },
+    {
+      "title": "Next milestone",
+      "time": "4:15–5:00 (45 seconds).",
+      "cue": "Finish with the acceptance criteria. Do not open the dashboard during the five-minute talk unless asked.",
+      "say": "Our next milestone is to connect a small delivery app and a reproducible traffic generator to the proposed event model. We will check the complete flow: a user action produces an event, ClickHouse stores it, and the dashboard displays the aggregate. A repeated submission must not increase the count twice. We will measure the workload and reproduce the setup on another machine. The current lab already provides enough data volume to support this work.",
+      "transition": "Thank you. We can show the current dashboard or discuss the database design.",
+      "qa": "**Why not add Kafka immediately?**\n\nWe first need to define and measure the ingestion requirements. A durable stream could help with replay and independent consumers, but it adds operational work and does not by itself eliminate duplicates."
+    }
+  ]
+}

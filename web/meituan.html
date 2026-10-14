@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a25">
+  <meta name="description" content="Dashboard académico de pedidos y clics reales de una plataforma de reparto de comida, conectado a ClickHouse.">
+  <title>Radar Delivery · Analítica en ClickHouse</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">R<span>•</span></span><span>RADAR <strong>DELIVERY</strong><small>Laboratorio BD2 / ClickHouse</small></span></div>
+      <div class="top-actions"><a class="dataset-link" href="/">Clickstream Lab ↗</a><a class="dataset-link" href="/glovo.html">Explorar Glovo España ↗</a><span class="data-pill"><span class="live-dot"></span> DATOS REALES · MEITUAN 2021</span></div>
+    </header>
+
+    <main>
+      <section class="intro">
+        <div>
+          <p class="eyebrow">EXPLORADOR DE DATOS · PEKÍN</p>
+          <h1>Una ciudad.<br><em>Millones de decisiones.</em></h1>
+          <p class="lead">Explora los pedidos, los platos y los restaurantes visitados antes de comprar en una plataforma de comida a domicilio.</p>
+        </div>
+        <div class="intro-side"><span>01—21<br>MAR 2021</span><p>Datos publicados por el proyecto TRD de Meituan. La muestra de entrenamiento cubre tres semanas y procede de 11 áreas comerciales.</p></div>
+      </section>
+
+      <form class="filters" id="filters">
+        <div class="filter-heading"><span class="filter-icon">↗</span><div><strong>Periodo de análisis</strong><small>Las métricas se recalculan en ClickHouse</small></div></div>
+        <label>Desde<input type="date" id="from" min="2021-03-01" max="2021-03-21" value="2021-03-01" required></label>
+        <label>Hasta<input type="date" id="to" min="2021-03-01" max="2021-03-21" value="2021-03-21" required></label>
+        <button type="submit">Actualizar <span aria-hidden="true">→</span></button>
+      </form>
+
+      <div class="status" id="status" role="status">Conectando con ClickHouse…</div>
+
+      <section class="kpi-grid" aria-label="Resumen">
+        <article class="kpi"><span class="kpi-icon">◫</span><span class="kpi-label">PEDIDOS</span><strong id="k-orders">—</strong><small>Órdenes registradas</small></article>
+        <article class="kpi"><span class="kpi-icon">↖</span><span class="kpi-label">CLICS</span><strong id="k-clicks">—</strong><small>Restaurantes abiertos antes de pedir</small></article>
+        <article class="kpi"><span class="kpi-icon">◉</span><span class="kpi-label">USUARIOS</span><strong id="k-users">—</strong><small>Identificadores anonimizados</small></article>
+        <article class="kpi accent"><span class="kpi-icon">⌁</span><span class="kpi-label">CLICS / PEDIDO</span><strong id="k-ratio">—</strong><small>Media en toda la muestra</small></article>
+      </section>
+
+      <section class="grid-main">
+        <article class="panel trend-panel">
+          <div class="panel-head"><div><span class="panel-kicker">01 / EVOLUCIÓN</span><h2>El pulso diario</h2></div><div class="legend"><span><i class="legend-orders"></i> Pedidos</span><span><i class="legend-clicks"></i> Clics</span></div></div>
+          <p class="panel-sub">Actividad por fecha del pedido. Cada serie usa su propia escala para comparar tendencias.</p>
+          <div id="daily-chart" class="daily-chart" aria-label="Gráfico de actividad diaria"></div>
+        </article>
+        <article class="panel hour-panel">
+          <div class="panel-head"><div><span class="panel-kicker">02 / HORARIO</span><h2>¿A qué hora se pide?</h2></div></div>
+          <p class="panel-sub">Hora local de Pekín, extraída de la marca temporal de cada pedido.</p>
+          <div id="hour-chart" class="hour-chart" aria-label="Pedidos por hora"></div>
+        </article>
+      </section>
+
+      <section class="grid-secondary">
+        <article class="panel">
+          <div class="panel-head"><div><span class="panel-kicker">03 / NAVEGACIÓN</span><h2>Antes de comprar</h2></div></div>
+          <p class="panel-sub">Número de clics en restaurantes registrados antes de cada pedido.</p>
+          <div id="depth-chart" class="bars" aria-label="Distribución de clics previos al pedido"></div>
+          <div class="insight"><span>↗</span><p>En el <strong id="match-value">—</strong> de los pedidos con clics registrados, el último restaurante visitado coincidió con el restaurante pedido.</p></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><span class="panel-kicker">04 / GASTO</span><h2>Bandas de precio</h2></div></div>
+          <p class="panel-sub">Rangos del importe del pedido tal como aparecen en el dataset.</p>
+          <div id="price-chart" class="bars" aria-label="Pedidos por banda de precio"></div>
+        </article>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="panel-head"><div><span class="panel-kicker">05 / RESTAURANTES</span><h2>Los más pedidos</h2></div><span class="table-caption">TOP 10 DEL PERIODO</span></div>
+        <div class="table-wrap"><table><thead><tr><th>Restaurante</th><th>Categoría</th><th>Valoración</th><th>Pedidos</th><th>Clics recibidos</th></tr></thead><tbody id="top-table"></tbody></table></div>
+      </section>
+
+      <aside class="method-note"><span>NOTA DE LECTURA</span><p>El conjunto publica los clics asociados a pedidos. El valor «0 clics» indica que no hay clics registrados antes de ese pedido. Estos datos no incluyen las visitas de usuarios que nunca compraron, por lo que este panel no estima el abandono global de la aplicación. Los nombres y categorías aparecen anonimizados.</p></aside>
+    </main>
+    <footer><span>RADAR DELIVERY <span class="footer-dot">•</span> PROYECTO BD2</span><a href="https://zenodo.org/records/8025855" target="_blank" rel="noopener noreferrer">Fuente: TRD / Zenodo ↗</a></footer>
+  </div>
+</body>
+</html>

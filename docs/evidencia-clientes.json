@@ -1,0 +1,44 @@
+{
+  "checked_at": "2026-10-14T14:36:31.366232+00:00",
+  "run_id": "39ff16d5-40f4-47ca-bbed-02f19a8013de",
+  "agent_mode": "ollama",
+  "model": "qwen3:0.6b",
+  "model_calls": 15,
+  "published_model_decisions": 15,
+  "order_id": "dd4788c1-1a4e-53fc-b833-a30e38548dcf",
+  "checkout_event_id": "329d77f8-2c2c-5841-9d11-3cda1760a9b0",
+  "session_id": "585453af-763d-5431-9827-72879041f395",
+  "amount_minor": 878,
+  "basket_total_matches": true,
+  "checkout_link_verified_in_clickhouse": true,
+  "delivered": true,
+  "observed_states": [
+    "created",
+    "delivered",
+    "en_route",
+    "picked_up",
+    "preparing"
+  ],
+  "stored_states": [
+    "created",
+    "delivered",
+    "en_route",
+    "picked_up",
+    "preparing"
+  ],
+  "gps": {
+    "positions": 49,
+    "couriers": 1,
+    "first": "2026-10-14 14:34:51.967",
+    "last": "2026-10-14 14:36:27.971"
+  },
+  "scope": "Real local LLM or labelled policy; no payment, no observed customers, no latency SLA.",
+  "ollama_version": "0.40.4",
+  "ollama_image_digest": "sha256:926d40fd6eeeebd346b5c358a63de2a10ec995371cd93dd22f1843200694b1a6",
+  "model_digest_prefix": "7df6b6e09427",
+  "unit_tests_passed": 18,
+  "tested_code_commit": "36ea395",
+  "model_price_input": "EUR decimal strings; database and basket use integer cents",
+  "public_dashboard": "https://delivery-atlas-demo.vercel.app",
+  "public_writes_rejected_http": 405
+}

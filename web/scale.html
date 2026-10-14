@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scale Room · ClickHouse BD2</title><link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/scale.css"><script src="/scale.js" defer></script>
+</head>
+<body>
+<div class="shell">
+<header><a class="logo" href="/">C<span>•</span> <b>SCALE ROOM</b><small>BD2 / CLICKHOUSE</small></a><nav><a href="/eleme.html">Ele.me ↗</a><a href="/">Clics OTTO ↗</a><a href="/rees46.html">Marketplace ↗</a><a href="/otto-presentacion.html">Presentación ↗</a></nav><span class="live"><i></i>DATOS EN CLICKHOUSE</span></header>
+<main>
+<section class="hero"><div class="eyebrow">LABORATORIO DE ESCALA · FUENTES DISTINGUIDAS</div><h1>Los datos grandes<br><em>se demuestran.</em></h1><p>Dos datasets reales, una prueba de mil millones de filas derivadas y una comparación medida entre leer el archivo completo y consultar un agregado.</p><div id="status" role="status">Leyendo ClickHouse…</div></section>
+<section class="headline" aria-label="Volumen cargado"><div class="number-card true"><span>EVENTOS REALES EN DOS FUENTES</span><strong id="real-total">—</strong><p>OTTO + REES46; no son la misma población ni el mismo tipo de evento.</p></div><div class="number-card stress"><span>FILAS DE PRUEBA DERIVADAS</span><strong id="derived-total">—</strong><p>Cinco escenarios generados a partir de OTTO, etiquetados por <code>scenario</code>.</p></div></section>
+<section class="section"><div class="section-heading"><span>01 / PROCEDENCIA</span><h2>Qué hay realmente en disco</h2><p>Las cifras proceden de partes activas de ClickHouse. El tamaño comprimido por fila depende de las columnas y sus valores; la carga en curso puede hacer variar las cifras.</p></div><div class="table-wrap"><table><thead><tr><th>TABLA</th><th>ORIGEN</th><th>FILAS</th><th>DISCO</th><th>BYTES/FILA</th></tr></thead><tbody id="source-rows"></tbody></table></div></section>
+<section class="section"><div class="section-heading"><span>02 / AGREGACIÓN</span><h2>Archivo bruto frente a vista materializada</h2><p>La pregunta es idéntica: recuentos diarios de OTTO por tipo de evento. El benchmark comprueba igualdad de resultados antes de comparar tiempos.</p></div><div id="benchmark" class="benchmark"><div class="placeholder">Ejecuta <code>python3 scripts/benchmark.py</code> después de las cargas para ver las medidas.</div></div></section>
+<section class="section split"><div><span class="eyebrow">03 / POR QUÉ FUNCIONA</span><h2>Preguntar sin recorrerlo todo</h2><p>La tabla de eventos conserva el detalle. La vista materializada acumula los 87 pares fecha/tipo para una pregunta habitual del panel. ClickHouse puede seguir consultando el detalle cuando el usuario necesita otra dimensión.</p></div><pre>INSERT → MergeTree
+             ├── historial completo
+             └── MATERIALIZED VIEW
+                  → SummingMergeTree
+                  → GROUP BY día, tipo</pre></section>
+<aside class="caution"><strong>Lectura honesta.</strong> «Tiempo real» es la ingesta y actualización del dashboard, no el momento histórico de OTTO o REES46. Las filas de estrés son derivadas y jamás se suman como eventos reales adicionales. Este equipo tiene un nodo local; no demuestra tolerancia a fallos.</aside>
+</main>
+<footer><span>Fuentes: <a href="https://github.com/otto-de/recsys-dataset">OTTO</a> · <a href="https://data.rees46.com/">REES46</a></span><a href="/otto-presentacion.html">Ver presentación ↗</a></footer>
+</div>
+</body></html>

@@ -1,0 +1,110 @@
+{
+  "slides": [
+    {
+      "number": 1,
+      "title": "Delivery Atlas",
+      "time": "0:00 - 0:30",
+      "cue": "Presentad la idea y señalad qué funciona hoy y qué construiréis después.",
+      "en": [
+        "Our project is **Delivery Atlas**, a fictional food delivery app inspired by Uber Eats and Glovo. We want to **record user actions and show them in a dashboard**.",
+        "We already have a **working ClickHouse lab with large public datasets**. The delivery app is our next step."
+      ],
+      "es": [
+        "Nuestro proyecto es **Delivery Atlas**, una aplicación ficticia de reparto inspirada en Uber Eats y Glovo. Queremos **registrar las acciones de los usuarios y mostrarlas en un dashboard**.",
+        "Ya tenemos un **entorno de ClickHouse funcionando con grandes datasets públicos**. El siguiente paso es construir la aplicación de reparto."
+      ],
+      "transition_en": "First, what is ClickHouse?",
+      "transition_es": "Primero, ¿qué es ClickHouse?"
+    },
+    {
+      "number": 2,
+      "title": "What is ClickHouse?",
+      "time": "0:30 - 1:10",
+      "cue": "Explicad las tres ideas de la izquierda. La tabla es solo un ejemplo sencillo.",
+      "en": [
+        "**ClickHouse is a database designed to analyse large amounts of data**. It stores information by columns, so a query can read the fields it needs.",
+        "We use **SQL to count events and filter results**, for example by date or city. This makes it a good fit for a dashboard with millions of records.",
+        "We run our current database in Docker on one node."
+      ],
+      "es": [
+        "**ClickHouse es una base de datos diseñada para analizar grandes cantidades de datos**. Guarda la información por columnas, de modo que una consulta puede leer los campos que necesita.",
+        "Usamos **SQL para contar eventos y filtrar resultados**, por ejemplo por fecha o ciudad. Por eso encaja con un dashboard que trabaja con millones de registros.",
+        "Nuestra base de datos actual funciona en Docker, en un solo nodo."
+      ],
+      "transition_en": "These are the datasets we use to test it.",
+      "transition_es": "Estos son los datasets que usamos para probarla."
+    },
+    {
+      "number": 3,
+      "title": "Our data sources",
+      "time": "1:10 - 2:00",
+      "cue": "Señalad los datos públicos y después la actividad ficticia que proponéis generar.",
+      "en": [
+        "Our main datasets are **OTTO and REES46**, with about **628 million historical e-commerce events** in total. They come from different populations, so we keep them separate.",
+        "**Ele.me adds food recommendation samples**. Glovo adds a product catalogue, including products from Spain. These records have different meanings.",
+        "For our own app, we propose **simulated food delivery actions**, such as opening a restaurant or adding a product to the cart. We will clearly label simulated data."
+      ],
+      "es": [
+        "Los principales datasets son **OTTO y REES46**, con unos **628 millones de eventos históricos de comercio electrónico** en total. Proceden de poblaciones diferentes, por eso los mantenemos separados.",
+        "**Ele.me aporta muestras de recomendaciones de comida**. Glovo aporta un catálogo de productos, incluidos productos de España. Estos registros tienen significados distintos.",
+        "Para nuestra propia aplicación, proponemos **acciones simuladas de reparto**, como abrir un restaurante o añadir un producto al carrito. Identificaremos claramente los datos simulados."
+      ],
+      "transition_en": "Next, this is how we propose to collect and organise app events.",
+      "transition_es": "Ahora veremos cómo proponemos recoger y organizar los eventos de la aplicación."
+    },
+    {
+      "number": 4,
+      "title": "Proposed data flow and schema",
+      "time": "2:00 - 3:10",
+      "cue": "Recorred las flechas y explicad la tabla: una acción, una fila. Aclarad que es una propuesta.",
+      "en": [
+        "The proposed flow is simple: **the app produces an event, Python checks it, and ClickHouse stores it**. The dashboard will query the results through Python.",
+        "**One row represents one action**. We record an event ID, the session, the time, the action, the city and the origin of the data. For example, a simulated user opens a restaurant in Madrid.",
+        "We plan to **group data by month and create daily summaries**. The SQL design exists, but this app integration is still a proposal."
+      ],
+      "es": [
+        "El recorrido propuesto es sencillo: **la aplicación genera un evento, Python lo comprueba y ClickHouse lo guarda**. El dashboard consultará los resultados a través de Python.",
+        "**Cada fila representa una acción**. Guardamos un identificador del evento, la sesión, la hora, la acción, la ciudad y el origen de los datos. Por ejemplo, un usuario simulado abre un restaurante en Madrid.",
+        "Queremos **agrupar los datos por mes y crear resúmenes diarios**. El diseño SQL existe, pero esta integración con la aplicación sigue siendo una propuesta."
+      ],
+      "transition_en": "We have already tested why daily summaries can help.",
+      "transition_es": "Ya hemos probado por qué los resúmenes diarios pueden ayudar."
+    },
+    {
+      "number": 5,
+      "title": "A faster dashboard",
+      "time": "3:10 - 4:00",
+      "cue": "Señalad las barras: 5,89 segundos frente a 0,21. El resultado es el mismo.",
+      "en": [
+        "We tested **counting OTTO events by day and type**. Reading about **217 million events** took **5.89 seconds**.",
+        "Reading a daily summary took **0.21 seconds**, with **the same answer**. That was **about 28 times faster in this test on our computer**.",
+        "Both queries used ClickHouse. This shows how daily summaries can help the dashboard respond faster."
+      ],
+      "es": [
+        "Probamos a **contar los eventos de OTTO por día y tipo**. Leer unos **217 millones de eventos** tardó **5,89 segundos**.",
+        "Consultar un resumen diario tardó **0,21 segundos**, con **el mismo resultado**. Fue **casi 28 veces más rápido en esta prueba, en nuestro ordenador**.",
+        "Las dos consultas usaron ClickHouse. Esto muestra cómo los resúmenes diarios pueden ayudar a que el dashboard responda más rápido."
+      ],
+      "transition_en": "Finally, this is what works today and what comes next.",
+      "transition_es": "Para terminar, esto es lo que funciona hoy y lo que haremos después."
+    },
+    {
+      "number": 6,
+      "title": "Current progress and next steps",
+      "time": "4:00 - 5:00",
+      "cue": "Primero lo que ya funciona. Después lo que vais a construir y comprobar.",
+      "en": [
+        "Today, **ClickHouse, the public datasets and the dashboard already work**. We also have a measured query comparison.",
+        "Next, we will **connect the delivery mini app and generate simulated activity**. We will check that the dashboard shows new actions correctly.",
+        "We also need to **avoid counting repeated requests twice**, test many actions arriving at once, and check that another person can run the project. Our current setup uses one node, so failure recovery still needs testing."
+      ],
+      "es": [
+        "Actualmente, **ClickHouse, los datasets públicos y el dashboard ya funcionan**. También tenemos una comparación de consultas medida.",
+        "Después vamos a **conectar la pequeña aplicación de reparto y generar actividad simulada**. Comprobaremos que el dashboard muestre correctamente las nuevas acciones.",
+        "También necesitamos **evitar contar dos veces las peticiones repetidas**, probar muchas acciones llegando a la vez y comprobar que otra persona pueda ejecutar el proyecto. El entorno actual usa un solo nodo, por lo que aún debemos probar la recuperación ante fallos."
+      ],
+      "transition_en": "Thank you. We can show the dashboard or answer your questions.",
+      "transition_es": "Gracias. Podemos enseñar el dashboard o responder a vuestras preguntas."
+    }
+  ]
+}

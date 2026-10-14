@@ -1,0 +1,153 @@
+{
+  "measured_at_utc": "2026-10-05T00:52:47.879310+00:00",
+  "metrics": {
+    "samples": 2170299,
+    "positive_clicks": 38914,
+    "users_approx": 1344158,
+    "shops_approx": 421934,
+    "min_unix": 1648742400,
+    "max_unix": 1648828798,
+    "invalid_unix": 0
+  },
+  "conditions": "One local node; one query thread; SQL query cache off; filesystem caches not cleared; three sequential runs. Ele.me merges paused during measurement.",
+  "queries": {
+    "typed_clicks": {
+      "sql": "SELECT sum(clicked) AS clicks FROM delivery.eleme_samples SETTINGS use_query_cache=0, max_threads=1, max_block_size=256, preferred_block_size_bytes=1048576, preferred_max_column_in_block_size_bytes=1048576, max_read_buffer_size=262144, max_read_buffer_size_local_fs=262144, max_memory_usage=1000000000",
+      "runs": [
+        {
+          "elapsed": 0.075285542,
+          "rows_read": 2170299,
+          "bytes_read": 426681
+        },
+        {
+          "elapsed": 0.055031042,
+          "rows_read": 2170299,
+          "bytes_read": 426681
+        },
+        {
+          "elapsed": 0.058103708,
+          "rows_read": 2170299,
+          "bytes_read": 426681
+        }
+      ],
+      "status": "success",
+      "median_seconds": 0.058103708
+    }
+  },
+  "raw_requested_this_run": false,
+  "columns": [
+    {
+      "name": "raw_features",
+      "type": "String",
+      "data_compressed_bytes": 8444498353,
+      "data_uncompressed_bytes": 17750084362
+    },
+    {
+      "name": "user_id",
+      "type": "String",
+      "data_compressed_bytes": 136790884,
+      "data_uncompressed_bytes": 141034270
+    },
+    {
+      "name": "item_id",
+      "type": "String",
+      "data_compressed_bytes": 124158381,
+      "data_uncompressed_bytes": 141034270
+    },
+    {
+      "name": "shop_id",
+      "type": "String",
+      "data_compressed_bytes": 115479674,
+      "data_uncompressed_bytes": 141034270
+    },
+    {
+      "name": "request_time_raw",
+      "type": "String",
+      "data_compressed_bytes": 11425773,
+      "data_uncompressed_bytes": 23867338
+    },
+    {
+      "name": "source_row",
+      "type": "UInt64",
+      "data_compressed_bytes": 9002719,
+      "data_uncompressed_bytes": 17358064
+    },
+    {
+      "name": "loaded_at",
+      "type": "DateTime",
+      "data_compressed_bytes": 3567134,
+      "data_uncompressed_bytes": 8679032
+    },
+    {
+      "name": "district_id",
+      "type": "LowCardinality(String)",
+      "data_compressed_bytes": 2849591,
+      "data_uncompressed_bytes": 4515030
+    },
+    {
+      "name": "category_id",
+      "type": "LowCardinality(String)",
+      "data_compressed_bytes": 833109,
+      "data_uncompressed_bytes": 2255758
+    },
+    {
+      "name": "source_id",
+      "type": "FixedString(64)",
+      "data_compressed_bytes": 721784,
+      "data_uncompressed_bytes": 138864512
+    },
+    {
+      "name": "request_hour",
+      "type": "UInt8",
+      "data_compressed_bytes": 495072,
+      "data_uncompressed_bytes": 2169758
+    },
+    {
+      "name": "meal_period",
+      "type": "LowCardinality(String)",
+      "data_compressed_bytes": 271280,
+      "data_uncompressed_bytes": 2255704
+    },
+    {
+      "name": "source_file",
+      "type": "String",
+      "data_compressed_bytes": 218648,
+      "data_uncompressed_bytes": 47734676
+    },
+    {
+      "name": "city_id",
+      "type": "LowCardinality(String)",
+      "data_compressed_bytes": 176472,
+      "data_uncompressed_bytes": 3028716
+    },
+    {
+      "name": "clicked",
+      "type": "UInt8",
+      "data_compressed_bytes": 65895,
+      "data_uncompressed_bytes": 128069
+    },
+    {
+      "name": "weekday",
+      "type": "LowCardinality(String)",
+      "data_compressed_bytes": 46664,
+      "data_uncompressed_bytes": 2254557
+    },
+    {
+      "name": "sample_day",
+      "type": "UInt8",
+      "data_compressed_bytes": 9925,
+      "data_uncompressed_bytes": 2169758
+    }
+  ],
+  "same_result_verified": false,
+  "previous_raw_failure": [
+    {
+      "event_time": "2026-10-05 00:48:10",
+      "query_id": "76618387-9470-404c-ab3a-6fe98786c52e",
+      "exception": "Code: 241. DB::Exception: (total) memory limit exceeded: would use 3.51 GiB (attempt to allocate chunk of 0.00 B bytes), current RSS: 2.47 GiB, maximum: 3.50 GiB. OvercommitTracker decision: Query was selected to stop by OvercommitTracker: While executing AggregatingTransform. (MEMORY_LIMIT_EXCEEDED) (version 25.8.33.6 (official build))",
+      "memory_usage": 5468393,
+      "read_rows": 1561645,
+      "read_bytes": 12785529641
+    }
+  ]
+}

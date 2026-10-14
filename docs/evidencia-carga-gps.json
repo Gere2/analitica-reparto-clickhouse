@@ -1,0 +1,20 @@
+{
+  "run_id": "ae2ae3f5-9de6-5a62-87e8-e2ee21192a89",
+  "start": "2026-10-06T10:00:00.000+00:00",
+  "seed": 42,
+  "fleet": 12,
+  "counts": {
+    "courier_positions": 100000,
+    "order_events": 5965
+  },
+  "accepted": 105965,
+  "duplicates": 0,
+  "submission_seconds": 435.887,
+  "source_kind": "synthetic",
+  "meaning": "Simulación histórica enviada por API; verificar publicación por run_id. No posiciones observadas.",
+  "verified_logical_rows": {
+    "courier_positions": 100000,
+    "order_events": 5965
+  },
+  "verified_in_clickhouse": true
+}

@@ -1,0 +1,19 @@
+{
+  "checked_at": "2026-10-07T14:51:28.932+00:00",
+  "run_id": "a42a5980-a28f-4b0e-9bf8-2bd21c7a0048",
+  "http_retry": {
+    "received": 3,
+    "accepted": 0,
+    "duplicates": 3,
+    "state": "already_accepted"
+  },
+  "out_of_order_keeps_latest": true,
+  "invalid_coordinates_status": 400,
+  "mixed_batch_recovers": true,
+  "mixed_run": "4015e227-cccc-48d2-afa3-b8615642c524",
+  "logical_positions_after_replay": 2,
+  "physical_positions_after_replay": 4,
+  "latest_couriers_after_replay": 2,
+  "logical_orders_after_replay": 2,
+  "scope": "Prueba local con fallo inyectado entre INSERTs. No transacción entre tablas ni GPS observado."
+}
