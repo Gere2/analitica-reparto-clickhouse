@@ -19,15 +19,15 @@ Teammate's browser -> web and GET function on Vercel
                    -> local Atlas API -> local ClickHouse
 ```
 
-Event generation, SQLite and ClickHouse remain in Docker on Jere's computer. The shared website displays its queries; it does not reproduce separately invented positions. If the computer goes to sleep, Docker stops or the tunnel closes, the website stays published but the data stops updating and a warning is shown.
+Event generation, SQLite and ClickHouse remain in Docker on the demo server (Anuar's computer since 21 October; Jere's before). The shared website displays its queries; it does not reproduce separately invented positions. If the computer goes to sleep, Docker stops or the tunnel closes, the website stays published but the data stops updating and a warning is shown.
 
 The website is visible to anyone who has its link. Vercel and Cloudflare carry **fictional** positions and orders, counts and public catalog data. The massive files and the professor's resources are not published. The gateway token only exists in an ignored local file and in a sensitive environment variable of the function; it is never included in the browser JavaScript.
 
 ## What it can read
 
-`simulation`, `operations`, `status`, `track`, `summary` (Madrid), `inventory` and `catalog`. The gateway validates routes and parameters, rejects POST/PUT/PATCH/DELETE and requires a token. `status` and `simulation` are reduced to the fields the dashboard needs. The Vercel function also rejects writes. The shared dashboard has no simulation controls and no insert button. Access to ClickHouse's SQL stays local.
+`simulation`, `operations`, `status`, `track`, `summary` (Madrid), `inventory`, `catalog` and `datasets` (the summary of the downloaded Criteo and Glovo datasets). The gateway validates routes and parameters, rejects POST/PUT/PATCH/DELETE and requires a token. `status` and `simulation` are reduced to the fields the dashboard needs. The Vercel function also rejects writes. The shared dashboard has no simulation controls and no insert button. Access to ClickHouse's SQL stays local.
 
-There is a cache in the gateway: 1.5 s for tracking/status, 10 s for browsing and 60 s for catalog/inventory, with a maximum of 128 keys. It groups queries from several viewers; it adds delay compared with the local dashboard. The visual interval is still not a latency guarantee.
+There is a cache in the gateway: 1.5 s for tracking/status, 10 s for browsing and 60 s for catalog/inventory/datasets, with a maximum of 128 keys. It groups queries from several viewers; it adds delay compared with the local dashboard. The visual interval is still not a latency guarantee.
 
 ## Prepare and start
 

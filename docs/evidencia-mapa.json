@@ -1,0 +1,21 @@
+{
+  "deployment": "https://delivery-atlas-demo-dx3zwgtuy.vercel.app",
+  "source": "fb23de975dfbd0258979554b009394972a40fd87",
+  "checks": 8,
+  "couriers": 12,
+  "historyRows": 240,
+  "writes": 405,
+  "assets": {
+    "map": 5665,
+    "leaflet": 147552,
+    "leaflet-css": 14145
+  },
+  "public_url": "https://delivery-atlas-demo.vercel.app/#tracking",
+  "deployment_id": "dpl_7YNHVnxHo1EzEbVEpDG1W8vZEucq",
+  "date": "2026-10-21",
+  "js_tests_passed": 10,
+  "public_browser_console_errors": 0,
+  "mobile_document_width": 390,
+  "mobile_map_width": 358,
+  "code_pull_request": "https://github.com/Gere2/analitica-reparto-clickhouse/pull/8"
+}

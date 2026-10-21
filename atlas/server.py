@@ -187,6 +187,8 @@ def make_handler(store, ch, publisher, simulator):
                         'rows':ch.query("SELECT source_row,city_code,store_name,product_name,collection_section "
                             "FROM delivery.glovo_products WHERE country_code='ES' AND city_code='MAD' "
                             "ORDER BY store_name,source_row LIMIT 40")})
+                if parsed.path=='/api/datasets':
+                    return self.send_json(ch.datasets())
                 if parsed.path=='/api/demo-catalog':
                     return self.send_json({'restaurants':ch.query('SELECT * EXCEPT version FROM delivery_atlas.demo_restaurants FINAL ORDER BY restaurant_id'),
                         'products':ch.query('SELECT * EXCEPT version FROM delivery_atlas.demo_products FINAL ORDER BY product_id'),

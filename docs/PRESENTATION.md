@@ -1,44 +1,36 @@
-# Presentation: 20 minutes + 10-minute demo
+# Delivery Atlas: final presentation
 
-**Current 5-minute progress update:** [PROGRESS-UPDATE.md](PROGRESS-UPDATE.md). This document keeps the earlier script for the final talk and needs to be adapted to the new Delivery Atlas scope.
+English slides and speaker notes, prepared 21 October 2026. This replaces the earlier Clickstream Lab final script; the six-slide progress decks remain historical artifacts.
 
-**Title:** Clickstream Lab: analytics over hundreds of millions of real events and a billion-row test with ClickHouse.
+**Format:** 20 minutes including demo, then about 10 minutes of questions. The core script totals 18 min 10 sec, leaving 1 min 50 sec for transitions.
 
-**Thesis:** ClickHouse makes it possible to query and visualize large event tables; physical design, incremental aggregation and data provenance can be measured and explained.
+| Slide | Topic | Target |
+|---:|---|---:|
+| 1 | Delivery Atlas | 0:30 |
+| 2 | Why ClickHouse fits our workload | 0:55 |
+| 3 | What is ClickHouse? | 0:50 |
+| 4 | How our ClickHouse tables are structured | 1:15 |
+| 5 | The project ideas we explored | 1:10 |
+| 6 | Choosing a project: the hard parts | 1:05 |
+| 7 | Why we built Delivery Atlas | 0:45 |
+| 8 | 1 · Downloaded data: scale and context | 1:05 |
+| 9 | 2 · Simulated data: a repeatable workload | 0:45 |
+| 10 | 3 · Agents create customer decisions | 1:00 |
+| 11 | How the project connects | 1:05 |
+| 12 | One checkout, linked across the database | 1:05 |
+| 13 | What our measurements actually show | 1:15 |
+| 14 | Reliability and scaling: our limits | 0:55 |
+| 15 | Live demo · follow one order | 3:30 |
+| 16 | What we learned | 1:00 |
 
-**New framing for the next version:** present a fictional food-delivery platform and design its analytics infrastructure for massive event volumes, with simulated browsing and traffic, and adapters for future real data. The design is in [FICTIONAL-PLATFORM.md](FICTIONAL-PLATFORM.md). The current slides show the implementation from before that integration: update the walkthrough once it is implemented and measured. The existing benchmarks are still from OTTO/REES46/Ele.me, not from the fictional platform.
+[Speaker notes](FINAL-PRESENTER-NOTES-EN.md) · [Editable content source](FINAL-PRESENTATION-EN.json) · [Project selection evidence](PROJECT-DECISIONS.md) · [Assignment](ASSIGNMENT.md)
 
-Results verified on this machine: **628,425,832 real events** from two sources, **1,083,580,480 derived rows** and a comparison of **5.89 s vs 0.21 s** for the same daily question. See [RESULTS.md](RESULTS.md) for conditions and limits.
+## Rehearsal
 
-[Navigable slides](http://127.0.0.1:8000/otto-presentacion.html) (arrow keys and `F` for full screen). [Reproducible demo](DEMO.md).
+Use the local miniapp and a host terminal for controls/CRUD. The public Vercel link only exposes reads. Test `python3 scripts/crud_demo.py` against the intended ClickHouse host before class; this command uses the historical-lab connection defaults, so set `CLICKHOUSE_URL`, `CLICKHOUSE_USER` and `CLICKHOUSE_PASSWORD` for a different host. Use the scratch table, not the real source tables, for CRUD.
 
-| Time | Slides | What to explain |
-|---:|---:|---|
-| 0–2 min | 1–2 | An application produces events as people browse. A dashboard needs to group by time, type and product, not retrieve a single order. |
-| 2–4 min | 3–4 | OTTO: 216,716,096 verified events, including 194,720,954 clicks; JSONL session structure transformed into one row per event. |
-| 4–7 min | 5–6 | ClickHouse as a columnar OLAP engine that uses SQL. `MergeTree`, parts, compression, sparse index, partitions and selective column reads. Architecture ZIP/CSV → Python ETL → ClickHouse → API → dashboard. |
-| 7–9 min | 7–8 | Two clocks: historical event time and insertion time during the replay. 30-second window over `ingested_at`. |
-| 9–11 min | 9–10 | Dashboard and single-node operating model. `Distributed`, `ReplicatedMergeTree` and Keeper as an explanation of scaling, without faking a local cluster. |
-| 11–13 min | 11 | REES46: seven real months of a marketplace with views, carts and purchases, categories, brands and price. Geography not published; these are not Uber Eats/Glovo events. |
-| 13–15 min | 12 | Table of 1,083,580,480 derived rows, five labelled scenarios. Distinguish workload size from newly observed data. |
-| 15–17 min | 13–14 | Materialized view and `SummingMergeTree`: 87 day/type keys. Comparison of queries with the same answer and read/time statistics from the benchmark. |
-| 17–20 min | 15–16 | Strengths, update/delete, dataset limits, honest metrics, and transition to the demo. |
-| 20–30 min | — | Follow [DEMO.md](DEMO.md). |
+Show one linked checkout/order/courier. Explain event age and the difference between a real street map and synthetic GPS. If the tunnel or tiles fail, switch to saved screenshots and recorded query results, clearly labelled as evidence.
 
-## Talking points for questions
+## Claims to defend accurately
 
-- **"Why ClickHouse and not a traditional database?"** The dominant case is repeated `GROUP BY` over very large event tables. ClickHouse stores and reads by column and offers incremental aggregates. PostgreSQL can also store events and build aggregates; the choice depends on the workload. Individual orders and accounts fit better in a transactional engine.
-- **"Is it NoSQL?"** It is a columnar OLAP store and it uses SQL. Explain the category without hiding that nuance.
-- **"Are these events from Glovo or from Spain?"** No. OTTO events are anonymized commercial events, and REES46 is an anonymous marketplace from an unspecified country. The analogy with delivery is the browsing and analysis pattern.
-- **"Is the billion-row table real data?"** They are test rows **derived from OTTO's 216.7 million**. They are never presented as new users or clicks. The other two datasets are published observations.
-- **"Is it a live feed?"** The replay inserts historical events today at a controlled pace; the button clicks are new. There is no current public stream from OTTO, Glovo or Uber Eats here.
-- **"What does conversion mean?"** Cohorts, session, time window and attribution must be defined; a simple ratio between event counts is not a conversion of people.
-- **"Where is the scalability?"** A local billion-row table, a measured query and the partition/order design. The demo does not prove fault tolerance or a multi-node cluster.
-
-## Sources
-
-- [OTTO: description, counts and license](https://github.com/otto-de/recsys-dataset)
-- [REES46: historical marketplace datasets](https://data.rees46.com/)
-- [ClickHouse: MergeTree](https://clickhouse.com/docs/engines/table-engines/mergetree-family/mergetree)
-- [ClickHouse: materialized views](https://clickhouse.com/docs/materialized-views)
-- [ClickHouse: horizontal scaling](https://clickhouse.com/docs/architecture/horizontal-scaling)
+ClickHouse was assigned to the group. We implemented one node. Public histories are not live Spanish Uber/Glovo customer data. The OTTO 27.9× result compares two designs in ClickHouse, not two database products. The Atlas aggregate did not improve its measured query. Rule-based traffic is not AI. Queue acceptance is not yet ClickHouse visibility.

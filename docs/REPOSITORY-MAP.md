@@ -87,6 +87,7 @@ The lab pages are still in Spanish.
 | `atlas_tracking_consultas.sql` | Atlas | Queries to explain tracking in class |
 | `schema.sql` | Lab | Tables of the lab: OTTO (archive, replay, daily rollup, billion-row test), REES46, Glovo, Meituan TRD, live clicks from the lab page and the CRUD scratch table `demo_events` |
 | `eleme.sql` | Lab | Ele.me sample and staging tables |
+| `criteo.sql` | Atlas + Lab | `delivery.criteo_uplift`: the Criteo Uplift v2.1 advertising experiment, shown in the dashboard's "Downloaded datasets" view |
 | `propuesta_delivery.sql` | Docs | First design of the platform's tables (5 October). Never applied; replaced by `atlas.sql` |
 
 The four Atlas schema files are applied automatically when the API starts.
@@ -119,6 +120,7 @@ Run them from the repository root with `python3` (or `python` on Windows).
 | `scale.py` | Build the labelled billion-row stress table from OTTO |
 | `eleme.py` | Inspect, validate and load Ele.me ZIP files through a staging table |
 | `glovo.py` | Download and load the Glovo FooDI-ML catalog |
+| `criteo.py` | Download, verify and load the Criteo Uplift v2.1 dataset (14.0 M rows) into the Atlas ClickHouse |
 | `download.py`, `prepare.py`, `load.py` | Download, transform and load the Meituan TRD dataset |
 
 **Lab: measuring and reporting**
@@ -148,9 +150,9 @@ Run them from the repository root with `python3` (or `python` on Windows).
 | `cargar_criteo.sh` | Loads the Criteo Uplift CSV into the first app's database |
 | `consultas_demo.sql` | Demo queries of the first app |
 
-## `tests/` — automated tests (38 in Python, 7 in JavaScript)
+## `tests/` — automated tests (42 in Python, 7 in JavaScript)
 
-Run with `python3 -m unittest discover -s tests -v` and `node --test tests/test_delivery_ui.cjs`. They need no downloads. One Python test needs a disposable ClickHouse and is skipped unless `ATLAS_TEST_CLICKHOUSE_URL` is set (see `docs/MINIAPP.md`).
+Run with `python3 -m unittest discover -s tests -v` and `node --test tests/test_delivery_ui.cjs`. They need no downloads. Two Python tests need a disposable ClickHouse and are skipped unless `ATLAS_TEST_CLICKHOUSE_URL` is set (see `docs/MINIAPP.md`).
 
 | File | Tests | What it checks |
 |---|---:|---|
@@ -162,6 +164,7 @@ Run with `python3 -m unittest discover -s tests -v` and `node --test tests/test_
 | `test_share.py` | 2 | Allowed routes and parameters of the sharing gateway |
 | `test_operations_reader.py` | 3 | Concurrent HTTP viewers share one snapshot, expired results refresh, failed reads retry |
 | `test_shared_start.py` | 2 | Uses the newest complete Quick Tunnel origin and rejects unrelated hosts |
+| `test_data_views.py` | 4 | Downloaded-datasets summary (missing, empty and loaded tables), its gateway route, and AI agents versus simulated customers counted apart in a real ClickHouse |
 
 ## `docs/` — documentation
 
@@ -227,6 +230,7 @@ Run with `python3 -m unittest discover -s tests -v` and `node --test tests/test_
 | `chuleta-bilingue.json` | Content source of the bilingual cheat sheet PDF |
 | `capturas/` (9 images) | Screenshots of the dashboard, the mini-app, mobile views and the public website |
 | `*-preview.png` (4 images) | Previews of the lab dashboards |
+| `atlas-data-flow.svg` | Slide-ready diagram (16:9) of how the three kinds of data reach ClickHouse and the dashboard |
 
 ## Other folders
 

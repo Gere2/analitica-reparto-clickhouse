@@ -1,5 +1,5 @@
 'use strict';
-const routes = new Set(['simulation','operations','status','track','summary','inventory','catalog']);
+const routes = new Set(['simulation','operations','status','track','summary','inventory','catalog','datasets']);
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control','no-store');
   if(req.method !== 'GET') return res.status(405).json({error:'The shared demo is read-only'});
@@ -20,9 +20,9 @@ module.exports = async (req, res) => {
       target.searchParams.set(key,value);
     }
     const response = await fetch(target,{headers:{Authorization:'Bearer '+token},signal:AbortSignal.timeout(12000),redirect:'error'});
-    if(!response.ok) return res.status(503).json({error:"Jere's lab is not available. It will be retried."});
+    if(!response.ok) return res.status(503).json({error:'The demo server is not available. It will be retried.'});
     res.status(200).json(await response.json());
   } catch(error) {
-    res.status(503).json({error:"Jere's lab is not available. It will be retried."});
+    res.status(503).json({error:'The demo server is not available. It will be retried.'});
   }
 };

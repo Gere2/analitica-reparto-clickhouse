@@ -74,11 +74,21 @@ class ClickHouse:
             "toString(event_time) AS event_time FROM delivery_atlas.order_latest AS o "
             "WHERE simulation_run_id={run:UUID} ORDER BY (o.status IN ('delivered','cancelled')), "
             "(o.courier_id=toUUID('00000000-0000-0000-0000-000000000000')),o.event_time DESC LIMIT 200",params)
-        metrics=self.query("SELECT count() AS orders,countIf(status='delivered') AS delivered,"
-            "countIf(status='cancelled') AS cancelled,countIf(status NOT IN ('delivered','cancelled')) AS active,"
-            "sumIf(amount_minor,status='delivered') AS delivered_amount_minor,"
-            "countIf(status NOT IN ('delivered','cancelled') AND promised_delivery_at<now64(3)) AS late "
-            "FROM delivery_atlas.order_latest WHERE simulation_run_id={run:UUID}",params)[0]
+        # One row per customer type: orders bought by AI agents versus everything
+        # else (traffic simulator, test policy and manual mini-app purchases).
+        by_kind=self.query("SELECT if(c.decision_mode='ollama','ai','simulated') AS kind,count() AS orders,"
+            "countIf(o.status='delivered') AS delivered,countIf(o.status='cancelled') AS cancelled,"
+            "countIf(o.status NOT IN ('delivered','cancelled')) AS active,"
+            "sumIf(o.amount_minor,o.status='delivered') AS delivered_amount_minor,"
+            "countIf(o.status NOT IN ('delivered','cancelled') AND o.promised_delivery_at<now64(3)) AS late "
+            "FROM delivery_atlas.order_latest AS o LEFT JOIN (SELECT order_id,any(decision_mode) AS decision_mode "
+            "FROM delivery_atlas.customer_orders WHERE simulation_run_id={run:UUID} GROUP BY order_id) AS c "
+            "ON o.order_id=c.order_id WHERE o.simulation_run_id={run:UUID} GROUP BY kind",params)
+        keys=('orders','delivered','cancelled','active','delivered_amount_minor','late')
+        metrics_by_kind={kind:dict.fromkeys(keys,0) for kind in ('simulated','ai')}
+        for row in by_kind:
+            metrics_by_kind[row['kind']]={key:int(row[key]) for key in keys}
+        metrics={key:sum(m[key] for m in metrics_by_kind.values()) for key in keys}
         rate=self.query("SELECT toString(toStartOfInterval(event_time,INTERVAL 5 SECOND)) AS bucket,"
             "uniqExact(event_id) AS positions FROM delivery_atlas.courier_positions "
             "WHERE simulation_run_id={run:UUID} AND event_time>=now()-INTERVAL 2 MINUTE "
@@ -97,7 +107,7 @@ class ClickHouse:
         for row in orders:
             if row['order_id'] in links:
                 row.update({k:v for k,v in links[row['order_id']].items() if k not in {'event_time','amount_minor'}})
-        return {'couriers':couriers,'orders':orders,'metrics':metrics,'positions_by_5s':rate,
+        return {'couriers':couriers,'orders':orders,'metrics':metrics,'metrics_by_kind':metrics_by_kind,'positions_by_5s':rate,
                 **customer_data,
                 'source_kind':'synthetic','run_id':run_id,'truncated':len(orders)==200,
                 'snapshot_at':self.query('SELECT toString(now64(3)) AS at')[0]['at']}
@@ -124,7 +134,9 @@ class ClickHouse:
             "toString(session_id) AS session_id,toString(event_time) AS event_time,action,reason,"
             "decision_mode,model,toString(order_id) AS order_id,restaurant_id,product_id "
             "FROM delivery_atlas.customer_activity FINAL WHERE simulation_run_id={run:UUID} "
-            "ORDER BY event_time DESC,event_id DESC LIMIT 30",params)
+            # The latest 30 model decisions and the latest 30 other actions: hundreds of
+            # simulated customers must not push the few AI agents out of their own view.
+            "ORDER BY event_time DESC,event_id DESC LIMIT 30 BY decision_mode='ollama'",params)
         for row in customers+activity:
             row['product_name']=self._demo_labels['products'].get(row.get('product_id'))
             row['restaurant_name']=self._demo_labels['restaurants'].get(row.get('restaurant_id'))
@@ -132,14 +144,46 @@ class ClickHouse:
             "toString(session_id) AS session_id,toString(checkout_event_id) AS checkout_event_id,"
             "restaurant_id,items,amount_minor,decision_mode,toString(event_time) AS event_time "
             "FROM delivery_atlas.customer_orders FINAL WHERE simulation_run_id={run:UUID} ORDER BY event_time DESC LIMIT 200",params)
-        flow=self.query("SELECT uniqExact(session_id) AS sessions,"
-            "uniqExactIf(session_id,action='checkout') AS purchasing_sessions,"
-            "uniqExactIf(session_id,action='abandon') AS abandoned_sessions,"
-            "uniqExactIf(event_id,decision_mode='ollama') AS model_decisions,"
-            "uniqExactIf(event_id,action IN ('search','open_restaurant','open_product','add_to_cart','remove_from_cart','checkout','abandon')) AS clicks,"
-            "uniqExactIf(event_id,action='checkout') AS checkouts "
-            "FROM delivery_atlas.customer_activity WHERE simulation_run_id={run:UUID}",params)[0]
-        return {'customers':customers,'activity':activity,'purchases':purchases,'customer_metrics':flow}
+        # A customer is an AI agent once the model has taken one of its decisions;
+        # its system actions (session start, step limit, delivery) count with it.
+        flow=self.query("SELECT if(k.ai,'ai','simulated') AS kind,uniqExact(a.session_id) AS sessions,"
+            "uniqExactIf(a.session_id,a.action='checkout') AS purchasing_sessions,"
+            "uniqExactIf(a.session_id,a.action='abandon') AS abandoned_sessions,"
+            "uniqExactIf(a.event_id,a.decision_mode='ollama') AS model_decisions,"
+            "uniqExactIf(a.event_id,a.action IN ('search','open_restaurant','open_product','add_to_cart','remove_from_cart','checkout','abandon')) AS clicks,"
+            "uniqExactIf(a.event_id,a.action='checkout') AS checkouts "
+            "FROM delivery_atlas.customer_activity AS a LEFT JOIN (SELECT customer_id,max(decision_mode='ollama') AS ai "
+            "FROM delivery_atlas.customer_activity WHERE simulation_run_id={run:UUID} GROUP BY customer_id) AS k "
+            "ON a.customer_id=k.customer_id WHERE a.simulation_run_id={run:UUID} GROUP BY kind",params)
+        keys=('sessions','purchasing_sessions','abandoned_sessions','model_decisions','clicks','checkouts')
+        by_kind={kind:dict.fromkeys(keys,0) for kind in ('simulated','ai')}
+        for row in flow:
+            by_kind[row['kind']]={key:int(row[key]) for key in keys}
+        # Sessions and events belong to one customer, so the types add up exactly.
+        total={key:sum(m[key] for m in by_kind.values()) for key in keys}
+        return {'customers':customers,'activity':activity,'purchases':purchases,
+                'customer_metrics':total,'customer_metrics_by_kind':by_kind}
+
+    def datasets(self):
+        """Live summaries of the downloaded public datasets, timed by ClickHouse itself."""
+        loaded={r['name']:int(r['total_rows'] or 0) for r in self.query("SELECT name,total_rows FROM system.tables "
+            "WHERE database='delivery' AND name IN ('criteo_uplift','glovo_products')")}
+        def timed(sql):
+            result=self.result(sql)
+            stats=result.get('statistics',{})
+            return {'rows':result['data'],'elapsed_ms':round(float(stats.get('elapsed',0))*1000,1),
+                    'rows_read':int(stats.get('rows_read',0))}
+        criteo=glovo=None
+        if loaded.get('criteo_uplift'):
+            criteo=timed("SELECT treatment,count() AS users,avg(exposure) AS exposure_rate,"
+                "avg(visit) AS visit_rate,avg(conversion) AS conversion_rate "
+                "FROM delivery.criteo_uplift GROUP BY treatment ORDER BY treatment")
+        if loaded.get('glovo_products'):
+            glovo=timed("SELECT country_code,count() AS products,uniqExact(store_name) AS stores,"
+                "countIf(city_code='MAD') AS madrid_products "
+                "FROM delivery.glovo_products GROUP BY country_code ORDER BY products DESC")
+        return {'criteo':criteo,'glovo':glovo,'queried_at':self.query('SELECT toString(now64(3)) AS at')[0]['at'],
+                'meaning':'Real public datasets, downloaded from their publishers. No GPS or orders; never mixed with the simulation.'}
 
     def history(self,run_id,courier_id):
         return self.query("SELECT latitude,longitude,toString(order_id) AS order_id,toString(event_time) AS event_time FROM "
