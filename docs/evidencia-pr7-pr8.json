@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-21",
+  "prs": [
+    7,
+    8
+  ],
+  "pr7_reviewed_head": "ba90f94225f4ef9cf5127b15f465428c5d89b332",
+  "map_base": "8aa6d7e51b15e5329ef7614ae137c6176c7b8add",
+  "python_tests": 43,
+  "real_clickhouse_integrations": 3,
+  "javascript_tests": 19,
+  "gateway_http_checks": [
+    401,
+    405,
+    400,
+    200
+  ],
+  "qa_data": "explicitly labelled fixtures, not production counts or model executions",
+  "browser": {
+    "desktop": [
+      1280,
+      900
+    ],
+    "mobile": [
+      375,
+      844
+    ],
+    "mobile_document_width": 375,
+    "mobile_map_width": 343,
+    "map_markers_after_view_switch": 3,
+    "selected_markers": 1,
+    "console_errors": 0
+  },
+  "production_dependency": "Anuar must rebuild atlas and share-gateway for /api/datasets and per-kind metrics"
+}

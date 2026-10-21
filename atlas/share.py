@@ -10,7 +10,7 @@ from urllib.parse import parse_qs, urlencode, urlsplit
 from urllib.request import urlopen
 from uuid import UUID
 
-ROUTES = {'simulation', 'operations', 'status', 'track', 'summary', 'inventory', 'catalog'}
+ROUTES = {'simulation', 'operations', 'status', 'track', 'summary', 'inventory', 'catalog', 'datasets'}
 CACHE = OrderedDict()
 LOCK = threading.Lock()
 READ_LOCKS = {endpoint: threading.Lock() for endpoint in ROUTES}
@@ -68,7 +68,7 @@ class Handler(BaseHTTPRequestHandler):
         try:
             # Coalesce concurrent viewers into one local query per cache window.
             with READ_LOCKS[endpoint]:
-                ttl = 60 if endpoint in {'inventory', 'catalog'} else 10 if endpoint == 'summary' else 1.5
+                ttl = 60 if endpoint in {'inventory', 'catalog', 'datasets'} else 10 if endpoint == 'summary' else 1.5
                 with LOCK:
                     cached = CACHE.get(path)
                 if cached and time.monotonic() - cached[0] < ttl:
@@ -94,7 +94,7 @@ class Handler(BaseHTTPRequestHandler):
                             CACHE.popitem(last=False)
             self.send_json(200, body)
         except Exception:
-            self.send_json(503, {'error': "Jere's computer is not responding. It will be retried."})
+            self.send_json(503, {'error': 'The demo server is not responding. It will be retried.'})
 
 
 if __name__ == '__main__':

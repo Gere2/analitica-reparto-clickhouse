@@ -6,6 +6,8 @@ Date: 7 October 2026. Implementation: `compose.yaml`, `Dockerfile.atlas`, `atlas
 
 ## 1. Short explanation for the team
 
+![How the three kinds of data reach ClickHouse and the dashboard](atlas-data-flow.svg)
+
 Anuar builds a small fictional app. Each action creates an event with an ID. Python checks the event and records it in a persistent queue. A publisher collects batches and inserts them into ClickHouse. ClickHouse stores the details and prepares daily counts. Echenique's dashboard queries those counts through Python.
 
 ```text
@@ -113,6 +115,25 @@ This is a format sample, not an observed interaction. For a new action, create U
 | `GET /api/summary` | Logical counts from ClickHouse, not from SQLite |
 | `GET /api/recent` | Last 30 logical events, including ID, session and both times |
 | `GET /health` | Checks the connection to ClickHouse; shows the publisher's recent error |
+| `GET /api/datasets` | Live summary of the downloaded public datasets (Criteo, Glovo) with ClickHouse's own elapsed time and rows read; `null` for a dataset that is not loaded |
+
+**The three data views of the dashboard.** A selector at the top of http://127.0.0.1:8001/ switches between three kinds of data without mixing them. The choice is kept in the address (`?view=simulated`, `?view=ai`, `?view=real`), so a link opens the same view, including on the shared site.
+
+| View | Data | Where it comes from |
+|---|---|---|
+| Simulated customers | Fictional customers of the traffic simulator or the test policy, plus orders placed by hand in the mini-app | The current run; counters from `operations.metrics_by_kind.simulated` and `customer_metrics_by_kind.simulated` |
+| AI agents | Fictional customers whose decisions come from the local model (Ollama) | The same run; the `ai` entries. Start a run with "AI + mass traffic" (three AI agents plus simulated traffic) or "Local AI · Ollama". A customer counts as an AI agent from its first model decision |
+| Downloaded datasets | Real public data: the Criteo Uplift advertising experiment (14.0 M rows) and the Glovo FooDI-ML catalog (2.9 M products) | `GET /api/datasets` and the inventory. No GPS or orders, never joined with the simulation |
+
+The courier fleet is shared by every customer type, so the map shows all couriers in both live views. The downloaded datasets are optional; without them the third view says they are not loaded. To load them on the demo server (about 880 MB of downloads, verified by size and SHA-256):
+
+```bash
+python scripts/glovo.py download
+python scripts/glovo.py prepare
+python scripts/glovo.py load
+python scripts/criteo.py download
+python scripts/criteo.py load
+```
 
 `/api/summary` accepts `from=YYYY-MM-DD`, `to`, `city_id`, `source_kind` and `event_type`. Example: `/api/summary?city_id=madrid&source_kind=synthetic`. The list of groups is limited to 10000; `events` and `groups` are the total for the filter, and `truncated` says whether groups are missing from the list.
 
