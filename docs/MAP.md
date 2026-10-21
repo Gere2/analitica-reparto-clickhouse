@@ -17,3 +17,11 @@ Street tiles require network access. They use the standard HTTPS tile URL, visib
 - The UI detector's two advisory findings were inspected: em-dashes are existing empty-value placeholders; the 3 px border is the GPS-line legend, not a card accent. Neither affects the map interaction.
 
 These checks do not establish a maximum fleet rendering capacity or guarantee the external tile service's availability.
+
+## Published result
+
+The verified version is live at [Delivery Atlas](https://delivery-atlas-demo.vercel.app/#tracking). [Deployment evidence](evidencia-mapa.json) records the source revision, route checks and measurements. The code is in [PR #8](https://github.com/Gere2/analitica-reparto-clickhouse/pull/8).
+
+![Published Madrid map](capturas/mapa-madrid-publico.jpg)
+
+[Desktop evidence](capturas/mapa-madrid-escritorio.jpg) and [mobile evidence](capturas/mapa-madrid-movil.jpg) can also support the presentation if the live connection is unavailable.
