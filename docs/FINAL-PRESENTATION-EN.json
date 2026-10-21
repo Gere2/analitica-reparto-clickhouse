@@ -1,0 +1,316 @@
+[
+  {
+    "title": "Why ClickHouse fits our workload",
+    "tag": "WHY CLICKHOUSE",
+    "seconds": 55,
+    "columns": [
+      [
+        "Many events",
+        "Clicks, carts, checkouts and GPS samples accumulate over time."
+      ],
+      [
+        "Analytical questions",
+        "Group millions of rows by day, action, source and city."
+      ],
+      [
+        "Repeated dashboard queries",
+        "Read selected columns and prepare aggregates for common questions."
+      ]
+    ],
+    "takeaway": "ClickHouse was assigned to our group. We chose a use case that shows its strengths.",
+    "notes": "ClickHouse was assigned by the professor, confirmed on 19 October. Our choice was the project and workload. We needed a workload where reading many events matters, rather than only choosing one courier from a short list. App analytics gives us large histories, continuous batch inserts and repeated aggregations. The operational simulation makes those events easy to explain. We do not claim that ClickHouse replaces every transactional database. Sources: docs/ASSIGNMENT.md; https://clickhouse.com/docs/intro"
+  },
+  {
+    "title": "What is ClickHouse?",
+    "tag": "THE TECHNOLOGY",
+    "seconds": 50,
+    "columns": [
+      [
+        "Column-oriented",
+        "Values from the same column are stored together. Queries can read the fields they need."
+      ],
+      [
+        "OLAP with SQL",
+        "Built for analytical queries: counts, trends, grouped metrics and large scans."
+      ],
+      [
+        "Our deployment",
+        "ClickHouse 25.8 in Docker, with one node and a persistent data volume."
+      ]
+    ],
+    "takeaway": "The application records a click. ClickHouse stores and analyses the event.",
+    "notes": "OLAP means online analytical processing. For example, counting purchases per day needs the event date and event type, rather than every field in each record. Column storage also helps compress similar values. ClickHouse uses SQL; describing it simply as a database that measures clicks would be inaccurate. Our project runs one server instance, not a distributed cluster. Sources: https://clickhouse.com/docs/intro; docker-compose.yml; docs/FUNDAMENTALS.md"
+  },
+  {
+    "title": "How our ClickHouse tables are structured",
+    "tag": "DATABASE STRUCTURE",
+    "seconds": 75,
+    "columns": [
+      [
+        "Partitions",
+        "Monthly partitions group the event history for management and time filtering."
+      ],
+      [
+        "Sorted parts",
+        "ORDER BY arranges rows inside data parts. A sparse index helps skip irrelevant ranges."
+      ],
+      [
+        "Background work",
+        "New inserts create parts. MergeTree engines merge parts; views prepare useful results."
+      ]
+    ],
+    "takeaway": "A partition is not a shard. ORDER BY does not enforce a unique primary key.",
+    "notes": "Start with the hierarchy: one ClickHouse server, databases, tables, partitions and sorted data parts containing columns. Our main event tables use ReplacingMergeTree(ingested_at). The sorting key is chosen around how the events are queried. ReplacingMergeTree replaces versions with the same sorting key during merges; background replacement is eventual. It is not an immediate uniqueness constraint. Our API preserves event identity and rejects conflicting retries. Aggregate tables use AggregatingMergeTree; incremental materialized views process inserted blocks. Sources: sql/atlas.sql; sql/atlas_operations.sql; https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/mergetree; https://clickhouse.com/docs/concepts/features/materialized-views/incremental-materialized-view"
+  },
+  {
+    "title": "The project ideas we explored",
+    "tag": "OUR DECISION PATH",
+    "seconds": 70,
+    "columns": [
+      [
+        "Large public datasets",
+        "NYC taxis, public complaints, GitHub, Wikipedia; then movies, chess, music and news."
+      ],
+      [
+        "Closer to Spain",
+        "Madrid fines, Bicimad, traffic and air quality; Uber/Cabify fleet and congestion ideas."
+      ],
+      [
+        "Food delivery",
+        "Courier assignment → Meituan dashboard → Glovo catalog → clickstream → Delivery Atlas."
+      ]
+    ],
+    "takeaway": "These were proposals we discussed. We did not implement or benchmark every alternative.",
+    "notes": "The project chat records the actual sequence. We first asked for ideas with millions of rows. Suggestions included NYC taxis and 311, GitHub and Wikipedia, then MovieLens, Lichess, cybersecurity, ListenBrainz and GDELT. We preferred Spain and a recognizable Uber/Cabify-style application. Ten mobility proposals included fleet repositioning, congestion, event pickups, courier assignment, charging, bicycle connections, transport coverage, accidents, prices and Chicago ride data. We developed courier assignment before redirecting to events. Sources: project chat ‘Proponer proyectos con millones de d’, turns 01a0e886-2f1f-70e2-a172-6a86f1d7c82c through 01a0e895-0d19-74e3-a39c-a99bde2d853a; documented in docs/PROJECT-DECISIONS.md."
+  },
+  {
+    "title": "Choosing a project: the hard parts",
+    "tag": "PROBLEMS AND PIVOTS",
+    "seconds": 65,
+    "columns": [
+      [
+        "Availability",
+        "We did not find an accessible massive Spanish Uber/Glovo clickstream in our search."
+      ],
+      [
+        "Meaning",
+        "Glovo gives products; Meituan clicks are tied to orders; Ele.me gives labelled recommendation samples."
+      ],
+      [
+        "Workload and hardware",
+        "A small courier assignment needs little data. Large downloads and JSON queries strained the laptop."
+      ]
+    ],
+    "takeaway": "Many rows are useful only when we can explain what one row means.",
+    "notes": "Avoid claiming that no dataset exists anywhere; explain what our search found. Glovo matched the sector and Spain but lacked clicks and orders. Meituan provided food delivery behaviour in Beijing, but only click sequences linked to purchases, so it could not support a whole-app abandonment rate. OTTO provided massive full event sequences, but in general ecommerce. Ele.me matched food recommendations, but download access required a Tianchi account and the full JSON history query exceeded local memory. The datasets share no trustworthy joining identifiers. These constraints led us to keep each source separate and build a fictional platform with our own event contract. Sources: project chat turns 01a108a2-2eb3-7060-b192-0948fde201e9, 01a108b8-d6c5-7291-9de2-105bd18d784a, 01a10949-6d51-7c53-a858-81fc439d103f, 01a10c45-7bfb-7b22-9679-fee396cd2d68; docs/ELEME.md."
+  },
+  {
+    "title": "Why we built Delivery Atlas",
+    "tag": "THE FINAL PROJECT",
+    "seconds": 45,
+    "columns": [
+      [
+        "A clear story",
+        "A customer searches, compares, buys and receives a fictional delivery."
+      ],
+      [
+        "A useful event model",
+        "Stable IDs link the purchase, order, courier positions and changing status."
+      ],
+      [
+        "Three origins",
+        "Downloaded history, rule-based simulation and AI decisions have explicit roles."
+      ]
+    ],
+    "takeaway": "A platform we control lets us demonstrate ingestion and explain every event.",
+    "notes": "The professor suggested inventing the platform and building infrastructure that could accept future real data. That is the turning point documented in the chat. Public datasets remain evidence for large-scale analytics, while our own simulated platform provides a coherent live story. Future real integrations would still require adapters, validation and compatible semantics. We are not connected to a private Uber Eats or Glovo operational feed. Sources: project chat turn 01a10c50-d553-76b2-96f4-9e97f1be25d6; docs/FICTIONAL-PLATFORM.md; docs/ATLAS-INFRASTRUCTURE.md."
+  },
+  {
+    "title": "1 · Downloaded data: scale and context",
+    "tag": "DATA ORIGIN 1",
+    "seconds": 65,
+    "rows": [
+      [
+        "OTTO",
+        "216,716,096 events",
+        "Historical ecommerce clicks, carts and orders"
+      ],
+      [
+        "REES46",
+        "411,709,736 events",
+        "Historical marketplace behaviour"
+      ],
+      [
+        "Ele.me",
+        "2,170,299 samples",
+        "Recommendation labels; 38,914 positive clicks"
+      ],
+      [
+        "Glovo",
+        "2,887,444 products",
+        "Catalog context; 415,137 products in Spain"
+      ]
+    ],
+    "takeaway": "Separate populations and meanings. We do not join them into one customer journey.",
+    "notes": "These are the loaded counts documented in the historical lab, not a promise that the live Windows server contains every large dataset. OTTO and REES46 together contain 628,425,832 events from different populations. Ele.me is the first complete D1_0 ZIP we loaded, not the full 146 million samples advertised by the publisher. Glovo contains catalog entries, not clicks, GPS or sales. Our billion-row stress test is derived from OTTO and is not additional real observations. Sources: docs/RESULTS.md; docs/ELEME.md; docs/GLOVO.md; docs/TEAM-STATUS.md. Original sources: https://github.com/otto-de/recsys-dataset ; https://data.rees46.com/ ; https://tianchi.aliyun.com/dataset/131047 ; https://github.com/Glovo/foodi-ml-dataset"
+  },
+  {
+    "title": "2 · Simulated data: a repeatable workload",
+    "tag": "DATA ORIGIN 2",
+    "seconds": 45,
+    "columns": [
+      [
+        "Rules and a seed",
+        "A fast traffic simulator generates customer actions and fictional orders."
+      ],
+      [
+        "A linked delivery",
+        "Checkout creates an order; a courier produces positions and status events."
+      ],
+      [
+        "Test at scale",
+        "A separate Atlas run verified 1 million synthetic events and retry-safe logical counts."
+      ]
+    ],
+    "takeaway": "Rule-based traffic is labelled as simulation. It is not an AI model.",
+    "notes": "We control budgets, product prices, allowed actions and the simulation seed. Fictional GPS samples connect the story visually, but they are not real courier traces or street routing. The simulation can create more activity than a local language model can cheaply generate. One million events were verified in the documented Atlas test; this is a separate test from the current live run. Manual actions from our miniapp use demo_live provenance; they are human actions in a fictional commerce environment. Sources: atlas/commerce.py; atlas/customer_agent.py; docs/ATLAS-RESULTS.md; docs/DATA-AND-TRACKING.md."
+  },
+  {
+    "title": "3 · Agents create customer decisions",
+    "tag": "DATA ORIGIN 3",
+    "seconds": 60,
+    "columns": [
+      [
+        "The model chooses",
+        "Local Ollama + Qwen3:0.6b chooses an allowed customer action and gives a reason."
+      ],
+      [
+        "Python validates",
+        "Budgets, choices and state transitions are checked before an action is executed."
+      ],
+      [
+        "Events become data",
+        "The accepted action creates browsing events, a checkout link and a simulated delivery."
+      ]
+    ],
+    "takeaway": "AI adds decisions. The simulator adds volume. Both generate explicitly synthetic data.",
+    "notes": "The model receives structured context and a bounded list of choices. Python enforces the contract; the model does not receive direct SQL access. Hybrid configuration defaults to 3 AI customers and 197 rule-based customers, with 80 couriers. These are supported defaults, not a claim about every deployment. Ollama is optional and is not enabled on Anuar’s current traffic-only server. There are call limits, validation and visible errors. Sources: docs/AI-CUSTOMERS.md; atlas/customer_agent.py; atlas/customer_runtime.py; web/atlas-dashboard.html."
+  },
+  {
+    "title": "How the project connects",
+    "tag": "PROJECT ARCHITECTURE",
+    "seconds": 65,
+    "flow": [
+      [
+        "Producers",
+        "Miniapp · simulator · AI"
+      ],
+      [
+        "Python API",
+        "Validation + SQLite queue"
+      ],
+      [
+        "Publisher",
+        "Batch inserts + retries"
+      ],
+      [
+        "ClickHouse",
+        "Events + aggregate views"
+      ]
+    ],
+    "takeaway": "Browser → read-only Vercel proxy → gateway → Python API → ClickHouse views.",
+    "notes": "First explain the ingestion direction: producers call the Python API, the API validates and commits to a persistent SQLite outbox, then a publisher inserts batches into ClickHouse. The browser reads through the API. For the shared demo, Vercel proxies an allowlist of GET routes through a temporary Cloudflare gateway to the host server. The gateway token stays server-side. Public viewers cannot start the simulator or submit orders through that gateway. HTTP 202 means accepted into the queue, not already visible in ClickHouse. SQLite is an outbox, not a ClickHouse replica. Sources: docs/ATLAS-INFRASTRUCTURE.md; docs/SHARING-VERCEL.md; atlas/store.py; api/proxy.js."
+  },
+  {
+    "title": "One checkout, linked across the database",
+    "tag": "LOGICAL DATA MODEL",
+    "seconds": 65,
+    "columns": [
+      [
+        "Customer activity",
+        "customer_activity records the action. app_events stores the browsing event."
+      ],
+      [
+        "Purchase and order",
+        "customer_orders links session_id and checkout_event_id to order_id. order_events stores status changes."
+      ],
+      [
+        "Courier history",
+        "courier_positions links courier_id and order_id to timestamped coordinates. Latest views use argMax states."
+      ]
+    ],
+    "takeaway": "delivery_atlas holds our platform. delivery keeps the historical lab separate.",
+    "notes": "Trace a single confirmed purchase. The customer action and browsing event describe what happened. customer_orders provides the explicit relationship from checkout to order. order_events is append-oriented status history, while courier_positions is append-oriented GPS history. Latest-state aggregates let the dashboard show one current state while detail tables retain history. event_id supports retry recognition; order_id and simulation_run_id keep the live story linked. The model stores money in integer minor units and timestamps in UTC. Sources: sql/atlas.sql; sql/atlas_agents.sql; sql/atlas_operations.sql; atlas/clickhouse.py."
+  },
+  {
+    "title": "What our measurements actually show",
+    "tag": "RESULTS",
+    "seconds": 75,
+    "chart": true,
+    "takeaway": "OTTO: 27.9× faster locally with the prepared aggregate. Same engine, same result.",
+    "notes": "The chart shows the median of three local runs of the same daily OTTO aggregation, with SQL query cache disabled: 5.8908 seconds reading the 216,716,096-row detail table, versus 0.2113 seconds querying 87 aggregate groups. Results were identical. It is not a benchmark against PostgreSQL. The separate Atlas exact-ID aggregate did not improve speed in its measured test: 0.703 seconds versus 0.498 seconds for detail. This is why we measure rather than assume. The billion-row OTTO stress workload contains derived copies and cannot be presented as a billion independent observations. Sources: docs/RESULTS.md; docs/ATLAS-RESULTS.md. Hardware, query and run conditions are documented there."
+  },
+  {
+    "title": "Reliability and scaling: our limits",
+    "tag": "CONSISTENCY AND SCALE",
+    "seconds": 55,
+    "columns": [
+      [
+        "In our demo",
+        "Queued events persist across process restarts. Stable event IDs make retries recognizable."
+      ],
+      [
+        "Current limits",
+        "One ClickHouse node, one host and a temporary tunnel. No automatic failover or disk-loss guarantee."
+      ],
+      [
+        "Possible extension",
+        "Shards divide data; replicas keep copies. ReplicatedMergeTree and Keeper coordinate replication."
+      ]
+    ],
+    "takeaway": "Monthly partitions, a Docker volume and a persistent queue do not create a replicated cluster.",
+    "notes": "Accepted events are committed to the outbox before the API confirms them. A restart recovery was tested, but that does not imply surviving a lost disk or machine. ClickHouse visibility follows publisher progress; background replacement can be eventual, and logical counts use stable IDs. Scaling to multiple shards or replicas is explained, not implemented or benchmarked. A Distributed table can route queries to shards, and ReplicatedMergeTree uses Keeper/ZooKeeper coordination; cluster consistency settings would need explicit design. Sources: docs/ATLAS-RESULTS.md; docs/FUNDAMENTALS.md; https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/replication"
+  },
+  {
+    "title": "Live demo · follow one order",
+    "tag": "DEMO · 3 MIN 30 SEC",
+    "seconds": 210,
+    "columns": [
+      [
+        "1 · Create and follow",
+        "Use the local miniapp or a pre-running simulation. Select one checkout and open its delivery."
+      ],
+      [
+        "2 · Explain the data",
+        "Show the linked IDs, position age and recorded GPS path on the Madrid map."
+      ],
+      [
+        "3 · Query and change",
+        "Run the Python CRUD example on delivery.demo_events; show one real SQL result."
+      ]
+    ],
+    "takeaway": "Public link: read-only. Controls, SQL and CRUD run on the host computer.",
+    "notes": "Rehearse before class. 0:00–1:00: submit one fictional miniapp order, or use an already generated checkout if the flow is slow; display its order ID. 1:00–2:00: select that delivery, explain pickup/dropoff, recorded path and event age. Real street tiles do not make the simulated GPS a real street route. 2:00–3:10: run python3 scripts/crud_demo.py and show insert, read, update and delete in the scratch table delivery.demo_events. 3:10–3:30: show a prepared analytical query and return to the deck. Check the exact CRUD command in docs/DEMO.md before rehearsal. If the host/tunnel or tiles are unavailable, use the saved map screenshot and documented query outputs; label them as recorded evidence. Sources: docs/DEMO.md; scripts/crud_demo.py; docs/TEAM-INSTALL-TESTS.md."
+  },
+  {
+    "title": "What we learned",
+    "tag": "LESSONS AND DISCUSSION",
+    "seconds": 60,
+    "columns": [
+      [
+        "Data meaning comes first",
+        "A product, a click and a recommendation sample are different observations."
+      ],
+      [
+        "Design follows queries",
+        "Sorting, aggregate states and latest views solve specific access patterns. Measure the result."
+      ],
+      [
+        "A live system needs contracts",
+        "Validation, IDs, retries, provenance and reproducible setup matter as much as the dashboard."
+      ]
+    ],
+    "takeaway": "Our next steps: rehearse the full demo, test on both hosts and plan durable hosting.",
+    "notes": "The strongest lesson was to choose a coherent workload rather than chase row counts. We learned to separate historical evidence from synthetic operations, and rule-based traffic from actual model decisions. We also learned that an aggregate is not automatically faster, persistence is not high availability, and a polling interval is not an end-to-end latency guarantee. The final rehearsal should cover the CRUD script, the tunnel, a reproducible linked purchase and an offline evidence fallback. Invite questions about source semantics, event identity, MergeTree, replication and what we would change in production. Sources: docs/RESULTS.md; docs/ATLAS-RESULTS.md; docs/TEAM-INSTALL-TESTS.md."
+  }
+]

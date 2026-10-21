@@ -20,9 +20,9 @@ module.exports = async (req, res) => {
       target.searchParams.set(key,value);
     }
     const response = await fetch(target,{headers:{Authorization:'Bearer '+token},signal:AbortSignal.timeout(12000),redirect:'error'});
-    if(!response.ok) return res.status(503).json({error:"Jere's lab is not available. It will be retried."});
+    if(!response.ok) return res.status(503).json({error:"The host server is not available. It will be retried."});
     res.status(200).json(await response.json());
   } catch(error) {
-    res.status(503).json({error:"Jere's lab is not available. It will be retried."});
+    res.status(503).json({error:"The host server is not available. It will be retried."});
   }
 };

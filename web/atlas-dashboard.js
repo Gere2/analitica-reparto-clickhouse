@@ -19,33 +19,18 @@ async function request(path,body){
     const data=await response.json();if(!response.ok)throw new Error(data.error||`HTTP ${response.status}`);return data;
   }finally{clearTimeout(timeout);}
 }
-function project(lat,lon){return [28+(Number(lon)+3.718)/.037*744,450-(Number(lat)-40.400)/.030*420];}
-function svgNode(tag,attrs){const node=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([key,value])=>node.setAttribute(key,value));return node;}
 function showError(message){$('error').hidden=!message;$('error').textContent=message;}
 function buttons(){ if(readOnly)return; if(lastSimulation.running){$('fleet').value=String(lastSimulation.fleet);$('customer-count').value=String(lastSimulation.customers||3);$('agent-mode').value=lastSimulation.mode==='customers'?lastSimulation.agent_mode:'legacy';} $('start').disabled=controlling||lastSimulation.running;$('stop').disabled=controlling||!lastSimulation.running;for(const id of ['fleet','agent-mode','customer-count'])$(id).disabled=controlling||lastSimulation.running; }
 function selectCourier(id){selected=id;$('courier').value=id;if(lastData)renderMap(lastData);}
 function renderMap(data){
   const couriers=data.couriers||[];
   if(!couriers.some(row=>row.courier_id===selected))selected=couriers[0]?.courier_id||'';
-  const previous=$('courier').value;
-  if($('courier').options.length!==couriers.length||!couriers.some(r=>r.courier_id===previous)){
+  if($('courier').options.length!==couriers.length||couriers.some((r,i)=>$('courier').options[i]?.value!==r.courier_id)){
     $('courier').replaceChildren(...couriers.map((row,i)=>{const option=document.createElement('option');option.value=row.courier_id;option.textContent=`Courier ${String(i+1).padStart(2,'0')} · ${row.courier_id.slice(0,8)}`;return option;}));
   }
   $('courier').value=selected;
-  $('markers').replaceChildren();
-  couriers.forEach((row,i)=>{
-    const [x,y]=project(row.latitude,row.longitude);
-    const group=svgNode('g',{});
-    const dot=svgNode('circle',{cx:x,cy:y,r:row.courier_id===selected?11:couriers.length>24?5:10,class:`marker ${row.courier_id===selected?'selected':''} ${Number(row.age_ms)>10000?'stale':''}`});
-    const title=svgNode('title',{});title.textContent=`Courier ${i+1}: ${row.latitude}, ${row.longitude}`;dot.append(title);
-    dot.addEventListener('click',()=>selectCourier(row.courier_id));
-    const label=svgNode('text',{x,y:y+3.5,'text-anchor':'middle',class:'marker-label'});label.textContent=i+1;
-    group.append(dot);if(couriers.length<=24||row.courier_id===selected)group.append(label);$('markers').append(group);
-  });
-  $('map-empty').setAttribute('visibility',couriers.length?'hidden':'visible');
   const row=couriers.find(r=>r.courier_id===selected);
-  $('destinations').replaceChildren();$('route').setAttribute('points','');
-  if(!row){$('freshness').textContent='No positions';return;}
+  if(!row){fleetMap.update(data,selected,null);$('freshness').textContent='No positions';$('courier-detail').innerHTML='<dt>Status</dt><dd>Waiting for positions</dd>';return;}
   const order=(data.orders||[]).find(o=>o.order_id===row.order_id);
   const customer=(data.customers||[]).find(c=>c.customer_id===order?.customer_id);
   const age=Math.max(0,(Date.now()-Date.parse(row.event_time.replace(' ','T')+'Z'))/1000);
@@ -57,18 +42,13 @@ function renderMap(data){
     ['Event time',clock(row.event_time)],['Age',`${age.toFixed(1)} s`],
     ['Until received by API',`${Math.max(0,Number(row.receipt_delay_ms))} ms`]]
     .map(([key,value])=>`<dt>${escapeHTML(key)}</dt><dd>${escapeHTML(value)}</dd>`).join('');
-  if(order){
-    for(const [lat,lon,color,label] of [[order.pickup_lat,order.pickup_lon,'#24553d','Fictional pickup'],[order.dropoff_lat,order.dropoff_lon,'#a96224','Fictional dropoff']]){
-      const [x,y]=project(lat,lon);const dot=svgNode('rect',{x:x-5,y:y-5,width:10,height:10,fill:color});const title=svgNode('title',{});title.textContent=label;dot.append(title);$('destinations').append(dot);
-    }
-  }
+  fleetMap.update(data,selected,order);
   const selectedAtRequest=selected,runAtRequest=data.run_id;
   if(!order||trackFetching)return;
   trackFetching=true;
   request(`/api/track?run_id=${encodeURIComponent(data.run_id)}&courier_id=${encodeURIComponent(selected)}`).then(history=>{
     if(selected!==selectedAtRequest||lastData?.run_id!==runAtRequest||lastData.couriers.find(c=>c.courier_id===selected)?.order_id!==row.order_id)return;
-    const points=history.rows.filter(p=>p.order_id===row.order_id).map(p=>project(p.latitude,p.longitude).join(','));
-    $('route').setAttribute('points',points.join(' '));
+    fleetMap.setHistory(history.rows.filter(p=>p.order_id===row.order_id),[runAtRequest,selectedAtRequest,row.order_id].join(':'));
     $('rate-note').textContent='The chart is queried from the GPS history in ClickHouse.';
   }).catch(()=>{$('rate-note').textContent='The path could not be queried. It will be retried on the next refresh.';}).finally(()=>{trackFetching=false;});
 }
@@ -123,7 +103,7 @@ async function loadNavigation(force=false){
   finally{navigationFetching=false;}
 }
 async function poll(){
-  if(fetching)return;fetching=true;
+  if(fetching||document.hidden)return;fetching=true;
   try{
     lastSimulation=await request('/api/simulation');buttons();
     const [data,queue]=await Promise.all([request('/api/operations'),request('/api/status')]);
@@ -163,8 +143,10 @@ async function loadContext(){
   else $('inventory-body').innerHTML='<tr><td colspan="4">The inventory could not be queried. Reload to retry.</td></tr>';
   if(results[1].status==='fulfilled'){
     const catalog=results[1].value;$('catalog-note').textContent=catalog.meaning+' The simulated positions do not belong to these businesses.';
-    $('catalog').innerHTML=catalog.rows.slice(0,12).map(row=>`<article><strong>${escapeHTML(row.product_name)}</strong><p>${escapeHTML(row.store_name)} · ${escapeHTML(row.collection_section)}</p></article>`).join('')||'<p class="empty">The simulation works without this catalog. It is available in Jere\'s lab.</p>';
+    $('catalog').innerHTML=catalog.rows.slice(0,12).map(row=>`<article><strong>${escapeHTML(row.product_name)}</strong><p>${escapeHTML(row.store_name)} · ${escapeHTML(row.collection_section)}</p></article>`).join('')||'<p class="empty">The simulation works without this catalog. It is available on the host server.</p>';
   }else $('catalog').innerHTML='<p class="empty">The catalog is not available. Reload to retry; the fleet keeps working.</p>';
 }
+const fleetMap=new AtlasFleetMap($('map'),selectCourier);
+window.addEventListener('pagehide',event=>{if(!event.persisted)fleetMap.destroy();});
 poll();loadContext();
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll();});
