@@ -9,6 +9,9 @@
 !web/atlas-dashboard.html
 !web/atlas-dashboard.css
 !web/atlas-dashboard.js
+!web/analytics.html
+!web/analytics.css
+!web/analytics.js
 
 !web/atlas-map.js
 !web/vendor
