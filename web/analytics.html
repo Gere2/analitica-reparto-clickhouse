@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ClickHouse Analytics · Delivery Atlas</title><link rel="stylesheet" href="/atlas-dashboard.css"><link rel="stylesheet" href="/analytics.css"><script src="/analytics.js" defer></script></head>
+<body><div class="shell analytics-shell">
+<header><a class="brand" href="/">Delivery <strong>Atlas</strong></a><nav aria-label="Main navigation"><a href="/#tracking">Live operations &amp; map</a><a href="/analytics.html?panel=journey" aria-current="page">ClickHouse analytics</a></nav><span class="source-tag">SQL-backed dashboards</span></header>
+<div class="analytics-layout">
+<aside class="dashboard-menu"><h2>Dashboards</h2><nav aria-label="Dashboards">
+<a href="/?view=simulated#tracking">Live operations</a>
+<a href="?panel=journey" data-panel="journey">Customer Journey</a>
+<a href="?panel=performance" data-panel="performance">ClickHouse Performance</a>
+<a href="?panel=otto" data-panel="otto">OTTO Events</a>
+<a href="?panel=rees46" data-panel="rees46">Marketplace Trends</a>
+<a href="?panel=glovo" data-panel="glovo">Catalog Explorer</a>
+<a href="?panel=eleme" data-panel="eleme">Recommendation Samples</a>
+<a href="?panel=criteo" data-panel="criteo">Advertising Groups</a>
+</nav><p>Each view reads ClickHouse. Public histories and fictional platform events keep separate meanings.</p></aside>
+<main id="analytics-main">
+<section class="heading"><div><h1 id="panel-title">Customer Journey</h1><p id="panel-question">Which steps do customer sessions reach?</p></div><button id="refresh" class="secondary">Refresh data</button></section>
+<form id="filters" class="analytics-filters" aria-label="Dashboard filters"></form>
+<p id="analytics-status" class="status" role="status">Reading ClickHouse…</p>
+<div id="analytics-error" class="error" role="alert" hidden></div>
+<div id="analytics-content" aria-busy="true"></div>
+<section class="section query-section" aria-labelledby="query-heading"><div class="section-head"><h2 id="query-heading">The ClickHouse queries behind this view</h2><span>Server-side measurements</span></div><p class="caption">Fixed, parameterised queries. Times exclude the gateway and browser. Shared snapshots reduce repeated scans for simultaneous viewers.</p><div id="query-list"></div></section>
+</main></div><footer><span>Delivery Atlas · ClickHouse course project</span><a href="/#tracking">Return to the Madrid map</a></footer>
+</div></body></html>

@@ -23,3 +23,11 @@ for(const [name,request,code] of [
 ])test('proxy rejects '+name+' before contacting the server',async()=>{
   const {proxy,response,calls}=fixture();await proxy(request,response);assert.equal(response.code,code);assert.equal(calls.length,0);
 });
+for(const endpoint of ['journey?kind=ai','performance','benchmark?workload=atlas','historical?dataset=glovo&country=ES&city=MAD'])test('analytical read is forwarded: '+endpoint,async()=>{
+  const {proxy,response,calls}=fixture();await proxy({method:'GET',query:{endpoint:endpoint.split('?')[0]},url:'/api/'+endpoint},response);
+  assert.equal(response.code,200);assert.equal(calls.length,1);assert.match(calls[0].url,/validation-only\.trycloudflare\.com\/api\//);
+});
+for(const endpoint of ['performance?sql=SELECT+1','journey?kind=all&kind=ai','journey?run_id=no','benchmark?workload=system.users','historical?dataset=otto&period=ALL','historical?dataset=glovo&country=ALL&city=MAD'])test('analytical filters reject unsafe or incompatible scope: '+endpoint,async()=>{
+  const {proxy,response,calls}=fixture();await proxy({method:'GET',query:{endpoint:endpoint.split('?')[0]},url:'/api/'+endpoint},response);
+  assert.equal(response.code,400);assert.equal(calls.length,0);
+});

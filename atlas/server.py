@@ -15,6 +15,7 @@ from atlas.store import Store, Conflict, Full
 from atlas.operations import validate_operation
 from atlas.simulation import Simulator
 from atlas.catalog import seed_demo_catalog
+from atlas.analytics import Analytics, ROUTES as ANALYTICS_ROUTES, validate_filters
 from uuid import UUID
 
 MAX_BATCH = 5000
@@ -40,6 +41,30 @@ class OperationsReader:
             self.cache[run] = (time.monotonic(), body)
             while len(self.cache) > 8:
                 del self.cache[next(iter(self.cache))]
+            return body
+
+class AnalyticsReader:
+    """Bounded shared snapshots so classroom viewers do not multiply scans."""
+    def __init__(self, ch):
+        self.ch = ch
+        self.cache = {}
+        self.locks = {endpoint: threading.Lock() for endpoint in ANALYTICS_ROUTES}
+        self.cache_lock = threading.Lock()
+
+    def get(self, endpoint, filters):
+        key = (endpoint, tuple(sorted(filters.items())))
+        ttl = 5 if endpoint == 'journey' else 10 if endpoint == 'performance' else 60
+        with self.locks[endpoint]:
+            with self.cache_lock:
+                cached = self.cache.get(key)
+            if cached and time.monotonic() - cached[0] < ttl:
+                return cached[1]
+            reader = Analytics(self.ch)
+            body = getattr(reader, endpoint)(**filters)
+            with self.cache_lock:
+                self.cache[key] = (time.monotonic(), body)
+                while len(self.cache) > 32:
+                    del self.cache[next(iter(self.cache))]
             return body
 
 class Publisher:
@@ -83,6 +108,7 @@ class Publisher:
 
 def make_handler(store, ch, publisher, simulator):
     operations_reader = OperationsReader(ch)
+    analytics_reader = AnalyticsReader(ch)
     class Handler(BaseHTTPRequestHandler):
         def send_json(self, data, status=200):
             raw = json.dumps(data, ensure_ascii=False).encode()
@@ -160,6 +186,12 @@ def make_handler(store, ch, publisher, simulator):
                         last_batch=publisher.last_batch,last_publish_seconds=publisher.last_publish_seconds))
                 if parsed.path=='/api/simulation':
                     return self.send_json(simulator.snapshot())
+                endpoint = parsed.path.removeprefix('/api/')
+                if parsed.path.startswith('/api/') and endpoint in ANALYTICS_ROUTES:
+                    filters = validate_filters(endpoint, parse_qs(parsed.query, keep_blank_values=True, max_num_fields=8))
+                    if endpoint == 'journey':
+                        filters.setdefault('run_id', simulator.snapshot().get('run_id'))
+                    return self.send_json(analytics_reader.get(endpoint, filters))
                 if parsed.path=='/api/order':
                     filters=parse_qs(parsed.query,keep_blank_values=True)
                     if set(filters)!={'run_id','order_id'} or any(len(v)!=1 for v in filters.values()):

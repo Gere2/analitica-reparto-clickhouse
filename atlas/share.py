@@ -9,8 +9,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlencode, urlsplit
 from urllib.request import urlopen
 from uuid import UUID
+from atlas.analytics import ROUTES as ANALYTICS_ROUTES, validate_filters
 
-ROUTES = {'simulation', 'operations', 'status', 'track', 'summary', 'inventory', 'catalog', 'datasets'}
+ROUTES = {'simulation', 'operations', 'status', 'track', 'summary', 'inventory', 'catalog', 'datasets'} | ANALYTICS_ROUTES
 CACHE = OrderedDict()
 LOCK = threading.Lock()
 READ_LOCKS = {endpoint: threading.Lock() for endpoint in ROUTES}
@@ -23,7 +24,11 @@ def canonical_path(raw):
     endpoint = url.path.removeprefix('/api/')
     if not url.path.startswith('/api/') or endpoint not in ROUTES:
         raise ValueError('Route not available')
-    query = parse_qs(url.query, keep_blank_values=True, max_num_fields=4)
+    query = parse_qs(url.query, keep_blank_values=True, max_num_fields=8)
+    if endpoint in ANALYTICS_ROUTES:
+        filters = validate_filters(endpoint, query)
+        suffix = urlencode(sorted(filters.items()))
+        return endpoint, '/api/' + endpoint + ('?' + suffix if suffix else '')
     allowed = {'track': {'run_id', 'courier_id'}, 'summary': {'city_id', 'source_kind'}}.get(endpoint, set())
     if set(query) - allowed or any(len(v) != 1 for v in query.values()):
         raise ValueError('Parameters not available')
@@ -68,7 +73,7 @@ class Handler(BaseHTTPRequestHandler):
         try:
             # Coalesce concurrent viewers into one local query per cache window.
             with READ_LOCKS[endpoint]:
-                ttl = 60 if endpoint in {'inventory', 'catalog', 'datasets'} else 10 if endpoint == 'summary' else 1.5
+                ttl = 60 if endpoint in {'inventory', 'catalog', 'datasets', 'historical', 'benchmark'} else 10 if endpoint in {'summary', 'performance'} else 5 if endpoint == 'journey' else 1.5
                 with LOCK:
                     cached = CACHE.get(path)
                 if cached and time.monotonic() - cached[0] < ttl:
@@ -77,7 +82,7 @@ class Handler(BaseHTTPRequestHandler):
                         if path in CACHE:
                             CACHE.move_to_end(path)
                 else:
-                    with urlopen(BACKEND + path, timeout=10) as response:
+                    with urlopen(BACKEND + path, timeout=24 if endpoint in ANALYTICS_ROUTES else 10) as response:
                         payload = response.read(2 * 1024 * 1024 + 1)
                     if len(payload) > 2 * 1024 * 1024:
                         raise ValueError('Response too large')

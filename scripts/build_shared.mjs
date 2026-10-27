@@ -6,9 +6,9 @@ html = html.replace('Fictional positions and orders, published in ClickHouse dur
 html = html.replace('Fictional customers who compare, buy and receive orders. Data published in ClickHouse.','Shared read-only demo. Fictional customers, purchases and deliveries, plus real public datasets; connected to the team\'s demo server.');
 html = html.replace(/<div class="controls">.*?<\/div><\/section>/,'<p class="caption">The simulation is controlled from the demo server.</p></section>');
 html = html.replace('<button id="manual" class="secondary">Record a manual search</button>','<button id="manual" hidden disabled>Record a manual search</button>');
-html = html.replace('<a href="http://127.0.0.1:8000/">Open the historical lab</a>','<span>Available while the lab and the tunnel are running</span>');
 await writeFile('shared-public/index.html',html);
 await Promise.all(['css','js'].map(ext=>copyFile('web/atlas-dashboard.'+ext,'shared-public/atlas-dashboard.'+ext)));
 
 await copyFile('web/atlas-map.js','shared-public/atlas-map.js');
+await Promise.all(['html','css','js'].map(ext=>copyFile('web/analytics.'+ext,'shared-public/analytics.'+ext)));
 await cp('web/vendor/leaflet','shared-public/vendor/leaflet',{recursive:true});
