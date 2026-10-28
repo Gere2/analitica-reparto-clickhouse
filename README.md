@@ -4,6 +4,8 @@ BD2 project to design the analytics infrastructure of a fictional food-delivery 
 
 **Project brief and checklist:** [docs/ASSIGNMENT.md](docs/ASSIGNMENT.md) summarizes what the assignment asks for and where each requirement is covered.
 
+**ClickHouse dashboards:** the English analytics portal at `/analytics.html` brings together Customer Journey, ClickHouse Performance and five historical analyses. Every view exposes its source, fixed SQL and server statistics. The Madrid map remains on the live operations page. See [the dashboard guide](docs/CLICKHOUSE-DASHBOARDS.md) for scope, deployment requirements and query interpretation.
+
 **Concurrent traffic:** mixed mode with **200 customers (3 AI + 197 simulated) and 80 couriers**, up to 500/150 from the controls. Customers in batches, varied pauses, linked purchases and an activity summary; [guide](docs/AI-CUSTOMERS.md), test with `python3 scripts/check_traffic.py` on the active scenario.
 
 **Commercial mini-app (14 Oct):** http://127.0.0.1:8001/delivery.html. A person searches, filters, opens a restaurant, fills the cart and checks out. Every action goes to `POST /api/events` (`demo_live`) and checkout (`POST /api/checkout`) creates a real order in the simulation, which is delivered and tracked by GPS. It requires clicking "Start customers and delivery" on the dashboard. [Guide, events and verification](docs/MINIAPP.md).

@@ -1,36 +1,50 @@
-# Delivery Atlas: final presentation
+# ClickHouse in practice: final presentation
 
-English slides and speaker notes, prepared 21 October 2026. This replaces the earlier Clickstream Lab final script; the six-slide progress decks remain historical artifacts.
+Updated 27 October 2026. English slides and notes. Delivery Atlas supplies the workload; ClickHouse is the main subject.
 
-**Format:** 20 minutes including demo, then about 10 minutes of questions. The core script totals 18 min 10 sec, leaving 1 min 50 sec for transitions.
+**Format:** 20 minutes including dashboard exploration and the operations/CRUD demo, then about 10 minutes of questions. Core script: **17:35**, with **2:25** for transitions and small delays.
 
-| Slide | Topic | Target |
-|---:|---|---:|
-| 1 | Delivery Atlas | 0:30 |
-| 2 | Why ClickHouse fits our workload | 0:55 |
-| 3 | What is ClickHouse? | 0:50 |
-| 4 | How our ClickHouse tables are structured | 1:15 |
-| 5 | The project ideas we explored | 1:10 |
-| 6 | Choosing a project: the hard parts | 1:05 |
-| 7 | Why we built Delivery Atlas | 0:45 |
-| 8 | 1 · Downloaded data: scale and context | 1:05 |
-| 9 | 2 · Simulated data: a repeatable workload | 0:45 |
-| 10 | 3 · Agents create customer decisions | 1:00 |
-| 11 | How the project connects | 1:05 |
-| 12 | One checkout, linked across the database | 1:05 |
-| 13 | What our measurements actually show | 1:15 |
-| 14 | Reliability and scaling: our limits | 0:55 |
-| 15 | Live demo · follow one order | 3:30 |
-| 16 | What we learned | 1:00 |
+| Slide | Topic | Speaker | Target |
+|---:|---|---|---|
+| 1 | ClickHouse in practice | Geremi | 0:20 |
+| 2 | Why ClickHouse fits our workload | Geremi | 0:40 |
+| 3 | What is ClickHouse? | Geremi | 0:40 |
+| 4 | ClickHouse table structure | Geremi | 1:00 |
+| 5 | Why we chose Delivery Atlas | Geremi | 0:35 |
+| 6 | Three data origins in ClickHouse | Geremi | 0:40 |
+| 7 | The data path into ClickHouse | Geremi | 0:45 |
+| 8 | One checkout, linked across the database | Geremi | 0:45 |
+| 9 | Dashboards backed by ClickHouse | Anuar | 0:30 |
+| 10 | Customer Journey in ClickHouse | Anuar | 2:00 |
+| 11 | Historical datasets, analytical SQL | Anuar | 2:00 |
+| 12 | ClickHouse Performance | Anuar | 2:00 |
+| 13 | Prepared aggregates: a measured trade-off | Echenique | 1:00 |
+| 14 | Live operations and Python CRUD | Echenique | 3:00 |
+| 15 | Reliability and measured limits | Echenique | 0:40 |
+| 16 | What we learned | Echenique | 1:00 |
 
-[Speaker notes](FINAL-PRESENTER-NOTES-EN.md) · [Editable content source](FINAL-PRESENTATION-EN.json) · [Project selection evidence](PROJECT-DECISIONS.md) · [Assignment](ASSIGNMENT.md)
+[English notes](CLICKHOUSE-PRESENTER-NOTES-EN.md) · [Editable content](CLICKHOUSE-PRESENTATION-EN.json) · [Dashboard guide](CLICKHOUSE-DASHBOARDS.md) · [Selection history](PROJECT-DECISIONS.md)
 
-## Rehearsal
+## Rehearsal route
 
-Use the local miniapp and a host terminal for controls/CRUD. The public Vercel link only exposes reads. Test `python3 scripts/crud_demo.py` against the intended ClickHouse host before class; this command uses the historical-lab connection defaults, so set `CLICKHOUSE_URL`, `CLICKHOUSE_USER` and `CLICKHOUSE_PASSWORD` for a different host. Use the scratch table, not the real source tables, for CRUD.
+Geremi explains the workload, storage and event model. Anuar shows Journey, the historical explorers and Performance. Echenique distinguishes the documented measurements from current observations, follows one order and runs Python CRUD on the scratch table.
 
-Show one linked checkout/order/courier. Explain event age and the difference between a real street map and synthetic GPS. If the tunnel or tiles fail, switch to saved screenshots and recorded query results, clearly labelled as evidence.
+Journey: inspect one run and its unique-session grain, then expand windowFunnel SQL and actual read statistics. Source explorers: demonstrate a meaningful filter while preserving each source’s row meaning. Performance: inspect engines/sort keys, query history and a fixed comparison with matching answers. Operations: connect the latest-state view to the event history and map.
 
-## Claims to defend accurately
+The presentation keeps eight hidden slides for source semantics, retry identity, shards/replicas, CRUD, benchmark conditions, AI scope, recovery and production alternatives.
 
-ClickHouse was assigned to the group. We implemented one node. Public histories are not live Spanish Uber/Glovo customer data. The OTTO 27.9× result compares two designs in ClickHouse, not two database products. The Atlas aggregate did not improve its measured query. Rule-based traffic is not AI. Queue acceptance is not yet ClickHouse visibility.
+## Host preparation and fallback
+
+Rebuild both atlas and share-gateway for the new read routes. The frontend alone cannot add them to an old backend. Confirm which datasets exist on the presentation host; opening a dashboard never downloads them. The public gateway permits reads. Controls, miniapp checkout and SQL/CRUD run on the host.
+
+Preconfigure CLICKHOUSE_URL, CLICKHOUSE_USER and CLICKHOUSE_PASSWORD for the actual CRUD host without projecting values. The script defaults target the old lab on port 8124. Use delivery.demo_events. Rehearse its temporary pause and restoration of large-table merges when those tables exist.
+
+For a stable detail/aggregate comparison, stop producers on the host and wait until the queue is empty. Concurrent publication can change answers between reads. An equality failure suppresses the timing ratio.
+
+If a step stalls for 15 seconds, switch to a prepared order or the local dashboard. If no live path works, clearly label dated screenshots and saved query outputs as recorded evidence. They support explanation but do not replace the live-demo requirement.
+
+## Evidence boundaries
+
+The native five-session funnel is an explicitly labelled integration-test cohort, not production customer behaviour. The new Performance screenshot shows a disposable validation environment with tiny seeded datasets. The older Madrid capture is dated 21 October. The OTTO 27.9× result compares two ClickHouse designs under documented local conditions. Atlas exact-ID counts were slower in their separate measured experiment. No PostgreSQL performance benchmark or replicated cluster is claimed.
+
+A complete timed group rehearsal and the independent installation check still remain. Earlier FINAL-PRESENTATION-EN and FINAL-PRESENTER-NOTES-EN files are the previous working version.

@@ -1,0 +1,455 @@
+{
+  "updated": "2026-10-27",
+  "pageId": "page_29710b45b7c8819191c81f6febaa543b",
+  "language": "en",
+  "coreSeconds": 1055,
+  "transitionBufferSeconds": 145,
+  "core": [
+    {
+      "title": "ClickHouse in practice",
+      "seconds": 20,
+      "notes": "Speaker: Geremi\nTarget: 20 seconds\n\nHello, we are Geremi, Anuar and Echenique. Our project uses Delivery Atlas, a fictional delivery platform, to show how ClickHouse stores event histories and answers analytical questions. We will use dashboards to explain the tables, queries and measured costs behind the application.\n\n\n\nSources: docs/ASSIGNMENT.md; docs/CLICKHOUSE-DASHBOARDS.md",
+      "oldIndex": 0,
+      "speaker": "Geremi"
+    },
+    {
+      "title": "Why ClickHouse fits our workload",
+      "seconds": 40,
+      "notes": "Speaker: Geremi\nTarget: 40 seconds\n\nThe professor assigned ClickHouse to our group. Our decision was to choose a project that makes its strengths visible. A delivery application produces a long history of searches, carts, checkouts and courier positions. Analytical questions examine many of those events together. For example, we can count actions by day and compare the activity of different sources. These repeated summaries are a useful workload for ClickHouse. Choosing one courier from a short list would not explain why we needed a database for large-scale analytics. That is why the project focuses on the event history behind the application.\n\n\n\nSources: docs/ASSIGNMENT.md; docs/PROJECT-DECISIONS.md; https://clickhouse.com/docs/intro",
+      "oldIndex": 1,
+      "speaker": "Geremi"
+    },
+    {
+      "title": "What is ClickHouse?",
+      "seconds": 40,
+      "notes": "Speaker: Geremi\nTarget: 40 seconds\n\nClickHouse is a column-oriented database for analytical queries, and we query it with SQL. Column-oriented means it stores values from the same column together. In this illustrative table, a query counting actions by day needs the date and action columns. It does not need every field in every record. This can reduce the data the query reads. OLAP means online analytical processing: analysing a history through counts, groups and trends. Our deployment uses ClickHouse 25.8 in Docker with one node. The application creates the events. ClickHouse stores and analyses them.\n\nThe table is an illustrative example, not an output from a measured run. If asked about NoSQL: the course assigned ClickHouse. Its precise model is a columnar analytical database with a typed schema and SQL. The label alone does not explain its behaviour.\n\nSources: compose.yaml; docs/FUNDAMENTALS.md; https://clickhouse.com/docs/intro",
+      "oldIndex": 2,
+      "speaker": "Geremi"
+    },
+    {
+      "title": "ClickHouse table structure",
+      "seconds": 60,
+      "notes": "Speaker: Geremi\nTarget: 60 seconds\n\nThis is an excerpt from our actual app_events table. The engine is ReplacingMergeTree, with ingested_at as the version. We partition the table by month. A partition groups data inside a table, and it is different from a shard on another server. Within each data part, the sorting key starts with the fields used by our queries, including source, date and city. A sparse index helps the engine skip ranges it does not need. New inserts create data parts, and background merges combine them. ReplacingMergeTree can replace rows with the same sorting key during those merges. That replacement is eventual. ORDER BY does not enforce immediate uniqueness, so we also preserve stable event IDs in the application.\n\nHierarchy for follow-up: server, database, table, partitions, data parts and columns. The SQL excerpt shows the storage clauses, not the complete CREATE TABLE statement.\n\nSources: sql/atlas.sql; https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/mergetree; https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/replacingmergetree",
+      "oldIndex": 3,
+      "speaker": "Geremi"
+    },
+    {
+      "title": "Why we chose Delivery Atlas",
+      "seconds": 35,
+      "notes": "Speaker: Geremi\nTarget: 35 seconds\n\nWe considered large public datasets, then Spanish mobility and courier assignment. Choosing one courier did not justify millions of analytical events. Delivery datasets also had gaps: catalogs, recommendation samples and purchase-linked sequences have different meanings. Delivery Atlas gives us a coherent live event contract, while the public archives remain separate analytical workloads.\n\nThese are discussed proposals, not benchmarks of every alternative. The professor assigned ClickHouse. Our choice was the project and workload.\n\nSources: docs/PROJECT-DECISIONS.md; docs/ASSIGNMENT.md",
+      "oldIndex": 4,
+      "speaker": "Geremi"
+    },
+    {
+      "title": "Three data origins in ClickHouse",
+      "seconds": 40,
+      "notes": "Speaker: Geremi\nTarget: 40 seconds\n\nDownloaded archives provide historical observations. A rule-based simulator provides repeatable event volume. A local model can supply bounded customer decisions, which Python validates. These are data origins, not three different kinds of database. We use delivery for the historical lab and delivery_atlas for our platform. Provenance fields keep the populations and decision methods explicit.\n\nOTTO and REES46 have separately verified historical loads of 216,716,096 and 411,709,736 events. Do not imply all large archives are loaded on the public host. Manual miniapp actions remain a distinct provenance. An AI configuration alone does not prove a completed model decision.\n\nSources: sql/atlas.sql; sql/atlas_agents.sql; docs/AI-CUSTOMERS.md; docs/RESULTS.md",
+      "oldIndex": 5,
+      "speaker": "Geremi"
+    },
+    {
+      "title": "The data path into ClickHouse",
+      "seconds": 45,
+      "notes": "Speaker: Geremi\nTarget: 45 seconds\n\nProducers send events to the Python API. The API validates and commits them to a SQLite outbox. The publisher inserts batches into ClickHouse and retries failures. ClickHouse holds the event history and the prepared states used by the dashboards. The browser reads through an allowlisted gateway and Vercel proxy. The API and publisher are logical stages in one Python process. HTTP 202 confirms queue acceptance, while database visibility follows publication.\n\nPublic dataset loaders populate delivery separately. The public gateway permits reads and keeps its token server-side. SQLite is transport persistence, not an independent analytical replica.\n\nSources: atlas/server.py; atlas/store.py; atlas/clickhouse.py; api/proxy.js; docs/CLICKHOUSE-DASHBOARDS.md",
+      "oldIndex": 10,
+      "speaker": "Geremi"
+    },
+    {
+      "title": "One checkout, linked across the database",
+      "seconds": 45,
+      "notes": "Speaker: Geremi\nTarget: 45 seconds\n\nHere is the data model behind one purchase. app_events stores the checkout event. customer_orders connects checkout_event_id to order_id. order_events keeps the order's changing status. courier_positions records timestamped GPS samples linked to that order and courier. customer_activity stores the customer's action and its reason. We also keep simulation_run_id so different runs remain separate. These are application-level links. The histories retain the events, while latest-state views use argMax states to provide the current order and courier state. This lets the dashboard answer a current-state question without treating the latest row as the whole history.\n\n Money uses integer minor units. Timestamps use UTC. In a real trace show complete IDs in the data, even if the dashboard shortens labels.\n\nSources: sql/atlas.sql; sql/atlas_agents.sql; sql/atlas_operations.sql; atlas/clickhouse.py\n\nHandover: “Anuar will now show the ClickHouse dashboards and their queries.”",
+      "oldIndex": 11,
+      "speaker": "Geremi"
+    },
+    {
+      "title": "Dashboards backed by ClickHouse",
+      "seconds": 30,
+      "notes": "Speaker: Anuar\nTarget: 30 seconds\n\nThe portal contains eight views with a common English navigation. We will focus on Customer Journey and ClickHouse Performance, then explore the public sources and follow a delivery. Each analytics view exposes its source, fixed SQL and measured server work. The charts are entry points for explaining ClickHouse.\n\nDashboard list: live operations, Customer Journey, ClickHouse Performance, OTTO, REES46, Glovo, Ele.me and Criteo. Handover: Anuar takes over the dashboard tour here.\n\nSources: docs/CLICKHOUSE-DASHBOARDS.md; web/analytics.html",
+      "oldIndex": 6,
+      "speaker": "Anuar"
+    },
+    {
+      "title": "Customer Journey in ClickHouse",
+      "seconds": 120,
+      "notes": "Speaker: Anuar\nTarget: 120 seconds\n\nCustomer Journey asks which steps a session reaches in order. The query reads customer_activity for one run, applies FINAL and groups by session. windowFunnel then checks session start, product opening, cart addition and checkout within thirty minutes. Strictly increasing millisecond timestamps make the ordering rule explicit. A missing next step can mean the session is still in progress. We show observed abandonments separately. The chart on this slide is the five-session integration-test cohort, not production customer behaviour. Now we can open the real dashboard, change the customer filter and inspect its SQL statistics.\n\nOperator: 0:00–0:30 explain the grain and source. 0:30–1:10 open Journey, change all/simulated/AI and apply. An empty AI cohort can be correct for a traffic-only run. 1:10–2:00 expand the fixed query and explain FINAL, windowFunnel, rows read and elapsed time. windowFunnel receives UInt64 Unix milliseconds in ClickHouse 25.8, so its window is 1,800,000. Test data: 5 observed starts, 3 reach product, 1 reaches cart and checkout. Tests also cover an excluded orphan session, wrong order, equal timestamps, expiry and retries. Charts run as separate reads during continued ingestion.\n\nSources: atlas/analytics.py; tests/test_analytics.py; docs/CLICKHOUSE-DASHBOARDS.md; https://clickhouse.com/docs/sql-reference/aggregate-functions/parametric-functions#windowfunnel",
+      "oldIndex": 7,
+      "speaker": "Anuar"
+    },
+    {
+      "title": "Historical datasets, analytical SQL",
+      "seconds": 120,
+      "notes": "Speaker: Anuar\nTarget: 120 seconds\n\nThe historical explorers show several different analytical questions. OTTO groups ecommerce events over time. REES46 adds month filters, categories and brands. Glovo describes catalog supply by location. Ele.me groups recommendation samples, and Criteo shows observed released-sample group outcomes. These sources are separate populations. We can change a meaningful filter and inspect the SQL that ClickHouse executes. The figures on this slide are dated verified loads, not a promise about what the current host contains.\n\nOperator: use about 20 seconds per source view and 20 seconds for one filter plus SQL. If a source is missing, say so and use dated evidence. A page never downloads a dataset automatically. Criteo's non-uniform privacy subsampling prevents recovery of original campaign incrementality. Glovo catalog size is supply, not demand or sales.\n\nSources: docs/RESULTS.md; docs/ELEME.md; docs/GLOVO.md; docs/PR7-PR8-REVIEW.md; docs/CLICKHOUSE-DASHBOARDS.md; https://huggingface.co/datasets/criteo/criteo-uplift#privacy",
+      "oldIndex": 8,
+      "speaker": "Anuar"
+    },
+    {
+      "title": "ClickHouse Performance",
+      "seconds": 120,
+      "notes": "Speaker: Anuar\nTarget: 120 seconds\n\nThis dashboard makes ClickHouse itself visible. system.parts reports physical storage. We can inspect engines, partition keys, sorting keys and compression. system.query_log reports completed query work, grouped by query family and table. Finally, two fixed queries compare detail with a prepared aggregate. We check complete answer equality before interpreting their times. The Atlas comparison uses one date across all runs because the aggregate does not store a run dimension. A live timing is a local observation. Query cache is disabled, but system caches and concurrent ingestion still affect it.\n\nOperator: 0:00–0:35 inspect engine and sorting-key metadata. 0:35–1:00 inspect query families and server work. 1:00–2:00 choose a loaded workload, compare fixed queries, show answer equality, rows read and bytes. If answers differ, explain the displayed mismatch and do not interpret a ratio. Stop producers on the host and wait for pending=0 before rehearsal if a stable comparison is needed. The screenshot is a disposable validation environment with tiny seeded datasets, not a large-source benchmark. Raw historical query text is not exposed.\n\nSources: atlas/analytics.py; docs/CLICKHOUSE-DASHBOARDS.md; https://clickhouse.com/docs/reference/system-tables/parts; https://clickhouse.com/docs/reference/system-tables/query_log\n\nHandover: “Echenique will compare these live observations with our documented results, then run the operations demo.”\nImage evidence: docs/capturas/clickhouse-performance-validation.png, explicitly labelled validation environment.",
+      "oldIndex": 9,
+      "speaker": "Anuar"
+    },
+    {
+      "title": "Prepared aggregates: a measured trade-off",
+      "seconds": 60,
+      "notes": "Speaker: Echenique\nTarget: 60 seconds\n\nThis chart shows one measured result from our historical lab. We ran the same daily OTTO aggregation against the detail table and a prepared aggregate. The median of three local runs was 5.8908 seconds for detail and 0.2113 seconds for the aggregate. The results matched. That is about 27.9 times faster for this query on this machine. We disabled the SQL query cache, although operating-system cache and other conditions still matter. This compares two designs inside ClickHouse. We did not benchmark PostgreSQL. The separate Atlas test is a useful counterexample: its exact-ID aggregate took 0.703 seconds, compared with 0.498 seconds for detail. Exact states protect retry-safe counts, but add work. An aggregate needs measurement.\n\nOTTO: 216,716,096 detail rows versus 87 aggregate groups. Background merges paused for the documented large-table benchmark. Atlas: 1,000,002 logical events and 16 result groups, three queries per alternative, no concurrent workload. These are different schemas and queries. A billion-row stress table contains derived copies, not additional real observations.\n\nSources: docs/RESULTS.md; docs/ATLAS-RESULTS.md",
+      "oldIndex": 12,
+      "speaker": "Echenique"
+    },
+    {
+      "title": "Live operations and Python CRUD",
+      "seconds": 180,
+      "notes": "Speaker: Echenique\nTarget: 180 seconds\n\nWe now follow one fictional order. We match its order ID to its courier and inspect the age of the latest GPS sample. The map shows real streets, while positions and paths remain synthetic. The latest-state view uses argMax states so the dashboard can read the current position while the detail table keeps history. We finish with the Python CRUD script on a scratch table, showing that the program connects directly to ClickHouse.\n\nOperator: 0:00–1:15 select a prepared order and courier, then follow it. Explain recorded GPS and current-state views. 1:15–2:40 run python3 scripts/crud_demo.py on the intended host. Preconfigure its connection variables before projection. Use delivery.demo_events, not the analytical source histories. 2:40–3:00 return to the deck. The public gateway is read-only. Anuar prepares the host, Echenique controls the projected view and Geremi keeps time. Switch after a 15-second stall. Recorded evidence supports explanation but cannot be presented as a live demonstration.\n\nSources: sql/atlas_operations.sql; scripts/crud_demo.py; docs/TRACKING-DEMO.md; docs/capturas/mapa-madrid-escritorio.jpg\nMap attribution: OpenStreetMap contributors, https://www.openstreetmap.org/copyright",
+      "oldIndex": 14,
+      "speaker": "Echenique"
+    },
+    {
+      "title": "Reliability and measured limits",
+      "seconds": 40,
+      "notes": "Speaker: Echenique\nTarget: 40 seconds\n\nThe outbox and stable IDs help with retries and orderly restarts. They do not provide another host. We run one ClickHouse node, with no demonstrated disk-loss recovery or automatic failover. Partitions organise data within tables. Replicas and shards would require a separate design. Our measured results also show a trade-off: the exact-ID Atlas aggregate protected logical counts but took longer in its recorded query test.\n\n\n\nSources: docs/ATLAS-RESULTS.md; docs/FUNDAMENTALS.md; docs/CLICKHOUSE-DASHBOARDS.md",
+      "oldIndex": 13,
+      "speaker": "Echenique"
+    },
+    {
+      "title": "What we learned",
+      "seconds": 60,
+      "notes": "Speaker: Echenique\nTarget: 60 seconds\n\nOur first lesson was that the meaning of a row comes before its count. A catalog entry, a click and a recommendation label answer different questions. Second, database design follows the queries. Sorting keys, latest-state views and aggregate states solve different problems, and a smaller table is not automatically faster. Third, a live pipeline needs clear contracts: stable IDs, validation, retries and visible provenance. Delivery Atlas gave us a way to connect these lessons to one explainable workflow. Before the final presentation, our remaining work is a timed group rehearsal, a fresh host check and an independent reproduction test. Thank you. We are ready for questions.\n\nEnd the core presentation here. Slides B1–B8 are hidden during the normal show and are available for questions or recovery. Their existence does not add to the 20-minute core slot.\n\nSources: docs/RESULTS.md; docs/ATLAS-RESULTS.md; docs/ASSIGNMENT.md; docs/TEAM-INSTALL-TESTS.md",
+      "oldIndex": 15,
+      "speaker": "Echenique"
+    }
+  ],
+  "backups": [
+    {
+      "number": "B1",
+      "title": "What each dataset can support",
+      "speaker": "Anuar",
+      "kind": "table",
+      "size": 23,
+      "height": 350,
+      "widths": [
+        160,
+        480,
+        510
+      ],
+      "values": [
+        [
+          "Source",
+          "Supported interpretation",
+          "Boundary"
+        ],
+        [
+          "OTTO / REES46",
+          "Event counts and temporal patterns",
+          "Separate populations and event definitions"
+        ],
+        [
+          "Ele.me",
+          "Recommendation labels in the loaded sample",
+          "Positive labels do not describe whole-app sessions"
+        ],
+        [
+          "Glovo",
+          "Product catalog and location context",
+          "No clicks, orders or courier GPS"
+        ],
+        [
+          "Criteo",
+          "Observed treatment-group summaries",
+          "Released sample cannot recover original incrementality"
+        ]
+      ],
+      "takeaway": "A shared dashboard does not make unrelated sources a shared customer journey.",
+      "notes": "Suggested respondent: Anuar\nUse for questions. Hidden from the core slideshow.\n\nQ: Why keep these sources? They serve different educational tasks: large scans, recommendations, catalog context and grouped advertising outcomes.\nQ: Why not join them? We do not have trustworthy shared identities or populations.\nQ: Is Criteo causal? The publisher describes a randomized experiment, but non-uniform subsampling for privacy prevents recovery of the original incrementality. We describe observed released-sample differences.\nQ: Can you redistribute all files? Source terms differ. The repository contains loaders and source links, rather than automatically redistributing every dataset. Ele.me access requires a Tianchi account and reviewing its terms.\n\nSources: docs/RESULTS.md; docs/ELEME.md; docs/GLOVO.md; docs/PR7-PR8-REVIEW.md; https://huggingface.co/datasets/criteo/criteo-uplift#privacy"
+    },
+    {
+      "number": "B2",
+      "title": "A retry after a lost response",
+      "speaker": "Geremi",
+      "kind": "table",
+      "height": 310,
+      "widths": [
+        290,
+        430,
+        430
+      ],
+      "values": [
+        [
+          "Stage",
+          "What can happen",
+          "How Atlas handles it"
+        ],
+        [
+          "API acceptance",
+          "Client sends the same event again",
+          "Same ID + content returns 200"
+        ],
+        [
+          "Conflicting retry",
+          "Same ID arrives with other content",
+          "Content fingerprint detects conflict: 409"
+        ],
+        [
+          "Publisher retry",
+          "ClickHouse wrote data, response was lost",
+          "Logical counts use exact event-ID states"
+        ]
+      ],
+      "takeaway": "Recorded test: 3 physical rows represented 2 logical events.",
+      "notes": "Suggested respondent: Geremi\nUse for questions. Hidden from the core slideshow.\n\nQ: Is delivery exactly once? We use retries and stable identity to protect logical results. We do not claim one physical write across API, SQLite and several ClickHouse tables.\nQ: Does 202 mean published? It means the event committed to the local outbox.\nQ: Why not count rows? Resends can create physical copies. The exact-ID aggregate uses uniqExactState and uniqExactMerge.\nQ: Will a merge fix an already summed materialized view? Incremental views process inserted blocks. A plain sum would count a replay again. Our exact-ID design handles this specific retry pattern at a memory cost.\n\nSources: atlas/store.py; sql/atlas.sql; docs/ATLAS-RESULTS.md; https://clickhouse.com/docs/concepts/features/materialized-views/incremental-materialized-view"
+    },
+    {
+      "number": "B3",
+      "title": "Partitions, shards and replicas",
+      "speaker": "Geremi",
+      "kind": "table",
+      "height": 320,
+      "widths": [
+        220,
+        630,
+        300
+      ],
+      "values": [
+        [
+          "Concept",
+          "Purpose",
+          "Our deployment"
+        ],
+        [
+          "Partition",
+          "Organise data ranges inside a table",
+          "Monthly partitions"
+        ],
+        [
+          "Shard",
+          "Place different data on different nodes",
+          "Not implemented"
+        ],
+        [
+          "Replica",
+          "Keep another copy of a shard",
+          "Not implemented"
+        ],
+        [
+          "Keeper",
+          "Coordinate ReplicatedMergeTree replicas",
+          "Not deployed"
+        ]
+      ],
+      "takeaway": "The current system demonstrates one node, with recovery limits documented.",
+      "notes": "Suggested respondent: Geremi\nUse for questions. Hidden from the core slideshow.\n\nQ: Does a partition add a server? No. It is an organisation unit inside a table.\nQ: How would you scale? First measure the bottleneck. A larger single node, better batching or better queries may help before sharding. A proposed multi-node design needs a sharding key, replicas, coordination and query routing.\nQ: What happens during a network split? Our demo has no replicas, so we have not tested that scenario. Replicated deployments need explicit quorum and read-freshness choices.\nQ: Is a replica a backup? Replication and independently recoverable backups address different failure cases. Neither has been demonstrated here.\n\nSources: docs/FUNDAMENTALS.md; docs/ATLAS-RESULTS.md; https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/mergetree; https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/replication"
+    },
+    {
+      "number": "B4",
+      "title": "Python and SQL CRUD",
+      "speaker": "Echenique",
+      "kind": "text",
+      "blocks": [
+        {
+          "text": "python3 scripts/crud_demo.py",
+          "x": 64,
+          "y": 235,
+          "w": 1150,
+          "h": 64,
+          "size": 37,
+          "green": true,
+          "mono": true
+        },
+        {
+          "text": "INSERT and SELECT\nCreate one event and read it",
+          "x": 64,
+          "y": 343,
+          "w": 530,
+          "h": 100,
+          "size": 30,
+          "bold": true
+        },
+        {
+          "text": "ALTER TABLE ... UPDATE\nChange the scratch event action",
+          "x": 660,
+          "y": 343,
+          "w": 545,
+          "h": 100,
+          "size": 29,
+          "bold": true
+        },
+        {
+          "text": "ALTER TABLE ... DELETE\nRemove that event and check the result",
+          "x": 64,
+          "y": 475,
+          "w": 560,
+          "h": 100,
+          "size": 28,
+          "bold": true
+        },
+        {
+          "text": "Target: delivery.demo_events\nConnection: host environment variables",
+          "x": 660,
+          "y": 475,
+          "w": 545,
+          "h": 100,
+          "size": 27
+        }
+      ],
+      "takeaway": "The script uses a scratch table. The public gateway exposes read operations.",
+      "notes": "Suggested respondent: Echenique\nUse for questions. Hidden from the core slideshow.\n\nRun the actual Python script. It uses the standard-library HTTP client and Basic authentication to reach the host's ClickHouse endpoint. It creates a MergeTree scratch table if needed, inserts a unique event ID, reads it, changes the action and removes the event. mutations_sync = 2 waits for the demonstration's mutations. Preconfigure CLICKHOUSE_URL, CLICKHOUSE_USER and CLICKHOUSE_PASSWORD without projecting secret values. The defaults target the old lab on 127.0.0.1:8124, so check the intended host.\nQ: Why append new order events instead of editing history? The analytical flow records changes as events. Incremental materialized views do not automatically undo previous aggregates after a source mutation.\nQ: Does the script only change this table? When the historical large tables exist, it temporarily pauses their merges and restores them in finally. Rehearse its full behaviour on the selected host.\n\nSources: scripts/crud_demo.py; docs/DEMO.md; docs/ATLAS-INFRASTRUCTURE.md; https://clickhouse.com/docs/concepts/features/materialized-views/incremental-materialized-view"
+    },
+    {
+      "number": "B5",
+      "title": "Benchmark conditions and trade-offs",
+      "speaker": "Echenique",
+      "kind": "table",
+      "height": 250,
+      "widths": [
+        245,
+        250,
+        250,
+        405
+      ],
+      "values": [
+        [
+          "Workload",
+          "Detail",
+          "Aggregate",
+          "Observed result"
+        ],
+        [
+          "OTTO daily counts",
+          "5.8908 s",
+          "0.2113 s",
+          "Aggregate about 27.9× faster"
+        ],
+        [
+          "Atlas exact-ID counts",
+          "0.498 s",
+          "0.703 s",
+          "Aggregate slower in this test"
+        ]
+      ],
+      "takeaway": "Local comparisons of different designs inside ClickHouse. No cross-database benchmark.",
+      "notes": "Suggested respondent: Echenique\nUse for questions. Hidden from the core slideshow.\n\nOTTO: 216,716,096 detail rows and 87 aggregate groups. Same daily output, median of three local runs, SQL query cache disabled. Background merges paused for the documented large-table benchmark. Operating-system cache and concurrent conditions affect timings.\nAtlas: 1,000,002 logical events, 16 groups, three queries per alternative, no concurrent load and empty queue. The query cache was disabled. System cache and warm-up were not controlled. Exact unique-ID states have memory and merging cost.\nQ: Does fewer rows read mean faster? Our Atlas result shows why the answer needs measurement.\nQ: Where is PostgreSQL? We made a qualitative workload comparison, not a measured performance claim.\nQ: Did you have a billion real events? The billion-row stress table contains labelled copies derived from OTTO.\n\nSources: docs/RESULTS.md; docs/ATLAS-RESULTS.md"
+    },
+    {
+      "number": "B6",
+      "title": "AI decisions and metric scope",
+      "speaker": "Anuar",
+      "kind": "text",
+      "blocks": [
+        {
+          "text": "Model integration",
+          "x": 64,
+          "y": 235,
+          "w": 540,
+          "h": 50,
+          "size": 34,
+          "green": true,
+          "bold": true
+        },
+        {
+          "text": "Bounded choices\nPython validates the action\nModel and reason remain visible",
+          "x": 64,
+          "y": 320,
+          "w": 525,
+          "h": 188,
+          "size": 30
+        },
+        {
+          "text": "Metric interpretation",
+          "x": 690,
+          "y": 235,
+          "w": 525,
+          "h": 50,
+          "size": 34,
+          "green": true,
+          "bold": true
+        },
+        {
+          "text": "Same simulation run and time scope\nAI classification follows a recorded model decision\nConfigured customers may still be waiting",
+          "x": 690,
+          "y": 320,
+          "w": 525,
+          "h": 220,
+          "size": 28
+        }
+      ],
+      "takeaway": "A model configuration proves intent. A recorded decision proves that the model acted.",
+      "notes": "Suggested respondent: Anuar\nUse for questions. Hidden from the core slideshow.\n\nQ: Are all customers AI? No. Traffic and policy modes use rules. Hybrid mode combines a configured small AI subset with faster simulated traffic.\nQ: Is the AI realistic? We demonstrate a constrained integration. We have not validated human realism, economic predictions or a gain over policies.\nQ: Why can the AI list and metrics differ? A configured customer enters the AI metric after its first recorded model decision. A waiting customer may already appear in the list.\nQ: Is an empty AI view an error? It may be a traffic-only run, a model not yet producing decisions, or a host version without per-kind metrics. Check the current run and server.\nQ: Is AI making the GPS path? No. The simulator generates delivery movement after accepted actions.\n\nSources: docs/AI-CUSTOMERS.md; docs/PR7-PR8-REVIEW.md; atlas/customer_runtime.py; web/atlas-dashboard.js"
+    },
+    {
+      "number": "B7",
+      "title": "Demo recovery paths",
+      "speaker": "Echenique",
+      "kind": "table",
+      "height": 310,
+      "widths": [
+        270,
+        445,
+        435
+      ],
+      "values": [
+        [
+          "Condition",
+          "Demonstration path",
+          "What we tell the audience"
+        ],
+        [
+          "Server and tunnel ready",
+          "Host miniapp, public map, host SQL",
+          "Current live results"
+        ],
+        [
+          "Public connection fails",
+          "Use the working local dashboard",
+          "Live on the host, without public sharing"
+        ],
+        [
+          "Live system unavailable",
+          "Recorded map and saved query evidence",
+          "Recorded evidence with its date"
+        ]
+      ],
+      "takeaway": "A 15-second stall triggers the prepared alternative. Keep operations and CRUD inside 3 minutes.",
+      "notes": "Suggested respondent: Echenique\nUse for questions. Hidden from the core slideshow.\n\nPre-open the local miniapp, the dashboard and a host terminal. Prepare one linked order ID and a known courier. Run CRUD once during rehearsal. Verify the intended ClickHouse connection and keep credentials off the projected screen.\nEchenique controls and narrates the projected demo. Anuar monitors the host and prepares the miniapp. Geremi keeps time.\nIf one step stalls for 15 seconds, use the prepared order or local dashboard. If no live path works, use dated evidence and say explicitly that it is recorded. Recorded material supports explanation but cannot be presented as meeting the live-demo requirement.\nDo not download datasets, launch an unprepared model or change the infrastructure during the talk. The group still needs a complete timed rehearsal on the actual presentation setup.\n\nSources: docs/PRESENTATION.md; docs/DEMO.md; docs/TRACKING-DEMO.md; docs/TEAM-INSTALL-TESTS.md"
+    },
+    {
+      "number": "B8",
+      "title": "Workload fit and production extensions",
+      "speaker": "Geremi",
+      "kind": "table",
+      "height": 320,
+      "widths": [
+        330,
+        470,
+        350
+      ],
+      "values": [
+        [
+          "Need",
+          "Design direction",
+          "Evidence boundary"
+        ],
+        [
+          "Historical analytical queries",
+          "ClickHouse and measured aggregate designs",
+          "Implemented on one node"
+        ],
+        [
+          "Transactional business state",
+          "Evaluate a dedicated transactional store",
+          "Proposed extension"
+        ],
+        [
+          "Multiple independent consumers",
+          "Evaluate a shared event broker",
+          "Current queue has one publisher"
+        ],
+        [
+          "Host failure recovery",
+          "Independent backups and a replica design",
+          "Not demonstrated"
+        ]
+      ],
+      "takeaway": "Production changes should address measured needs and explicit failure cases.",
+      "notes": "Suggested respondent: Geremi\nUse for questions. Hidden from the core slideshow.\n\nQ: Why not use only PostgreSQL? Our analysis compares workload needs qualitatively. We did not measure a PostgreSQL baseline or prove ClickHouse is faster for every task. A production commerce system may separate transactional state from analytical history.\nQ: Why SQLite? It gives this single-host demo a durable local outbox with a simple startup. It is not an independent replica or a multi-consumer broker.\nQ: What would you change first? Rehearse and measure. Then address host reliability, backups, access control, retention and memory cost before claiming production readiness.\nQ: What about CAP? Discuss the chosen topology, operations, failure and settings. The current one-node demo does not measure behaviour under a replica network partition.\n\nSources: docs/FUNDAMENTALS.md; docs/APPLIED-THEORY.md; docs/ATLAS-INFRASTRUCTURE.md; docs/ATLAS-RESULTS.md"
+    }
+  ]
+}

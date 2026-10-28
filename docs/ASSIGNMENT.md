@@ -74,7 +74,7 @@ Each group researches a NoSQL database in depth, explains its fundamentals and s
 
 | Deliverable | Where | Status |
 |---|---|---|
-| 20-minute presentation with the demo | [PRESENTATION.md](PRESENTATION.md) is the old Clickstream Lab script and allocates 20 minutes of presentation plus 10 of demo. [PROGRESS-UPDATE.md](PROGRESS-UPDATE.md) is the 5-minute progress update. Slides in `presentaciones/` | Missing: the final 20-minute Delivery Atlas script, with the demo included |
+| 20-minute presentation with the demo | [PRESENTATION.md](PRESENTATION.md), [English speaker notes](CLICKHOUSE-PRESENTER-NOTES-EN.md) and [slide content](CLICKHOUSE-PRESENTATION-EN.json) | Draft ready: 17:35 including dashboards, map and CRUD, plus 2:25 buffer. Full group rehearsal still pending |
 | Documentation | [FUNDAMENTALS.md](FUNDAMENTALS.md), [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md), [ATLAS-INFRASTRUCTURE.md](ATLAS-INFRASTRUCTURE.md), [TEAM-TECHNICAL-GUIDE.md](TEAM-TECHNICAL-GUIDE.md) | Done |
 | Step-by-step installation | [ATLAS-INFRASTRUCTURE.md](ATLAS-INFRASTRUCTURE.md), section 2, and [INSTALLATION.md](INSTALLATION.md) | Done. Windows test with system, commands, results and common problems in [TEAM-INSTALL-TESTS.md](TEAM-INSTALL-TESTS.md). Echenique's test on his computer is still missing |
 | Guide to run the demo | [DEMO.md](DEMO.md) is the old OTTO lab demo; [TRACKING-DEMO.md](TRACKING-DEMO.md) covers Atlas tracking; [MINIAPP.md](MINIAPP.md), the mini-app | Partial: a single guide following the order of the final demo is missing |
@@ -91,13 +91,13 @@ Each group researches a NoSQL database in depth, explains its fundamentals and s
 | Clear and reproducible documentation | Atlas starts with one command and without large datasets; Windows test recorded ([TEAM-INSTALL-TESTS.md](TEAM-INSTALL-TESTS.md)) |
 | Real datasets, programming language and scalability | OTTO, REES46, Ele.me and Glovo; Python; a billion derived rows and an explanation of replicas and shards |
 | Creativity of the use case | Fictional delivery platform with AI customers, concurrent traffic and GPS tracking |
-| Answering questions and discussion | [PRESENTATION.md](PRESENTATION.md), "Talking points for questions", as the basis for preparing the 10 minutes of questions |
+| Answering questions and discussion | Eight supporting slides and the questions in [English speaker notes](CLICKHOUSE-PRESENTER-NOTES-EN.md) |
 
 ## Pending before the presentation
 
 By priority:
 
-1. **Final 20-minute script** with the demo included, and a timed rehearsal. Update [PRESENTATION.md](PRESENTATION.md), which still describes Clickstream Lab and 20 + 10 minutes.
+1. **Timed group rehearsal** of the [final 20-minute script](PRESENTATION.md), including the new ClickHouse dashboards, map and CRUD. Confirm the host and gateway run the new analytical routes before the rehearsal.
 2. **A single guide for the final demo**, step by step, with CRUD included and a plan B in case something fails.
 3. **Echenique's installation test** on his computer, added to [TEAM-INSTALL-TESTS.md](TEAM-INSTALL-TESTS.md).
 

@@ -14,6 +14,10 @@ Jere, Anuar and Echenique are preparing a BD2 project; the professor and other s
 
 Delivery Atlas demonstrates the analytics infrastructure of a fictional food-delivery platform. It must represent massive events, explain the schema and show ingestion and tracking during the demo.
 
+## ClickHouse-first presentation — 27 October 2026
+
+Geremi confirmed that ClickHouse is the main subject. Every dashboard must explain a concrete analytical question, its source tables and the database mechanisms used to answer it. The English analytics portal unifies Customer Journey, ClickHouse Performance and the historical dataset analyses, alongside the existing live operations map. Customer Journey uses a run-scoped ordered session funnel. Performance exposes storage engines, sorting keys, physical parts, completed query statistics and fixed detail/aggregate comparisons with answer equality checks. Public viewers keep read-only access. Missing datasets remain explicit host dependencies, without substituting invented counts.
+
 ## Operating Context
 
 Local demo in the browser and Docker Compose, Python/ClickHouse integration. The user confirmed Madrid and simulated couriers with positions every two seconds on 7 October 2026. We keep the public datasets and the historical dashboards.
