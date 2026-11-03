@@ -1,0 +1,26 @@
+name: atlas-gps-benchmark
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.8
+    restart: "no"
+    cpus: 2
+    mem_limit: 2g
+    environment:
+      CLICKHOUSE_USER: gps_lab_admin
+      CLICKHOUSE_PASSWORD: gps-lab-admin-only
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    ports:
+      - "127.0.0.1:18124:8123"
+    volumes:
+      - gps_lab_data:/var/lib/clickhouse
+      - ./config.xml:/etc/clickhouse-server/config.d/gps-benchmark.xml:ro
+      - ../../sql/atlas.sql:/docker-entrypoint-initdb.d/10-atlas.sql:ro
+      - ../../sql/atlas_operations.sql:/docker-entrypoint-initdb.d/20-operations.sql:ro
+      - ./init.sql:/docker-entrypoint-initdb.d/30-gps-lab.sql:ro
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--user", "gps_lab_admin", "--password", "gps-lab-admin-only", "--query", "SELECT count() FROM gps_comparison_lab.identity"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+volumes:
+  gps_lab_data:
