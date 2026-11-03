@@ -5,6 +5,8 @@ Ten English slides with four speakers. The core script takes 9:40 including the 
 - `content.json`: slide titles, complete speaker notes, sources and dated read-only observations.
 - `SCRIPT-EN.md`: spoken script, timing, demo preparation, fallback and questions.
 - `build.mjs`: native slide objects, editable tables and data-path diagram for Artifact Session.
+- `SCRIPT-DRAFT.md`: Anuar's first draft of the script, kept for reference; `SCRIPT-EN.md` supersedes it.
+- `screenshots/`: full-resolution captures of the local dashboard taken for that draft (map, AI agents, downloaded datasets, overview), usable as fallback images.
 - `map-public-2026-10-28.png`: recorded capture after reconnecting the public demo, around 11:43 Europe/Madrid.
 - The three `*-recorded.png` assets were extracted from Anuar's supplied PDF as reference/fallback evidence. The revised evidence slide uses native tables with the newly verified measurements.
 
