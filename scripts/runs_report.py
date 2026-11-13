@@ -25,7 +25,8 @@ def duration(summary: dict) -> str:
 
 
 def main() -> None:
-    summaries = [(json.loads(path.read_text(encoding="utf-8")), path.parent.name) for path in RUNS.glob("*/summary.json")]
+    summaries = [(json.loads(path.read_text(encoding="utf-8")), path.parent.name)
+                 for path in RUNS.glob("*/summary.json") if ".partial" not in path.parent.name]
     summaries.sort(key=lambda item: min(t["first_event"] for t in item[0]["tables"].values() if t["rows"]))
     total_rows = sum(t["rows"] for summary, _ in summaries for t in summary["tables"].values())
     total_bytes = sum(t["bytes"] for summary, _ in summaries for t in summary["tables"].values())
@@ -41,11 +42,12 @@ def main() -> None:
         f"The exports are not in Git: download them from the [GitHub release]({RELEASE}) (one `.tar` per run). "
         "All the data is fictional and synthetic; the downloaded Criteo and Glovo datasets are not included.",
         "",
-        "Times are UTC. Customers and couriers are the distinct IDs that appear in the run; "
+        "Times are UTC. Event span is last minus first event, including any pauses; it is not continuous uptime. "
+        "Customers and couriers are the distinct IDs that appear in the run; "
         "AI customers are those with at least one decision taken by the local model (`decision_mode = 'ollama'`), "
         "which stops after 120 model calls per run.",
         "",
-        "| Run | Start (UTC) | Duration | Customers (AI) | Couriers | GPS positions | Customer actions | Browsing events "
+        "| Run | Start (UTC) | Event span | Customers (AI) | Couriers | GPS positions | Customer actions | Browsing events "
         "| Order events | Orders | Delivered | Total rows |",
         "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
@@ -67,7 +69,8 @@ def main() -> None:
         "- **19–22 October:** first runs with 24 simulated customers and 12 couriers, then hybrid runs "
         "(3 AI customers + simulated traffic). Short runs were tests of the AI agents or were stopped to update the server.",
         "- **28–30 October:** hybrid runs with 100 customers and 50 couriers prepared for the checkpoint presentation; "
-        "`2026-10-28_a12236a9` ran for almost two days.",
+        "`2026-10-28_a12236a9` spans almost two days, including a verified 17 h 56 min GPS gap; "
+        "do not present that span as continuous generation.",
         "- **31 October (big-data run):** two Atlas APIs writing to the same ClickHouse for 8 hours, each with "
         "500 customers, 150 couriers and a 1-second tick: `2026-10-31_4f297d43` on port 8001 (hybrid, seed 31) and "
         "`2026-10-31_6bf38221` on a second container on port 18001 (traffic only, seed 62). Together about 13.4 million "

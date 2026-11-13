@@ -2,7 +2,7 @@
 
 BD2 project to design the analytics infrastructure of a fictional food-delivery platform. The goal is to receive massive browsing events, keep their provenance and feed a dashboard with ClickHouse. The current implementation, called Clickstream Lab in the OTTO dashboard, provides the data and performance lab on which we build that case.
 
-**Start here:** [install Delivery Atlas step by step](docs/ATLAS-INSTALL.md), then [run the live demo](docs/DEMO-GUIDE.md). To understand the database, read [ClickHouse fundamentals](docs/FUNDAMENTALS.md). The final presentation is in [docs/PRESENTATION.md](docs/PRESENTATION.md).
+**Start here:** [install Delivery Atlas step by step](docs/ATLAS-INSTALL.md), then [run the live demo](docs/DEMO-GUIDE.md). To understand the database, read [ClickHouse fundamentals](docs/FUNDAMENTALS.md). Use the [14-slide English rehearsal presentation](presentaciones/final-2026-11-11/Delivery-Atlas.html), [matching script](presentaciones/final-2026-11-11/SCRIPT-EN.md) and [four-speaker route](docs/PRESENTATION.md). Download/open the HTML in a browser; the GitHub file page shows its source.
 
 **Project brief and checklist:** [docs/ASSIGNMENT.md](docs/ASSIGNMENT.md) summarizes what the assignment asks for and where each requirement is covered.
 

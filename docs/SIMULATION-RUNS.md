@@ -4,9 +4,9 @@ Every Delivery Atlas simulation run kept on the demo server (Anuar's computer), 
 
 **19 runs, 34,845,813 rows, 2.70 GB compressed.** The exports are not in Git: download them from the [GitHub release](https://github.com/AnuarH16/analitica-reparto-clickhouse/releases/tag/simulation-runs-2026-11-01) (one `.tar` per run). All the data is fictional and synthetic; the downloaded Criteo and Glovo datasets are not included.
 
-Times are UTC. Customers and couriers are the distinct IDs that appear in the run; AI customers are those with at least one decision taken by the local model (`decision_mode = 'ollama'`), which stops after 120 model calls per run.
+Times are UTC. Event span is last minus first event, including pauses; it is not continuous uptime. Customers and couriers are the distinct IDs that appear in the run; AI customers are those with at least one decision taken by the local model (`decision_mode = 'ollama'`), which stops after 120 model calls per run.
 
-| Run | Start (UTC) | Duration | Customers (AI) | Couriers | GPS positions | Customer actions | Browsing events | Order events | Orders | Delivered | Total rows |
+| Run | Start (UTC) | Event span | Customers (AI) | Couriers | GPS positions | Customer actions | Browsing events | Order events | Orders | Delivered | Total rows |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | `2026-10-19_dde04b4a` | 2026-10-19 14:58 | 9 min | 24 (0) | 12 | 3,084 | 1,080 | 808 | 375 | 68 | 56 | 5,415 |
 | `2026-10-19_6f5d9c10` | 2026-10-19 15:07 | < 1 min | 24 (0) | 12 | 96 | 108 | 84 | 6 | 3 | 0 | 297 |
@@ -33,8 +33,15 @@ Column to table: GPS positions = `courier_positions`, customer actions = `custom
 ## Notes on the runs
 
 - **19–22 October:** first runs with 24 simulated customers and 12 couriers, then hybrid runs (3 AI customers + simulated traffic). Short runs were tests of the AI agents or were stopped to update the server.
-- **28–30 October:** hybrid runs with 100 customers and 50 couriers prepared for the checkpoint presentation; `2026-10-28_a12236a9` ran for almost two days.
+- **28–30 October:** hybrid runs with 100 customers and 50 couriers prepared for the checkpoint presentation; `2026-10-28_a12236a9` spans almost two days, including a verified 17 h 56 min GPS gap; do not present it as continuous generation.
 - **31 October (big-data run):** two Atlas APIs writing to the same ClickHouse for 8 hours, each with 500 customers, 150 couriers and a 1-second tick: `2026-10-31_4f297d43` on port 8001 (hybrid, seed 31) and `2026-10-31_6bf38221` on a second container on port 18001 (traffic only, seed 62). Together about 13.4 million rows, roughly 1.7 million per hour. ClickHouse used about 40 % CPU when checked, and both queues drained to 0 when stopped. `scripts/simulation_watchdog.sh` was ready to reopen Docker Desktop and restart the runs, but no restart was needed. `2026-10-31_ce8625ad` is a one-minute run that the watchdog started by mistake after the planned stop.
 - **1 November:** the same two-API setup (`2026-11-01_2d08b7a9` hybrid, `2026-11-01_31fdac6e` traffic) stopped after 23 minutes, when Docker Desktop closed and the watchdog closed with the session that ran it. The queues still published everything once Docker was back.
 - **3 November (largest run):** the same setup again for about 11 hours, from 02:20 to 13:25 UTC: `2026-11-03_70861ccd` (hybrid, seed 1103) and `2026-11-03_592f4a72` (traffic only, seed 1104), together about 18.5 million rows. The watchdog ran the whole time without needing to restart anything, and the rows exported for each run equal the events its API accepted.
 - The second API was a manual `docker run` of the Atlas image on port 18001 with its own queue volume. From Git Bash, prefix that command with `MSYS_NO_PATHCONV=1`; otherwise Git Bash rewrites `ATLAS_QUEUE_PATH=/state/outbox.sqlite` to a Windows path and the queue is not kept on the volume.
+
+
+## Export and watchdog integrity
+
+Completed exports are gzip-CRC/CSV-count/run-ID checked before atomic promotion; new manifests include file SHA-256. An existing directory is reused only after verifying its manifest and files. Failed `.partial-*` folders are not saved runs and are excluded from reports; they stay available for diagnosis. The exporter uses bounded HTTP reads rather than loading a large compressed table into RAM. Do not export an actively writing run.
+
+The watchdog waits for an explicit integer `pending=0`, verifies the export, and rechecks the run identity, stopped state, pause and disk reserve before restarting. A reserve-triggered pause is created before stopping runs; `.reserve-pending` retains incomplete work for retry. Manual pauses never start new runs. Keep one watchdog process and the original API/queue volumes. The 19-run archived total above is a dated export corpus; the later live database inventory includes additional events and is not the same count.

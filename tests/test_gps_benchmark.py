@@ -145,6 +145,21 @@ class TransportTests(unittest.TestCase):
 
 
 class LoaderTests(unittest.TestCase):
+    def test_import_blocks_stay_bounded_under_the_existing_memory_budget(self):
+        import io
+        from types import SimpleNamespace
+        from urllib.parse import parse_qs, urlsplit
+        from unittest.mock import Mock
+        opener=Mock();opener.open.return_value=io.BytesIO(b'')
+        with patch.object(lab,'build_opener',return_value=opener):
+            lab.insert(SimpleNamespace(user='gps_lab_admin',password='gps-lab-admin-only'),b'fixture','JSONEachRow')
+        request=opener.open.call_args.args[0]
+        settings=parse_qs(urlsplit(request.full_url).query)
+        self.assertEqual(settings['max_insert_block_size'],['262144'])
+        self.assertEqual(settings['min_insert_block_size_rows'],['262144'])
+        self.assertEqual(settings['input_format_parallel_parsing'],['0'])
+        self.assertEqual(settings['max_memory_usage'],['536870912'])
+
     def test_csv_parser_counts_records_with_embedded_newlines_and_rejects_wrong_run_before_insert(self):
         import csv
         run=str(uuid4());rows=lab.fixture_rows(run)

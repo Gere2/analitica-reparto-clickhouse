@@ -65,7 +65,9 @@ def insert(client, stream, fmt):
         raise ValueError('Unsupported lab import format.')
     params={'query':'INSERT INTO delivery_atlas.courier_positions FORMAT '+fmt,
             'date_time_input_format':'best_effort','async_insert':0,'wait_end_of_query':1,
-            'max_execution_time':300,'max_memory_usage':536870912,'max_threads':2}
+            'max_execution_time':300,'max_memory_usage':536870912,'max_threads':2,
+            'max_insert_block_size':262144,'min_insert_block_size_rows':262144,
+            'min_insert_block_size_bytes':0,'input_format_parallel_parsing':0}
     request=Request(LAB_URL+'?'+urlencode(params),data=stream,
         headers={'X-ClickHouse-User':client.user,'X-ClickHouse-Key':client.password})
     # A timed-out INSERT can have partially succeeded. Never retry it automatically.

@@ -90,7 +90,7 @@ UNION ALL SELECT 'customer actions', count() FROM delivery_atlas.customer_activi
 UNION ALL SELECT 'orders', count() FROM delivery_atlas.customer_orders
 ```
 
-Larger runs: the controls accept up to **500 customers and 150 couriers**. As a reference, on the demo host that size produced about 1.7 million rows per hour.
+Larger runs: the controls accept up to **500 customers and 150 couriers**. As a reference, two APIs with that configuration on the demo host produced about 1.7 million total rows per hour together (not per API).
 
 ## 5. Optional: AI customers with a local model
 
@@ -129,6 +129,8 @@ git pull
 docker compose -f compose.yaml --profile atlas up -d --build --wait
 ```
 
+Before updating a host with a watchdog or two API instances, follow the pause, drain and export steps in [DEMO-GUIDE.md](DEMO-GUIDE.md#one-day-before-update-the-host-without-losing-its-runs). Reuse its existing checkout/Compose project and volumes.
+
 A restart keeps ClickHouse data and the pending queue, but it does not resume a simulation: start a new run from the dashboard.
 
 **Never use `docker compose down -v`** unless you really want to delete everything: `-v` removes the volumes with all ClickHouse data and the queue.
@@ -147,7 +149,7 @@ If you also run the shared read-only website, rebuild its gateway too after an u
 | `analytics.html` returns 404 | The Atlas image is older than the code. Run the update command of step 7 with `--build` |
 | The map is empty | No simulation is running. Start one (step 4). Positions refresh every two seconds |
 | The AI customers do nothing | The `ai` profile is not running or the model was not pulled (step 5), or the run already used its 120 model calls |
-| A `.sh` script fails with `bad interpreter` on Windows | Line-ending conversion by Git. With no local changes: `git rm -r --cached . -q` then `git reset --hard` |
+| A `.sh` script fails with `bad interpreter` on Windows | Preserve local changes. Run the script from Git Bash and convert that script to LF in the editor; do not reset the repository or remove data |
 
 ## Tested
 

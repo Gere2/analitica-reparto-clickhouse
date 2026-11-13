@@ -131,3 +131,12 @@ docker compose -f benchmarks/gps/compose.yaml stop
 ```
 
 References: [ClickHouse read-only settings](https://clickhouse.com/docs/operations/settings/permissions-for-queries), [query log](https://clickhouse.com/docs/operations/system-tables/query_log), [repeatable query diagnosis](https://clickhouse.com/docs/guides/clickhouse/performance-and-monitoring/isolate-query-bottlenecks).
+
+
+## Loader correction and received evidence (13 November)
+
+Anuar completed the lab on ClickHouse 25.8.33.6 / Windows on 6 November. Default insertion blocks exceeded the existing 512 MiB per-insert budget. The loader now uses 262,144-row blocks, disables parallel input parsing and keeps that memory limit. This changes loading only, not either measured SELECT. A failed load still requires checking actual stored rows before any manual retry.
+
+[Complete raw result release](https://github.com/AnuarH16/analitica-reparto-clickhouse/releases/tag/gps-benchmark-2026-11-06): ZIP SHA-256 `3ed1f911283fd9afccaa222550754dda238a9df12ac8dbe701bd5861ab91d5d7`. It contains the report, full samples/query-log joins, frozen answer, commands, environment, plots and loader patch. This review verifies archive integrity and consistency of the supplied measurements; it does not independently rerun the 4.37-million-row workload on Anuar’s machine.
+
+The rehearsal presentation is [the 14-slide 11 November web version](../presentaciones/final-2026-11-11/Delivery-Atlas.html); GPS conditions/results/explanation are slides 11–13. The map remains slides 7–8.

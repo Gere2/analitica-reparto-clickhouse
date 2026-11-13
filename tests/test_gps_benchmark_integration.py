@@ -7,14 +7,26 @@ import tempfile
 import unittest
 from pathlib import Path
 from uuid import uuid4
+from unittest.mock import patch
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 import gps_benchmark as gps
 import gps_benchmark_lab as lab
+import export_run as exporter
 
 
 @unittest.skipUnless(os.environ.get('GPS_BENCHMARK_TEST_URL'), 'Requires the separate GPS benchmark lab')
 class GPSIntegrationTests(unittest.TestCase):
+    def test_real_gzip_run_export_counts_all_tables_and_verifies_an_existing_archive(self):
+        gps.lab_url(os.environ['GPS_BENCHMARK_TEST_URL'])
+        run=str(uuid4());lab.load(lab.admin_client(),run)
+        with tempfile.TemporaryDirectory() as temporary, patch.object(exporter,'CLICKHOUSE',gps.LAB_URL.rstrip('/')):
+            target=Path(temporary)/'verified-run'
+            first=exporter.export(run,target)
+            self.assertEqual(first['tables']['courier_positions']['rows'],12)
+            self.assertEqual(set(first['tables']),set(exporter.TABLES))
+            self.assertEqual(exporter.export(run,target),first)
+
     def test_gzip_csv_stream_import_preserves_quoted_records_and_refuses_a_second_load(self):
         gps.lab_url(os.environ['GPS_BENCHMARK_TEST_URL'])
         run_id=str(uuid4())

@@ -1,5 +1,7 @@
 # ClickHouse in practice: English presenter notes
 
+**Archived 16-slide proposal. For the current 14-slide rehearsal use [SCRIPT-EN.md](../presentaciones/final-2026-11-11/SCRIPT-EN.md) and [PRESENTATION.md](PRESENTATION.md).**
+
 Core: **17 min 35 sec**, including dashboard exploration and operations/CRUD. Reserve **2 min 25 sec** for transitions and delays inside the 20-minute slot.
 
 | Speaker | Slides | Target |

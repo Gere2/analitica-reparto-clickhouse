@@ -1,175 +1,148 @@
-# Live demo guide
+# Rehearsal and live demo guide
 
-How to run the live part of the final presentation, step by step, and which ClickHouse idea each step shows. It follows slides 9–14 of [PRESENTATION.md](PRESENTATION.md); the spoken text is in [CLICKHOUSE-PRESENTER-NOTES-EN.md](CLICKHOUSE-PRESENTER-NOTES-EN.md).
+Use the **14-slide web presentation dated 11 November**, [Delivery-Atlas.html](../presentaciones/final-2026-11-11/Delivery-Atlas.html), and its [English script](../presentaciones/final-2026-11-11/SCRIPT-EN.md). [PRESENTATION.md](PRESENTATION.md) has the exact four-speaker allocation and timings. The old 16-slide outline is archived; its slides 10–14 do not describe this version.
 
-You need a working installation first: [ATLAS-INSTALL.md](ATLAS-INSTALL.md). Everything below runs on one computer, the **host**. The public read-only website can show the dashboards, but the controls, the mini-app checkout and the CRUD script only work on the host.
+Install first with [ATLAS-INSTALL.md](ATLAS-INSTALL.md). Anuar's computer is the **host**: ClickHouse, API, queue, simulation and authenticated gateway run there. Vercel hosts the read-only frontend and GET proxy. Rebuilding Vercel cannot add routes to an old API or gateway.
 
-## What the demo shows
+## Which slide uses which screen
 
-| Step | Where | ClickHouse idea |
-|---|---|---|
-| 1. Customer Journey | Analytics portal | `FINAL` to collapse retried rows, `windowFunnel` for ordered steps per session |
-| 2. Historical explorers | Analytics portal | Columnar reads over millions of rows; only the needed columns are read |
-| 3. ClickHouse Performance | Analytics portal | `system.parts` (storage, compression, sort keys), `system.query_log` (work per query), detail vs prepared aggregate |
-| 4. Live map | Dashboard | Append-only history plus a materialized view that keeps the latest state (`argMax`) |
-| 5. Follow one order | Mini-app and dashboard | Ingestion path: API, durable queue, batch INSERT, then reads of the new rows |
-| 6. Python CRUD | Terminal | INSERT and SELECT are cheap; UPDATE and DELETE are mutations that rewrite parts |
-| 7. SQL by hand (optional) | ClickHouse `/play` | The same ideas as SQL you can type and time |
+| Slide | Speaker | Action | ClickHouse point |
+|---:|---|---|---|
+| 1–3 | Echenique | Slides | Workload, column storage and analytical SQL |
+| 4 | Juanro | Slides | Read selected columns, sorted parts and compression |
+| 5–6 | Anuar | Slides; use diagram focus if helpful | Queue → batch inserts → history and prepared states; separate data origins |
+| **7** | **Geremi** | Local dashboard and Madrid map | Latest courier state computed from inserted GPS history |
+| **8** | **Geremi** | AI agents, then downloaded Criteo/Glovo views | Validated AI actions; timed analytical queries on real public data |
+| 9 | Juanro | Slides | Retained checkpoint status and lessons |
+| 10 | Echenique | Slides | Retained checkpoint closing; continue to the appendix |
+| 11 | Anuar | Experiment setup slide | Frozen 4,371,300 GPS rows, 150 couriers, 2 CPU / 2 GiB lab |
+| 12 | Juanro | Received p95 plot | Same answers/load: history crosses the target at 2 readers; prepared state passes |
+| 13 | Anuar | Server work table | Rows read, server time and query memory; view-maintenance cost remains separate |
+| 14 | Echenique | Planned comparison slide | Common corpus and resource budget; no PostgreSQL/DuckDB timing claimed |
 
-The order follows the slides: Anuar presents steps 1–3 (slides 10–12) and Echenique steps 4–6 (slide 14).
+The prepared slides and notes stay in English. Add Customer Journey/Performance and the scratch-table CRUD in the remaining presentation time, without replacing the rehearsed parts or renumbering slides. The map already belongs to the core script.
 
-## Before the presentation
+**20-minute slot:** the prepared core totals 14:35. Budget about 2 minutes for Journey/Performance (Anuar, after slide 8), 1 minute for the required CRUD demonstration (Echenique, after slide 14), and 2:25 for transitions and delays. Time this complete route together. An extra mini-app order or additional SQL belongs to questions if time is short.
 
-**One day before**
+## One day before: update the host without losing its runs
 
-1. Update the host and rebuild, so the API has the analytics portal:
+Use the **existing checkout and Compose project serving the demo**. Another clone/project can select new empty volumes. Do not remove volumes or recreate the manually started second API with a different queue path.
+
+1. Pause every watchdog before stopping runs. In Git Bash, from that checkout:
 
    ```bash
-   git pull
+   mkdir -p data/runs
+   touch data/runs/WATCHDOG-PAUSE
+   ```
+
+   Stop the watchdog process too if you are updating its script. A manual pause stops automation; it does not stop an already running simulation.
+2. Stop each simulation from its own dashboard: ports **8001 and 18001** if both are active. Keep Docker, ClickHouse and the publisher alive. Record each `run_id` from `/api/simulation`, and wait for **pending: 0 on both `/api/status` endpoints**. If a queue fails to drain, investigate; do not restart/rebuild yet.
+3. Export each stopped run with `python3 scripts/export_run.py RUN_UUID`. Use `python` on Windows. Each completed archive is verified for gzip CRC, CSV record count, run identity and source counts; new archives also contain SHA-256. Failed staging folders remain separate and do not count as saved runs. Never treat a folder name as evidence of success.
+4. Check local changes and update main:
+
+   ```bash
+   git status --short
+   git fetch origin main
+   git switch main
+   git merge --ff-only origin/main
+   git rev-parse HEAD
+   ```
+
+   If the checkout has local changes or cannot fast-forward, preserve them and resolve the issue. Do not use `reset --hard` or delete data to make the command work.
+5. Rebuild the existing Atlas stack, preserving its named volumes:
+
+   ```bash
    docker compose -f compose.yaml --profile atlas --profile ai up -d --build --wait
    ```
 
-   Check that http://127.0.0.1:8001/analytics.html opens. If the shared website is used, rebuild its gateway as well ([SHARING-VERCEL.md](SHARING-VERCEL.md)).
-2. Check which public datasets the host has. In http://127.0.0.1:8124/play:
+   This does not update a manually created second API container. Leave it stopped during rehearsal; update its image and existing queue-volume mapping separately before resuming long-run generation.
+6. Rebuild the authenticated gateway if sharing is used:
 
-   ```sql
-   SELECT name, total_rows FROM system.tables
-   WHERE database = 'delivery' AND total_rows > 0
-   ORDER BY total_rows DESC
+   ```bash
+   docker compose -f compose.yaml -f compose.share.yaml --profile atlas up -d --build --no-deps share-gateway
    ```
 
-   An explorer whose table is missing shows a message instead of data. Present only the loaded ones, or load them now ([ATLAS-INSTALL.md, step 6](ATLAS-INSTALL.md#6-optional-public-datasets)). Never download during the talk.
-3. Run the whole demo once, including the CRUD script, and time it.
+   Wait for its health check. Preserve the existing token files; never print or email their values. If the Quick Tunnel is running, rebuilding the gateway alone need not replace its address. If the tunnel was stopped/recreated, start it, take its **current** HTTPS address from its logs and follow [SHARING-VERCEL.md](SHARING-VERCEL.md) to validate and publish that origin. A Vercel deployment being READY alone does not prove the host connection works.
+7. Check all three pages on the host: `/`, `/analytics.html`, `/delivery.html`. Check `/api/status`, `/api/journey`, `/api/performance`, and the read-only shared equivalents. A 404 means old API/gateway code; a 503 on the public site can mean the tunnel or host is unavailable. The public proxy is deliberately read-only.
+8. Confirm Criteo and Glovo are loaded. OTTO, REES46 and Ele.me are not required on Anuar's host. Missing datasets must remain labelled missing; do not download large files during the talk.
+9. Rehearse all fourteen slides with a clock, on the host and actual projector/browser if available. Keep the original recorded captures as fallback and label them as recorded.
 
-**30 minutes before**
+The `WATCHDOG-PAUSE` flag stays present during rehearsal and benchmarks. A `.reserve-pending` marker means the reserve-triggered stop/export is incomplete and will be retried; keep Docker and the APIs available. Only clear maintenance flags after checking stopped runs, archive integrity, free disk and which generators should resume. A stale `.export-lock` is never removed automatically: confirm no exporter is running before removing that lock directory alone. Failed `.partial-*` directories are excluded from run reports.
 
-1. Open Docker Desktop and wait for the engine. Then `docker compose -f compose.yaml --profile atlas --profile ai up -d --wait`.
-2. Start a run from the dashboard: *Decisions* **AI + mass traffic**, **200 customers**, **80 couriers**, **Start customers and delivery**. Start it 10–15 minutes before speaking, so there are delivered orders and a Journey cohort. The AI stops after 120 model calls (a few minutes); if you want to show fresh AI reasons, start the run closer to the talk.
-3. Open these tabs, in this order:
-   - http://127.0.0.1:8001/analytics.html?panel=journey
-   - http://127.0.0.1:8001/?view=simulated#tracking
-   - http://127.0.0.1:8001/delivery.html
-   - http://127.0.0.1:8124/play, signed in as `demo` (do not show the password on screen)
-   - A terminal in the repository folder, with the command `python3 scripts/crud_demo.py` typed but not run.
-4. Note one order ID and its courier from the dashboard, as a backup if the live order is slow.
-5. Keep the laptop plugged in, notifications off, and sleep disabled.
+## 30 minutes before
 
-## During the demo
+1. Start Docker and the updated Atlas stack. Keep long-run producers and the watchdog paused.
+2. For the prepared 7–8 demonstration, start a fresh **hybrid run with 100 customers and 50 couriers**, with a 2-second tick if using the API. That matches the prepared narration. The old figures on slide 2 remain a dated checkpoint measurement; they are not today's live counters. If using another fleet size, state the actual value rather than claiming 50.
+3. Start near the rehearsal: the 3 AI customers have a 120-call budget and stop making model decisions after that budget. Traffic continues. Verify Ollama is available before speaking; distinguish model decisions from rule-generated actions.
+4. Open these tabs:
+   - `http://127.0.0.1:8001/?view=simulated#tracking`
+   - `http://127.0.0.1:8001/analytics.html?panel=journey` (optional questions)
+   - `http://127.0.0.1:8001/delivery.html` (optional order)
+   - `http://127.0.0.1:8124/play` (local SQL only)
+   - the offline 14-slide HTML presentation.
+5. Choose a courier/order that is already published in ClickHouse. Keep the recorded map/AI/dataset images ready. Keep the computer awake and plugged in.
 
-### 1. Customer Journey (slide 10)
+## Slide 7 — Geremi: Madrid map
 
-Open `analytics.html?panel=journey`.
+1. Switch to the local dashboard's simulated view and tracking map.
+2. Point out that the couriers and orders are fictional. The street basemap is real; the recorded GPS path joins samples with straight lines and is **not street routing**.
+3. Select a courier. Show its order, customer and recorded GPS path, then the active/delivered/late totals.
+4. Explain that GPS history is append-only. The materialized view maintains partial `argMax` states; `courier_latest` merges them into the latest answer. A 150-courier result does not imply only 150 physical stored aggregate states.
+5. Return to the presentation and advance through its manual focus builds. If data is stale, show its age rather than implying invented movement.
 
-1. Change **Customers** between all, simulated and AI and click **Apply filters**. An empty AI cohort is correct for a traffic-only run.
-2. Open **The ClickHouse queries behind this view**.
-3. Explain the query: it reads `customer_activity` for one run with `FINAL` (so a retried event counts once) and uses `windowFunnel` to check, per session, *session start → open product → add to cart → checkout* within 30 minutes. Under the query, ClickHouse reports elapsed time, rows read and bytes read.
+## Slide 8 — Geremi: AI and public datasets
 
-### 2. Historical explorers (slide 11)
+1. Switch to **AI agents**. Show the available decisions and reasons from the local model, noting the fixed budget. An empty AI view on a traffic-only run is expected.
+2. Switch to **Downloaded datasets**. Show **Criteo** and **Glovo**, which are loaded on the host.
+3. Show the SQL/read statistics if time permits. The Criteo grouping time is server query time, not browser latency. A Glovo catalog entry is an offered product, not an order. Keep real datasets separate from the fictional GPS and purchases.
+4. Return to the slides. Keep unrelated missing legacy explorers out of this short prepared route.
 
-Use the links on the left: **OTTO Events**, **Marketplace Trends** (REES46), **Catalog Explorer** (Glovo), **Recommendation Samples** (Ele.me) and **Advertising Groups** (Criteo). About 20 seconds each, only for the datasets the host has.
+## Slides 11–14 — experiment appendix
 
-- Change one filter, click **Apply filters**, and show the SQL and the rows read.
-- Each source keeps its own meaning: a catalog row is a product offered, not a sale; Criteo groups are observed differences in a privacy-protected sample, not a campaign effect.
+Use the received frozen evidence, not a new stress run while the demo is generating data. [GPS-BENCHMARK.md](GPS-BENCHMARK.md) documents the separate port-18124 lab and commands. It does not use the production port or gateway.
 
-### 3. ClickHouse Performance (slide 12)
+With one reader, history client p95 is 704–750 ms and prepared state 125 ms. With two readers, history is 1,625–1,969 ms and prepared state 266–281 ms. There are three 200-request repetitions per design/reader level: 2,400 measured requests, zero errors. The 1-second line is an experimental latency target, not an absolute ClickHouse capacity. Higher reader counts were not attempted after history crossed it.
 
-Open **ClickHouse Performance**.
+Server time is a different measure: the one-reader history median is 560–562 ms and prepared state 6 ms. Explain the recorded rows read and CPU budget; query memory is not total container RAM. Do not claim that all current server rows were scanned by a query filtering a single run. The cost of maintaining views during ingestion and the cross-database comparison are separate experiments.
 
-1. Table inventory: engine, partition key, sort key, rows, compressed and uncompressed size. Explain that each column is stored and compressed separately.
-2. Query history: query families from `system.query_log`, with count, duration, rows read and memory.
-3. Choose a workload and click **Compare fixed queries**: the same question on the detail table and on the prepared aggregate. The page first checks that both answers are equal; only then it shows the times. If they differ (data is still arriving), it says so and shows no ratio.
+## Extra live demonstration and questions
 
-For a stable comparison, stop the simulation and wait until the queue is empty (`pending: 0` at http://127.0.0.1:8001/api/status), then compare.
+- **Customer Journey:** open `/analytics.html?panel=journey`, filter one run/cohort, expand its ClickHouse SQL and read statistics. Explain unique sessions, `FINAL` and ordered `windowFunnel` steps. Empty AI cohorts are valid for traffic-only runs.
+- **Performance:** open the performance panel, show engines/sort keys and `system.parts`, then query families from `system.query_log`. For **Compare fixed queries**, stop generators and wait for pending 0. Both answers must match before a ratio is shown. A general detail/aggregate comparison is not the separate GPS boundary experiment.
+- **One order:** on the host mini-app place an order while a customer simulation is active, then follow its ID on the dashboard. A 202 response means queued, not yet visible in ClickHouse. Switch to the prepared order after 15 seconds rather than waiting through a delivery.
+- **CRUD:** `python3 scripts/crud_demo.py` uses only the scratch table `delivery.demo_events`. Explain insert/read versus part-rewriting mutations. Keep credentials out of the projector. If the assignment requires all four operations live, include this 1-minute example after slide 14. It is an add-on, not slide 14's prepared content.
 
-### 4. Live map (slide 14)
+### Optional SQL on the local host
 
-Open the dashboard at `/?view=simulated#tracking`.
-
-- Each dot is a courier of the simulation on real Madrid streets. The page asks the API every two seconds.
-- Click a courier: the **Selected courier** panel shows the order it carries and its **recorded GPS path** (straight lines between GPS samples, not street routing).
-- Point at the numbers at the top: active, delivered and late orders, computed by ClickHouse at that moment.
-
-**What to say about ClickHouse:** `courier_positions` keeps every GPS point and only receives inserts. A materialized view stores the latest point per courier as an `argMax` state, so the map reads one row per courier (`courier_latest`) instead of scanning the history. In a measured comparison on the demo computer (6 November, a separate ClickHouse limited to 2 CPUs), reading the latest position of 150 couriers from 4.37 million GPS rows took about 560 ms of server time; from `courier_latest` it took about 6 ms, with the same answer.
-
-### 5. Follow one order from the mini-app (slide 14)
-
-1. In http://127.0.0.1:8001/delivery.html, open a restaurant, click a dish, **Add to cart**, then **View order** and **Place order**. A simulation must be running. The dark panel on the right lists every event the app sent, each answered with `202` (queued).
-2. The tracking screen reads the order from ClickHouse every two seconds: *Order received → In the kitchen → Picked up by the courier → On the way → Delivered*. It can wait at "looking for a courier" while every courier is busy.
-3. Click **See the order on the operations dashboard** to find the same order and its courier on the map.
-
-**What to say:** the click went to the API, which stored it in a durable queue (SQLite) and answered at once. A publisher inserts queued events into ClickHouse in batches, which is how ClickHouse prefers to receive data. The order then appears in `app_events`, `customer_orders` and `order_events`, linked by the same `order_id`. A retry with the same IDs does not create a second order.
-
-If the order takes more than 15 seconds, switch to the order you noted before the talk.
-
-### 6. Python CRUD (slide 14)
-
-In the terminal:
-
-```bash
-python3 scripts/crud_demo.py
-```
-
-On Windows, type `python` instead of `python3`. It prints three lines: `INSERT` and `UPDATE` with the row read back after each step, and `DELETE: rows left = 0`. It works on a scratch table, `delivery.demo_events`, never on the project's histories.
-
-**What to say:** INSERT and SELECT are what ClickHouse is built for. `ALTER TABLE … UPDATE` and `… DELETE` are **mutations**: ClickHouse rewrites the affected data parts in the background (here we wait for them with `mutations_sync = 2`). That is why Atlas never updates an order: every status change is a new row, and the latest state comes from the materialized view.
-
-The script reads `CLICKHOUSE_URL`, `CLICKHOUSE_USER` and `CLICKHOUSE_PASSWORD`; the defaults point to this installation. Set them before projecting if the host is different, and keep their values off the screen.
-
-### 7. SQL by hand (optional, for questions)
-
-In http://127.0.0.1:8124/play. After each query, `/play` shows the elapsed time and the rows read.
-
-The same question two ways, latest position of each courier of the last run:
+For a stable latest-position comparison, set the **same frozen run UUID** in both queries. Do not discover the latest run by scanning the history inside only one timed path.
 
 ```sql
--- From the full GPS history
-SELECT courier_id, argMax((latitude, longitude, event_time), (event_time, event_id)) AS latest
+SELECT courier_id,
+       argMax((latitude, longitude, event_time), (event_time, event_id)) AS latest
 FROM delivery_atlas.courier_positions
-WHERE simulation_run_id = (SELECT simulation_run_id FROM delivery_atlas.courier_positions ORDER BY event_time DESC LIMIT 1)
+WHERE simulation_run_id = toUUID('4f297d43-7255-4c72-8b4d-0dc108280f6c')
+  AND city_id = 'madrid'
 GROUP BY courier_id
 ORDER BY courier_id;
 
--- From the state prepared by the materialized view
 SELECT courier_id, (latitude, longitude, event_time) AS latest
 FROM delivery_atlas.courier_latest
-WHERE simulation_run_id = (SELECT simulation_run_id FROM delivery_atlas.courier_positions ORDER BY event_time DESC LIMIT 1)
+WHERE simulation_run_id = toUUID('4f297d43-7255-4c72-8b4d-0dc108280f6c')
+  AND city_id = 'madrid'
 ORDER BY courier_id;
 ```
 
-Storage and compression per table:
+Use a run present in that local instance; the benchmark lab and demo have independent volumes. The runner compares full position tuples, validates every answer and collects query IDs; these short illustrative SQL statements do not replace that experiment.
 
-```sql
-SELECT table, sum(rows) AS total_rows,
-       formatReadableSize(sum(data_compressed_bytes)) AS compressed,
-       formatReadableSize(sum(data_uncompressed_bytes)) AS uncompressed,
-       round(sum(data_uncompressed_bytes) / sum(data_compressed_bytes), 1) AS ratio
-FROM system.parts
-WHERE active AND database = 'delivery_atlas'
-GROUP BY table
-ORDER BY total_rows DESC;
-```
+## Fallback and shutdown
 
-Engines and sort keys:
-
-```sql
-SELECT name, engine, partition_key, sorting_key
-FROM system.tables
-WHERE database = 'delivery_atlas' AND engine NOT IN ('View', 'MaterializedView')
-ORDER BY name;
-```
-
-More queries: `sql/atlas_consultas.sql` and `sql/atlas_tracking_consultas.sql`.
-
-## If something fails
-
-| Symptom | What to do |
+| Symptom | Action |
 |---|---|
-| A page does not load | `docker compose -f compose.yaml --profile atlas ps`; if a service is not healthy, `docker compose -f compose.yaml --profile atlas logs --tail 40 atlas` |
-| Map empty or frozen | The simulation stopped. Check the error on the dashboard and start a new run |
-| `pending` keeps growing at `/api/status` | ClickHouse is behind; the data on screen is older. Wait or reduce the run size; nothing is lost |
-| An explorer says the dataset is missing | That table is not loaded on this host. Say so and move on |
-| Any step stalls for 15 seconds | Use the prepared order or the screenshots in `presentaciones/checkpoint-2026-10-28/`, and say clearly that they are recorded |
+| Local analytics page is 404 | Rebuild Atlas from current main; refresh the gateway too for shared routes |
+| Public data routes are 503 | Check host, authenticated gateway and current tunnel address; use the host demo |
+| Map empty/stale | Check run state, queue and the displayed position age; use the recorded capture if necessary |
+| Queue grows | Wait or reduce the workload; pending data is not a proof of permanent loss or successful publication |
+| A query stalls beyond 15 s | Switch to the prepared screenshot/output, clearly marked recorded |
+| A public dataset is missing | Skip it or show its missing state; never present simulation as that dataset |
 
-## After the demo
-
-Click **Stop** in the dashboard. The data stays in ClickHouse. To shut everything down: `docker compose -f compose.yaml --profile atlas --profile ai stop` (without `down -v`).
+After rehearsal, stop the fresh run, wait for pending 0 and keep its archive. Restore long-run generation only intentionally; never delete ClickHouse or queue volumes to reset the demo. To stop services while keeping data, use `docker compose -f compose.yaml --profile atlas --profile ai stop`.

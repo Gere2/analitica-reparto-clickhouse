@@ -32,7 +32,7 @@ Each group researches a NoSQL database in depth, explains its fundamentals and s
 
 | Requirement | Where | Status |
 |---|---|---|
-| Type of database | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Fit with the BD2 course"; [PRESENTATION.md](PRESENTATION.md), "Is it NoSQL?" | Done |
+| Type of database | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Fit with the BD2 course"; current deck slide 3 | Done |
 | Problems it solves better than other databases | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Experiment that justifies ClickHouse" and "Comparison with a transactional database" | Done |
 | Scenarios where it is commonly used | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Where ClickHouse is used": use-case families from the official documentation and companies from the official list of adopters, including some delivery companies | Done |
 
@@ -57,7 +57,7 @@ Each group researches a NoSQL database in depth, explains its fundamentals and s
 | Requirement | Where | Status |
 |---|---|---|
 | Real or semi-real datasets | OTTO, REES46, Ele.me and Glovo: [README](../README.md) and [RESULTS.md](RESULTS.md). In Atlas, simulated traffic (`synthetic`) and manual actions (`demo_live`); without the Glovo catalog a demo catalog is used | Done. The large datasets are only loaded on Jere's computer; the part that uses them must be run from there |
-| Insert, query, update and delete | `scripts/crud_demo.py` on the scratch table `delivery.demo_events`. [TRACKING-DEMO.md](TRACKING-DEMO.md) explains why the history is not modified | Done: step 6 of [DEMO-GUIDE.md](DEMO-GUIDE.md); run again in a fresh installation on 11 November |
+| Insert, query, update and delete | `scripts/crud_demo.py` on the scratch table `delivery.demo_events`. [TRACKING-DEMO.md](TRACKING-DEMO.md) explains why the history is not modified | Done: scratch-table CRUD in the extra live demonstration section of [DEMO-GUIDE.md](DEMO-GUIDE.md); Anuar reported a fresh-install execution on 11 November |
 | Connection from a programming language | Python API and publisher (`atlas/`); loading and query scripts (`scripts/`) | Done |
 | Simple but representative use case | Delivery Atlas: dashboard at `http://127.0.0.1:8001/`, GPS tracking, simulated and AI customers ([AI-CUSTOMERS.md](AI-CUSTOMERS.md)) and the commercial mini-app ([MINIAPP.md](MINIAPP.md)) | Done |
 | Multiple nodes | [FUNDAMENTALS.md](FUNDAMENTALS.md) explains `ReplicatedMergeTree`, ClickHouse Keeper and `Distributed` tables | Optional (explained, not set up) |
@@ -67,14 +67,14 @@ Each group researches a NoSQL database in depth, explains its fundamentals and s
 | Requirement | Where | Status |
 |---|---|---|
 | Strengths and limitations observed | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Data quality and limits"; [APPLIED-THEORY.md](APPLIED-THEORY.md), "Advantages and disadvantages of ClickHouse here"; [ATLAS-RESULTS.md](ATLAS-RESULTS.md), where the aggregate was not faster | Done |
-| Comparison with other approaches or traditional databases | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Comparison with a transactional database"; [PRESENTATION.md](PRESENTATION.md), "Talking points for questions" | Done, qualitatively. There is no benchmark against PostgreSQL; the brief does not require one |
+| Comparison with other approaches or traditional databases | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Comparison with a transactional database"; current deck slide 14 (planned comparison) | Done, qualitatively. There is no benchmark against PostgreSQL; the brief does not require one |
 | Projects it fits best | [FUNDAMENTALS.md](FUNDAMENTALS.md), comparison table | Done |
 
 ## Deliverables
 
 | Deliverable | Where | Status |
 |---|---|---|
-| 20-minute presentation with the demo | [PRESENTATION.md](PRESENTATION.md), [English speaker notes](CLICKHOUSE-PRESENTER-NOTES-EN.md) and [slide content](CLICKHOUSE-PRESENTATION-EN.json) | Draft ready: 17:35 including dashboards, map and CRUD, plus 2:25 buffer. Full group rehearsal still pending |
+| 20-minute presentation with the demo | [PRESENTATION.md](PRESENTATION.md), [current English notes](../presentaciones/final-2026-11-11/SCRIPT-EN.md) and [14-slide web deck](../presentaciones/final-2026-11-11/Delivery-Atlas.html) | Prepared core 14:35; reserve the rest of the 20-minute slot for dashboard/CRUD additions and delays. Full timed group rehearsal still pending |
 | Documentation | [FUNDAMENTALS.md](FUNDAMENTALS.md), [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md), [ATLAS-INFRASTRUCTURE.md](ATLAS-INFRASTRUCTURE.md), [TEAM-TECHNICAL-GUIDE.md](TEAM-TECHNICAL-GUIDE.md) | Done |
 | Step-by-step installation | [ATLAS-INFRASTRUCTURE.md](ATLAS-INFRASTRUCTURE.md), section 2, and [INSTALLATION.md](INSTALLATION.md) | Done. Windows test with system, commands, results and common problems in [TEAM-INSTALL-TESTS.md](TEAM-INSTALL-TESTS.md). Echenique's test on his computer is still missing |
 | Guide to run the demo | [DEMO.md](DEMO.md) is the old OTTO lab demo; [TRACKING-DEMO.md](TRACKING-DEMO.md) covers Atlas tracking; [MINIAPP.md](MINIAPP.md), the mini-app | Partial: a single guide following the order of the final demo is missing |
@@ -91,13 +91,13 @@ Each group researches a NoSQL database in depth, explains its fundamentals and s
 | Clear and reproducible documentation | Atlas starts with one command and without large datasets; Windows test recorded ([TEAM-INSTALL-TESTS.md](TEAM-INSTALL-TESTS.md)) |
 | Real datasets, programming language and scalability | OTTO, REES46, Ele.me and Glovo; Python; a billion derived rows and an explanation of replicas and shards |
 | Creativity of the use case | Fictional delivery platform with AI customers, concurrent traffic and GPS tracking |
-| Answering questions and discussion | Eight supporting slides and the questions in [English speaker notes](CLICKHOUSE-PRESENTER-NOTES-EN.md) |
+| Answering questions and discussion | [ClickHouse fundamentals](FUNDAMENTALS.md), the current English script and the raw GPS evidence linked in [GPS-BENCHMARK.md](GPS-BENCHMARK.md) |
 
 ## Pending before the presentation
 
 By priority:
 
-1. **Timed group rehearsal** of the [final 20-minute script](PRESENTATION.md), including the new ClickHouse dashboards, map and CRUD. Confirm the host and gateway run the new analytical routes before the rehearsal.
+1. **Timed group rehearsal** of the [current 14-slide route](PRESENTATION.md) within the 20-minute slot, including the map and the additional dashboard/CRUD demonstrations. Confirm the host and gateway run the new analytical routes before the rehearsal.
 2. **A single guide for the final demo**, step by step, with CRUD included and a plan B in case something fails.
 3. **Echenique's installation test** on his computer, added to [TEAM-INSTALL-TESTS.md](TEAM-INSTALL-TESTS.md).
 
