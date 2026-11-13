@@ -48,8 +48,8 @@ Each group researches a NoSQL database in depth, explains its fundamentals and s
 
 | Requirement | Where | Status |
 |---|---|---|
-| Install, deploy or access | [ATLAS-INFRASTRUCTURE.md](ATLAS-INFRASTRUCTURE.md), section 2, for Atlas without large downloads; [INSTALLATION.md](INSTALLATION.md) for the lab with the large datasets | Done. Clean start verified on Windows 11 ([TEAM-INSTALL-TESTS.md](TEAM-INSTALL-TESTS.md)) |
-| Main commands and queries | `sql/atlas_consultas.sql`, `sql/atlas_tracking_consultas.sql`, [DEMO.md](DEMO.md), [TRACKING-DEMO.md](TRACKING-DEMO.md) | Done |
+| Install, deploy or access | [ATLAS-INSTALL.md](ATLAS-INSTALL.md) for Delivery Atlas step by step; [INSTALLATION.md](INSTALLATION.md) for the lab with the large datasets | Done. Every step run in a fresh clone on Windows 11 on 11 November ([ATLAS-INSTALL.md](ATLAS-INSTALL.md#tested)) |
+| Main commands and queries | [DEMO-GUIDE.md](DEMO-GUIDE.md) (demo steps and SQL to type), `sql/atlas_consultas.sql`, `sql/atlas_tracking_consultas.sql`, [TRACKING-DEMO.md](TRACKING-DEMO.md) | Done |
 | Tools and client libraries | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Interfaces, clients and tools": interfaces and ports, console, `/play` and `/dashboard`, official libraries, Grafana and why Atlas uses HTTP | Done |
 
 ### 4. Live demo
@@ -57,7 +57,7 @@ Each group researches a NoSQL database in depth, explains its fundamentals and s
 | Requirement | Where | Status |
 |---|---|---|
 | Real or semi-real datasets | OTTO, REES46, Ele.me and Glovo: [README](../README.md) and [RESULTS.md](RESULTS.md). In Atlas, simulated traffic (`synthetic`) and manual actions (`demo_live`); without the Glovo catalog a demo catalog is used | Done. The large datasets are only loaded on Jere's computer; the part that uses them must be run from there |
-| Insert, query, update and delete | `scripts/crud_demo.py` on the scratch table `delivery.demo_events`. [TRACKING-DEMO.md](TRACKING-DEMO.md) explains why the history is not modified | Partial: the script works (verified on Windows on 19 October), but it still needs to be fitted into the Atlas demo script ([ATLAS-INFRASTRUCTURE.md](ATLAS-INFRASTRUCTURE.md), section 7) |
+| Insert, query, update and delete | `scripts/crud_demo.py` on the scratch table `delivery.demo_events`. [TRACKING-DEMO.md](TRACKING-DEMO.md) explains why the history is not modified | Done: step 6 of [DEMO-GUIDE.md](DEMO-GUIDE.md); run again in a fresh installation on 11 November |
 | Connection from a programming language | Python API and publisher (`atlas/`); loading and query scripts (`scripts/`) | Done |
 | Simple but representative use case | Delivery Atlas: dashboard at `http://127.0.0.1:8001/`, GPS tracking, simulated and AI customers ([AI-CUSTOMERS.md](AI-CUSTOMERS.md)) and the commercial mini-app ([MINIAPP.md](MINIAPP.md)) | Done |
 | Multiple nodes | [FUNDAMENTALS.md](FUNDAMENTALS.md) explains `ReplicatedMergeTree`, ClickHouse Keeper and `Distributed` tables | Optional (explained, not set up) |

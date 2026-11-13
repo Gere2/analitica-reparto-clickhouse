@@ -1,6 +1,6 @@
-# Reproducible installation
+# Reproducible installation of the data lab
 
-To develop the fictional platform without downloading the historical datasets, follow [ATLAS-INFRASTRUCTURE.md](ATLAS-INFRASTRUCTURE.md). The instructions below are for the large-dataset lab.
+**To install the current project (Delivery Atlas), follow [ATLAS-INSTALL.md](ATLAS-INSTALL.md).** The instructions below are only for the earlier large-dataset lab (OTTO, REES46, Ele.me), which needs tens of GB of downloads.
 
 ## Requirements
 

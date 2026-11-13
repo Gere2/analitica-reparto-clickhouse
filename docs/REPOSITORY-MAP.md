@@ -177,6 +177,8 @@ Run with `python3 -m unittest discover -s tests -v` and `node --test tests/test_
 |---|---|
 | `REPOSITORY-MAP.md` | This document |
 | `ASSIGNMENT.md` | The assignment brief in our words and the checklist of every requirement |
+| `ATLAS-INSTALL.md` | Step-by-step installation of Delivery Atlas from zero, tested in a fresh clone |
+| `DEMO-GUIDE.md` | How to prepare and run the live demo of the final presentation, and what each step shows about ClickHouse |
 | `ATLAS-INFRASTRUCTURE.md` | Atlas architecture, start-up, SQL model, API contract and limits |
 | `TEAM-INSTALL-TESTS.md` | Installation test on Windows and common problems |
 | `MINIAPP.md` | The commercial mini-app: events, checkout, verification |

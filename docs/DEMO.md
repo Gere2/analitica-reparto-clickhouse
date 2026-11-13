@@ -1,4 +1,6 @@
-# Live demo script: 10 minutes
+# Live demo script: 10 minutes (earlier lab)
+
+**For the final presentation, use [DEMO-GUIDE.md](DEMO-GUIDE.md).** This script is the 10-minute demo of the earlier data lab, kept for reference.
 
 ## Direction for the next demo
 
