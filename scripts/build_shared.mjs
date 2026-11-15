@@ -12,3 +12,8 @@ await Promise.all(['css','js'].map(ext=>copyFile('web/atlas-dashboard.'+ext,'sha
 await copyFile('web/atlas-map.js','shared-public/atlas-map.js');
 await Promise.all(['html','css','js'].map(ext=>copyFile('web/analytics.'+ext,'shared-public/analytics.'+ext)));
 await cp('web/vendor/leaflet','shared-public/vendor/leaflet',{recursive:true});
+
+await Promise.all(['html','css','js'].map(ext=>copyFile('web/classroom.'+ext,'shared-public/classroom.'+ext)));
+
+await copyFile('web/classroom-live.js','shared-public/classroom-live.js');
+await cp('web/vendor/qrcode','shared-public/vendor/qrcode',{recursive:true});

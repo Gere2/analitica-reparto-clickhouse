@@ -1,0 +1,249 @@
+:root {
+  color-scheme: light;
+  --ink: #18242d;
+  --green: #24553d;
+  --paper: #f6f7f3;
+  --line: #c9d6c9;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: system-ui, sans-serif;
+}
+a {
+  color: var(--green);
+  text-underline-offset: 4px;
+}
+::selection {
+  background: #d0e8cb;
+}
+.class-order input,
+.class-order select {
+  caret-color: var(--green);
+}
+.class-order {
+  max-width: 620px;
+  margin: auto;
+  padding: 32px 24px 56px;
+}
+.wordmark {
+  font-size: 20px;
+  font-weight: 750;
+  text-decoration: none;
+}
+.class-order h1 {
+  font-size: clamp(44px, 9vw, 66px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  margin: 40px 0 18px;
+  color: var(--green);
+}
+.class-order p {
+  line-height: 1.55;
+  max-width: 60ch;
+}
+.class-order form {
+  margin: 32px 0 28px;
+}
+.class-order label {
+  display: block;
+  font-weight: 650;
+  margin: 22px 0 9px;
+}
+.class-order input,
+.class-order select,
+.class-order button,
+.class-button {
+  font: inherit;
+  min-height: 48px;
+  border-radius: 6px;
+}
+.class-order input,
+.class-order select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #8ca38d;
+  background: white;
+  color: var(--ink);
+}
+.class-order button,
+.class-button {
+  padding: 13px 19px;
+  background: var(--green);
+  color: white;
+  border: 1px solid var(--green);
+  font-weight: 650;
+  cursor: pointer;
+}
+.class-order button:hover,
+.class-button:hover {
+  background: #193e2b;
+}
+.class-order button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+form button {
+  width: 100%;
+  margin-top: 26px;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #b78829;
+  outline-offset: 4px;
+}
+.class-order .fine {
+  font-size: 14px;
+  color: #52645b;
+}
+#class-error {
+  color: #8b2525;
+  padding: 12px 0;
+}
+#class-receipt {
+  border-block: 1px solid var(--line);
+  padding: 20px 0;
+  margin: 32px 0;
+}
+#class-name {
+  font-size: 32px;
+  margin: 4px 0;
+}
+#class-state {
+  font-size: 24px;
+  display: block;
+  color: var(--green);
+}
+.class-button {
+  display: inline-block;
+  text-decoration: none;
+  margin: 12px 0;
+}
+.classroom-panel {
+  border-block: 2px solid #b4cdb1;
+  padding: 25px 0;
+  margin: 28px 0;
+}
+.classroom-panel h2 {
+  font-size: 28px;
+  margin: 0 0 12px;
+}
+.classroom-panel [hidden] {
+  display: none !important;
+}
+.classroom-host {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+}
+.classroom-host label {
+  font-size: 14px;
+  margin: 0;
+  flex: 1;
+  min-width: 240px;
+}
+.classroom-host input {
+  display: block;
+  margin-top: 6px;
+}
+.classroom-host button {
+  font-size: 16px;
+}
+.classroom-join {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-top: 22px;
+}
+.classroom-qr {
+  flex-shrink: 0;
+  background: white;
+  padding: 8px;
+}
+.classroom-qr svg {
+  width: 190px;
+  height: 190px;
+  display: block;
+}
+.classroom-link {
+  overflow-wrap: anywhere;
+}
+.classroom-feed {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0 22px;
+  margin-top: 22px;
+}
+.classroom-ticket {
+  display: grid;
+  gap: 7px;
+  text-align: left;
+  background: transparent;
+  color: var(--ink);
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  padding: 18px 0;
+  min-width: 0;
+}
+.classroom-ticket:hover {
+  background: #e7eee5;
+  color: var(--ink);
+}
+.classroom-ticket b {
+  font-size: 26px;
+  overflow-wrap: anywhere;
+}
+.classroom-ticket small {
+  font-size: 15px;
+  color: #52645b;
+}
+.classroom-ticket .ticket-state {
+  font-size: 19px;
+  color: var(--green);
+}
+.classroom-pin {
+  background: #24553d;
+  color: white;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px #0004;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-weight: 750;
+  font-size: 15px;
+  white-space: nowrap;
+}
+.leaflet-tooltip.classroom-label {
+  background: #24553d;
+  color: white;
+  border: 1px solid white;
+  font-size: 16px;
+  font-weight: 650;
+}
+.classroom-pipeline {
+  font-size: 16px !important;
+  color: #365743;
+  line-height: 1.5;
+}
+@media (max-width: 600px) {
+  .classroom-join {
+    align-items: start;
+    flex-direction: column;
+  }
+  .classroom-feed {
+    grid-template-columns: 1fr;
+  }
+  .classroom-host button {
+    flex: 1;
+  }
+  .classroom-panel {
+    padding: 20px 0;
+  }
+}

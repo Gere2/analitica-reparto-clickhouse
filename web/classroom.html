@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Your class order · Delivery Atlas</title>
+    <link rel="stylesheet" href="/classroom.css" />
+    <script defer src="/classroom.js"></script>
+  </head>
+  <body>
+    <main class="class-order">
+      <a class="wordmark" href="/">Delivery Atlas</a>
+      <h1>Your order,<br />on the map.</h1>
+      <p>
+        Choose a nickname and a dish. Watch your simulated delivery travel
+        through Madrid.
+      </p>
+      <p id="class-error" role="alert" hidden></p>
+      <form id="class-form">
+        <label for="class-alias">Your nickname on the live screen</label
+        ><input
+          id="class-alias"
+          name="alias"
+          maxlength="24"
+          autocomplete="nickname"
+          placeholder="e.g. Alex"
+          required
+        /><label for="class-product">Choose your dish</label
+        ><select id="class-product" required disabled>
+          <option>Loading the class menu…</option></select
+        ><button id="class-submit" disabled>Place my class order</button>
+        <p class="fine">
+          One order per device. Your nickname and order will appear on the class
+          screen. Fictional prices and delivery.
+        </p>
+      </form>
+      <section id="class-receipt" hidden>
+        <h2 id="class-name"></h2>
+        <p id="class-dish"></p>
+        <strong id="class-state"></strong>
+        <p id="class-progress"></p>
+        <a id="class-map" class="class-button"
+          >Find my delivery on the live map</a
+        >
+        <p id="class-id" class="fine"></p>
+      </section>
+      <a id="class-board">Watch all class orders</a>
+    </main>
+  </body>
+</html>
