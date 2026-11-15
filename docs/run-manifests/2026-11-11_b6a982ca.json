@@ -1,0 +1,68 @@
+{
+  "run_id": "b6a982ca-6754-4c7c-bfcf-7dac8a00fef1",
+  "tables": {
+    "app_events": {
+      "rows": 161401,
+      "first_event": "2026-11-11 17:33:53.721",
+      "last_event": "2026-11-11 22:11:20.085",
+      "file": "app_events.csv.gz",
+      "bytes": 10273951
+    },
+    "customer_activity": {
+      "rows": 216620,
+      "first_event": "2026-11-11 17:33:53.232",
+      "last_event": "2026-11-11 22:11:20.085",
+      "file": "customer_activity.csv.gz",
+      "bytes": 16127777
+    },
+    "customer_orders": {
+      "rows": 8778,
+      "first_event": "2026-11-11 17:34:01.255",
+      "last_event": "2026-11-11 22:11:20.085",
+      "file": "customer_orders.csv.gz",
+      "bytes": 1122433
+    },
+    "order_events": {
+      "rows": 51300,
+      "first_event": "2026-11-11 17:34:01.255",
+      "last_event": "2026-11-11 22:11:20.085",
+      "file": "order_events.csv.gz",
+      "bytes": 5088229
+    },
+    "courier_positions": {
+      "rows": 796950,
+      "first_event": "2026-11-11 17:33:53.232",
+      "last_event": "2026-11-11 22:11:19.714",
+      "file": "courier_positions.csv.gz",
+      "bytes": 66971358
+    }
+  },
+  "participants": {
+    "customers": 500,
+    "ai_customers": 0,
+    "ai_decisions": 0,
+    "couriers": 150
+  },
+  "orders_by_status": [
+    {
+      "status": "delivered",
+      "orders": 8400
+    },
+    {
+      "status": "created",
+      "orders": 228
+    },
+    {
+      "status": "en_route",
+      "orders": 150
+    }
+  ],
+  "orders_by_type": [
+    {
+      "decision_mode": "traffic",
+      "source_kind": "synthetic",
+      "orders": 8778,
+      "amount_minor": 10327689
+    }
+  ]
+}

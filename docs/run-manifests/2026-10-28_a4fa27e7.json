@@ -1,0 +1,74 @@
+{
+  "run_id": "a4fa27e7-f4a9-42cf-a4fe-a517de543196",
+  "tables": {
+    "app_events": {
+      "rows": 18719,
+      "first_event": "2026-10-28 09:32:32.464",
+      "last_event": "2026-10-28 10:16:40.274",
+      "file": "app_events.csv.gz",
+      "bytes": 885731
+    },
+    "customer_activity": {
+      "rows": 25203,
+      "first_event": "2026-10-28 09:32:32.228",
+      "last_event": "2026-10-28 10:16:40.274",
+      "file": "customer_activity.csv.gz",
+      "bytes": 1405404
+    },
+    "customer_orders": {
+      "rows": 1377,
+      "first_event": "2026-10-28 09:32:41.514",
+      "last_event": "2026-10-28 10:16:31.737",
+      "file": "customer_orders.csv.gz",
+      "bytes": 157900
+    },
+    "order_events": {
+      "rows": 8077,
+      "first_event": "2026-10-28 09:32:41.514",
+      "last_event": "2026-10-28 10:16:31.737",
+      "file": "order_events.csv.gz",
+      "bytes": 591467
+    },
+    "courier_positions": {
+      "rows": 66300,
+      "first_event": "2026-10-28 09:32:32.228",
+      "last_event": "2026-10-28 10:16:40.229",
+      "file": "courier_positions.csv.gz",
+      "bytes": 2642944
+    }
+  },
+  "participants": {
+    "customers": 100,
+    "ai_customers": 3,
+    "ai_decisions": 120,
+    "couriers": 50
+  },
+  "orders_by_status": [
+    {
+      "status": "delivered",
+      "orders": 1300
+    },
+    {
+      "status": "en_route",
+      "orders": 50
+    },
+    {
+      "status": "created",
+      "orders": 27
+    }
+  ],
+  "orders_by_type": [
+    {
+      "decision_mode": "traffic",
+      "source_kind": "synthetic",
+      "orders": 1372,
+      "amount_minor": 1599548
+    },
+    {
+      "decision_mode": "ollama",
+      "source_kind": "synthetic",
+      "orders": 5,
+      "amount_minor": 5282
+    }
+  ]
+}
