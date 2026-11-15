@@ -74,9 +74,11 @@ We used a frozen GPS run with just over four million positions and 150 couriers.
 
 I ran each design separately, with one and two concurrent readers. Each point has three repetitions of 200 requests. The lab was limited to two CPUs and two gibibytes of container memory. This is a warm test with the SQL result cache disabled.
 
-Our target is that 95 percent of successful requests finish within one second, with zero errors. That is our presentation target for this workload; it is not a universal ClickHouse limit. We checked all 2,400 requests against the server logs. Juanro will show what happened when we added a second reader.
+Our target is that 95 percent of successful requests finish within one second, with zero errors. We call that time p95, or the ninety-fifth percentile. That is our presentation target for this workload; it is not a universal ClickHouse limit. We checked all 2,400 requests against the server logs. Juanro will show what happened when we added a second reader.
 
 ## 12. At two readers, history misses our 1-second target
+
+p95 means percentile ninety-five. It is the time within which ninety-five percent of our measured requests finished. Milliseconds are thousandths of a second, so a thousand milliseconds equals one second.
 
 With one reader, both designs meet our target. The history query has a p95 between 704 and 750 milliseconds. The prepared state is 125 milliseconds in all three repetitions.
 
