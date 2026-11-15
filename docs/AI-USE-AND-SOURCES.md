@@ -26,6 +26,12 @@ Geremi coordinated the project and integration; Anuar operated the host and supp
 
 The local Qwen/Ollama customers are a separate part of the application: they emit bounded fictional decisions that Python validates. Their model-call budget and `decision_mode` distinguish them from rule-driven traffic. They are not the source of all the generated rows or of the public datasets.
 
+### Worked example: checking an AI-proposed GPS experiment
+
+During project planning, the assistant suggested showing where a query misses a latency target and testing whether a design change helps at the same load. We used the assistant to turn that idea into a repeatable comparison; the measurements came from Anuar’s ClickHouse lab. The question was: can we return the same latest position for each of 150 couriers without scanning their full history on every request?
+
+Both queries ran against the same frozen run of 4,371,300 GPS positions. The runner compared their complete answers before timing them. To check the interpretation, we recomputed the p95 for each of the twelve phases from the request samples and matched all 2,400 measured query IDs to server records. With two concurrent readers, the historical query missed the one-second target in every repetition (client p95: 1.625–1.969 s); the prepared-state query met it (0.266–0.281 s). We therefore report a boundary for this query, data and machine. The experiment does not establish ClickHouse’s maximum capacity or how much the materialized view costs to maintain during insertion. See the [experiment and original evidence](GPS-BENCHMARK.md) and the [verification record](FINAL-VALIDATION.md).
+
 ## Software and media attribution
 
 The map retains Leaflet's license in `web/vendor/leaflet/LICENSE` and OpenStreetMap attribution in its interface. The prepared HTML embeds its font license/source media and remains unchanged. Preserve those notices when redistributing the package. No private token or browser authentication state belongs in the archive.

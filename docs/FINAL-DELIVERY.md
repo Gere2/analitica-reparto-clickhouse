@@ -2,6 +2,8 @@
 
 This is the entry point for the code, presentation, Markdown documentation and small evidence files. The package's release manifest identifies its exact source commit and file hashes. The approved presentation and script are preserved byte for byte.
 
+**Submission:** Upload the final ZIP to [Proyect I on Canvas](https://ufv-es.instructure.com/courses/71424/assignments/604206). The exported assignment lists **15 November 2026 at 23:55 (Madrid time)** as the file deadline. Check the submission receipt in Canvas; the oral presentation slot is separate.
+
 ## Presentation and rehearsal
 
 Open [Delivery-Atlas.html](../presentaciones/final-2026-11-11/Delivery-Atlas.html) after extracting the package, and use [SCRIPT-EN.md](../presentaciones/final-2026-11-11/SCRIPT-EN.md). The HTML contains 14 English slides, embedded images/fonts and notes. It needs no server for its static slides. Live dashboard data and map tiles have separate host/network dependencies.

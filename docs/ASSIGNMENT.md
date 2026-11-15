@@ -4,7 +4,7 @@ Updated 15 November 2026. This maps the BD2 project requirements to the submitte
 
 ## Assignment scope
 
-The group researches its assigned technology, ClickHouse, explains its fundamentals and demonstrates a practical use case. The presentation date is 15 November 2026. The slot is **20 minutes including the demo, followed by about 10 minutes for questions**. Required files are the presentation, Markdown documentation with installation and demo instructions, and supporting code/resources sufficient for another student to reproduce the example.
+The group researches its assigned technology, ClickHouse, explains its fundamentals and demonstrates a practical use case. The exported [Canvas assignment, Proyect I](https://ufv-es.instructure.com/courses/71424/assignments/604206), lists a **file upload due on 15 November 2026 at 23:55 (Madrid time, CET)**. This is the submission deadline; the export does not specify the group's oral presentation slot. The brief mentions 30 minutes in its introduction and 20 minutes for the technical explanation and live demo under Deliverables. The team rehearses a 20-minute presentation and allows about 10 minutes for questions. Required files are the presentation, Markdown documentation with installation and demo instructions, and supporting code/resources sufficient for another student to reproduce the example.
 
 Minimum content covers context/motivation, characteristics, architecture/operation, live demonstration and critical reflection. Multiple nodes and a cross-database benchmark are not mandatory in the recorded brief. A qualitative comparison is included; PostgreSQL/DuckDB timings remain future work.
 
