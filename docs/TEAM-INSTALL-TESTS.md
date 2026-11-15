@@ -109,6 +109,10 @@ The dashboard's "Customers" selector did not offer 24, although the API accepts 
 
 **Watch out:** `scripts/check_operations.py` overwrites `docs/evidencia-tracking.json` with the result of each run. If you do not want to commit that new evidence, restore it with `git checkout -- docs/evidencia-tracking.json`.
 
+## Anuar: local CRUD after the 15 November rebuild
+
+Anuar reports `python scripts/crud_demo.py` on the updated host: INSERT, UPDATE and DELETE correct, zero rows remaining, elapsed 0.75 s. The [host record](HOST-STATUS-2026-11-15.md) and [inventory](INVENTORY-2026-11-15.md) identify the environment. This is a host-side check, separate from Echenique's additional reproduction and the full group rehearsal.
+
 ## Status for the final presentation
 
 Anuar reported another fresh Windows installation on 11 November in [ATLAS-INSTALL.md](ATLAS-INSTALL.md#tested), and a preserved-volume host/API/gateway rebuild on 15 November in [the host record](HOST-STATUS-2026-11-15.md). Long generated runs and archived exports are listed in [SIMULATION-RUNS.md](SIMULATION-RUNS.md). Those later checks supersede the earlier pending long-run/host-update items; they do not establish uninterrupted uptime.

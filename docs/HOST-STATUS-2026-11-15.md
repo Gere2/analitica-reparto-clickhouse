@@ -47,3 +47,7 @@ At **19:28 UTC**, production deployment `dpl_4uUyS8LYVqpYApBD38tjX6Ru14sk` serve
 ## Rehearsal
 
 Anuar confirms the 14-slide HTML opens offline and that he has the matching English script. His prepared parts remain 5, 6, 11 and 13, plus Journey/Performance after 8. He will start the 100-customer/50-courier, two-second hybrid run near the agreed rehearsal time so the bounded AI budget is useful. Recorded decisions remain distinguishable from new model calls.
+
+## Local CRUD check at 19:28 UTC
+
+In his follow-up, Anuar reports that `scripts/crud_demo.py` completed INSERT, UPDATE and DELETE correctly on `delivery.demo_events`, leaving zero rows, in 0.75 seconds. He also stopped the `atlas-sim2` container after its queue reached pending zero, retaining its volume. The main simulation/watchdog remain paused until the agreed rehearsal. This checks the local script; it is not a completed four-speaker rehearsal.
