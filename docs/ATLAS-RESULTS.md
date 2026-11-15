@@ -1,5 +1,7 @@
 # Delivery Atlas v1: verified results
 
+> Dated measurement record. Preserve the conditions and scope below. The current GPS campaign is documented separately in [GPS-BENCHMARK.md](GPS-BENCHMARK.md); the final project entry point is [FINAL-DELIVERY.md](FINAL-DELIVERY.md).
+
 Date: 7 October 2026. Evidence exported for the team: [evidencia-atlas.json](evidencia-atlas.json). Local ClickHouse node **25.8.33.6**, Python API and persistent queue. These results describe the `delivery_atlas` database, not the OTTO lab.
 
 ## Loading one million events

@@ -1,39 +1,33 @@
-# Course theory applied to the project
+# Course theory applied to Delivery Atlas
 
-Each technical decision in Delivery Atlas and the course concept that justifies it. Updated on 19 October 2026 for the current infrastructure: `compose.yaml` with the `atlas` profile, `atlas/` and `sql/atlas*.sql`.
+Updated 15 November 2026 for the implemented Atlas schema, analytical portal and isolated GPS campaign. [The final index](FINAL-DELIVERY.md) and [current model](DATABASE-STRUCTURE.md) define the delivery scope.
 
-| Concept | Decision | Where |
+| Concept | Implemented decision and consequence | Code or evidence |
 |---|---|---|
-| **Monolith or microservices** | A single Python process acts as HTTP API, queue and publisher. It is easy to start and debug, but it does not scale horizontally: two APIs cannot run over the same queue | `atlas/server.py` |
-| **ACID vs BASE** | The queue uses SQLite with transactions and `synchronous=FULL`: an accepted event is not lost even if ClickHouse is down. ClickHouse stores the analytics and has no transactions across tables. A mini-app order writes to three tables in separate INSERTs; if one fails, the whole batch is resent | `atlas/store.py`, `atlas/clickhouse.py` |
-| **CAP / PACELC** | With one node there are no replicas that can be split apart, but there is no high availability either. If ClickHouse goes down, the API keeps accepting events into the queue (202) and publishes them when it comes back: ingestion stays available and reads fall behind. With replicas (`ReplicatedMergeTree`), replication is asynchronous and the system would behave as PA/EL; `insert_quorum` would move it towards PC/EC at the cost of latency | Oral defence, [FUNDAMENTALS.md](FUNDAMENTALS.md) |
-| **Idempotency** | The `event_id` is set by whoever sends the event. The queue stores a SHA-256 fingerprint of the content: the same ID with the same content returns 200 without duplicating, and with different content returns 409. In ClickHouse, `ReplacingMergeTree(ingested_at)` removes copies when parts merge and the aggregates count unique IDs (`uniqExactState`), so a retry is never counted twice | `atlas/store.py`, `sql/atlas.sql` |
-| **Queues or streams** | Durable local queue (*outbox* pattern) with a single publisher that sends batches of up to 5000 events. It is not Kafka: there is one consumer, no offsets and no multiple subscribers. Kafka would be the next step if other systems needed to read the same events | `atlas/store.py`, `atlas/server.py` |
-| **Fault tolerance** | 202 means "durably received". If publishing fails, the events stay pending and are retried every 2 seconds. When the queue is full (200000 pending by default), the API returns 503 so the client retries later. Reads are retried if the node runs out of memory; writes are not repeated there | `atlas/server.py`, `atlas/clickhouse.py`, [ATLAS-RESULTS.md](ATLAS-RESULTS.md) |
-| **Modelling for access patterns** | Each table's `ORDER BY` starts with the columns the dashboard filters on: `(source_kind, event_date, city_id, event_type, …)` for browsing and `(simulation_run_id, city_id, courier_id, event_time, …)` for GPS positions | `sql/atlas.sql`, `sql/atlas_operations.sql` |
-| **Partitioning ≠ sharding** | `PARTITION BY toYYYYMM(...)` organises data by month within one server. Sharding would spread it across nodes with `Distributed` tables; it is optional and not set up | `sql/atlas.sql`, `sql/atlas_operations.sql` |
-| **Replication** | Explained with `ReplicatedMergeTree` and ClickHouse Keeper. Running several nodes is optional | Oral defence, [FUNDAMENTALS.md](FUNDAMENTALS.md) |
-| **Materialized views** | They compute at insert time what the dashboard queries often: the latest state of each courier, order and customer (`argMaxState`) and daily counts by unique IDs. The dashboard does not scan the whole history on every refresh | `sql/atlas.sql`, `sql/atlas_operations.sql`, `sql/atlas_agents.sql` |
-| **Observability** | `GET /api/status` reports pending and published events, errors, conflicts, rejections, publisher phase, last batch size and its duration. The dashboard shows data age and errors | `atlas/server.py`, `web/atlas-dashboard.js` |
-| **Security** | Ports are published only on `127.0.0.1`. Credentials are demo values in `compose.yaml`; there are no separate users for writing and reading, and the API runs as root in a `python:3.12-slim` image. Sharing the dashboard goes through a read-only gateway that does not expose SQL | `compose.yaml`, `Dockerfile.atlas`, [SHARING-VERCEL.md](SHARING-VERCEL.md) |
-| **Storage** | ClickHouse acts as an analytical store with schema on write: strict types, `Enum`, `LowCardinality` and `CHECK` constraints on the version and event type. The dataset files are local inputs, not a data lake | `sql/atlas.sql` |
-| **Docker Compose** | Healthchecks with `depends_on: service_healthy`, named volumes for ClickHouse and the queue, `atlas` and `ai` profiles, pinned ClickHouse version (25.8) and memory and CPU limits for Ollama | `compose.yaml` |
+| Service boundaries | One Python API process validates input, manages a local queue, publishes batches and serves reads. Multiple API producers need distinct queue volumes; two were used on Anuar's host. | `atlas/server.py`, `atlas/store.py`, [host record](HOST-STATUS-2026-11-15.md) |
+| Durable queue | SQLite WAL, transactions and `synchronous=FULL` commit accepted events before a 202 response. Pending events can be published after an ordinary API/ClickHouse restart. This does not provide disk-loss protection or replicated availability. | `atlas/store.py`, [recovery evidence](ATLAS-RESULTS.md) |
+| Multi-table publication | The publisher issues separate INSERTs to the destination tables. Partial success is recovered by resending the immutable batch; it is not one transaction across all tables. Specific ClickHouse INSERTs have their own documented guarantees. | `atlas/clickhouse.py`, [INSERT guarantees](https://clickhouse.com/docs/concepts/features/operations/insert/transactions) |
+| Idempotency | Stable event IDs and content fingerprints recognise retries; conflicting content returns 409. Replacement reads and exact ID states preserve logical answers even when physical retry copies exist. | `atlas/store.py`, `sql/atlas.sql`, operations/agent SQL |
+| Backpressure | The queue has a configurable pending limit (200,000 by default). Reaching it causes 503 rather than unlimited acceptance. A 202 confirms receipt, not dashboard visibility. | `ATLAS_MAX_PENDING`, `atlas/server.py` |
+| Analytical modelling | Histories use `ReplacingMergeTree`; prepared exact-ID/latest-state tables use `AggregatingMergeTree` and incremental materialized views. Query access patterns determine the sort/grouping keys. | Four `sql/atlas*.sql` files |
+| Event time | Latest-state weights include event time and event ID. Out-of-order arrival is tested so an old event cannot replace a newer position merely because it arrived later. | `sql/atlas_operations.sql`, operation integration tests |
+| Partitioning and sharding | Monthly partitions organise parts/maintenance in one server. Sharding across servers and replicated high availability are explained but not deployed. | SQL `PARTITION BY`, [fundamentals](FUNDAMENTALS.md) |
+| Availability and consistency | During ClickHouse unavailability, the API can accept events while queue capacity remains, and reads lag/fail. With one node there is no replica-partition experiment; CAP/PACELC labels alone do not describe every configuration. | Queue/status behavior, [host and public checks](HOST-STATUS-2026-11-15.md) |
+| Source semantics | AI/rule/manual platform actions and public advertising/catalog data retain different meanings. A catalog entry is not a purchase; public populations have no shared journey IDs. | Contracts, `decision_mode`, `source_kind`, dataset readers |
+| Observability | Queue status, publication errors, position age, physical parts and completed query logs expose different stages of the pipeline. Query logs flush asynchronously and shared reads may use a dated cache entry. | `/api/status`, `atlas/analytics.py`, [dashboard definitions](CLICKHOUSE-DASHBOARDS.md) |
+| Repeatable experiments | The GPS lab freezes input, verifies full answers and joins query IDs to server records before interpreting repeated bounded reader levels. The live dashboard's single detail/aggregate comparison is a different observation. | [GPS-BENCHMARK.md](GPS-BENCHMARK.md), `benchmarks/gps/` |
+| Shared access | Loopback host services are exposed through an authenticated read-only gateway and server-side GET proxy. Tokens remain on the server. Local controls/checkout/SQL are not exposed by that proxy. | `atlas/share.py`, `api/proxy.js`, [sharing guide](SHARING-VERCEL.md) |
 
-## Advantages and disadvantages of ClickHouse here
+## Observed advantages and tradeoffs
 
-**Advantages:**
-- It reads only the columns each query needs.
-- Materialized views keep the latest state and the counts up to date while data arrives.
-- `LowCardinality` and `Enum` types compress highly repeated columns well, such as city, event type or source.
-- It inserts batches of thousands of rows at once.
-- It uses SQL, which the team already knows.
+The completed GPS campaign demonstrates less read work from prepared latest state with equal answers under the tested concurrency and resource budget. Column storage and typed SQL support analytical reads; batch publication avoids treating each telemetry sample as an isolated small insert.
 
-**Disadvantages:**
-- There are no transactions across tables.
-- Deduplication is eventual: exact counts need `FINAL` or aggregates by ID.
-- `UPDATE` and `DELETE` are expensive mutations, and materialized views do not recompute deleted data.
-- Small INSERTs are penalised; that is why the publisher groups events into batches.
-- In the one-million-event test, the aggregate was not faster than the detail table (0.703 s vs 0.498 s; [ATLAS-RESULTS.md](ATLAS-RESULTS.md)).
-- With a single node there is no high availability.
+The improvement has costs: extra state storage and insertion-time computation, neither separately measured in that read campaign. Exact ID sets also consume memory; the older one-million-event test found its daily aggregate slower than detail for that question. These outcomes concern different workloads and do not contradict each other.
 
-The previous version of the repository, with Flask and Grafana (`app/`, `docker-compose.yml`), made other decisions, such as users with minimal permissions for writing and reading. It is in this document's git history.
+Background replacement is eventual, while exact queries require `FINAL` or suitable aggregate logic. Updates/deletes can rewrite parts and do not automatically reverse an incremental view's earlier contributions. The CRUD example uses a scratch table and temporarily pauses/restores merges on existing large legacy tables; avoid running it during a benchmark.
+
+The queue retains published IDs/payloads for retry recognition and grows with history; it has no automatic pruning policy. One host, one database node and a changing Quick Tunnel are operational limitations. The paused watchdog, verified exports and local/recorded fallback reduce disruption within this classroom setup; they do not turn it into a replicated production service.
+
+## Future work
+
+Measure the insertion/storage tradeoff of prepared views, compare databases on equivalent frozen answers/resources, and design a bounded queue-retention policy. Replicas/shards, backup restoration under additional failure modes and production authentication/resource isolation need their own implementation and evidence. The [retained presentation clarifications](DEFENCE-NOTES-EN.md) keep those distinctions explicit.

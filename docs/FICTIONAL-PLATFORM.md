@@ -1,5 +1,7 @@
 # Fictional food-delivery platform: scope and design
 
+> Historical record: dates, results, speaker allocations and pending statements below describe their original stage. For the current implemented project, 14-slide route and delivery status use [FINAL-DELIVERY.md](FINAL-DELIVERY.md), [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md) and [DEMO-GUIDE.md](DEMO-GUIDE.md).
+
 Status as of 7 October: **v1 infrastructure implemented; mini-app and dedicated dashboard pending**. [API, contract and applied SQL](ATLAS-INFRASTRUCTURE.md), [team responsibilities](TEAM-PLAN.md). The document below keeps the initial design from 5 October as a scope reference; the items pending at that date are checked against the v1 guide.
 
 ## Goal

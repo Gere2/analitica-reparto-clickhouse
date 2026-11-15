@@ -1,5 +1,7 @@
 # Delivery Atlas: five-minute speaker guide
 
+> Historical record: dates, results, speaker allocations and pending statements below describe their original stage. For the current implemented project, 14-slide route and delivery status use [FINAL-DELIVERY.md](FINAL-DELIVERY.md), [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md) and [DEMO-GUIDE.md](DEMO-GUIDE.md).
+
 6 slides, 5.0 planned minutes. Timing depends on delivery and questions.
 
 [Browser presentation](http://127.0.0.1:8000/avance-bd.html). Use arrow keys to navigate, F for full screen and N for notes. The PowerPoint includes speaker notes and editable tables.

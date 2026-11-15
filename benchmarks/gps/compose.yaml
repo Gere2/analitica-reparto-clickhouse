@@ -16,6 +16,8 @@ services:
       - ./config.xml:/etc/clickhouse-server/config.d/gps-benchmark.xml:ro
       - ../../sql/atlas.sql:/docker-entrypoint-initdb.d/10-atlas.sql:ro
       - ../../sql/atlas_operations.sql:/docker-entrypoint-initdb.d/20-operations.sql:ro
+      - ../../sql/atlas_agents.sql:/docker-entrypoint-initdb.d/25-agents.sql:ro
+      - ../../sql/atlas_miniapp.sql:/docker-entrypoint-initdb.d/26-miniapp.sql:ro
       - ./init.sql:/docker-entrypoint-initdb.d/30-gps-lab.sql:ro
     healthcheck:
       test: ["CMD", "clickhouse-client", "--user", "gps_lab_admin", "--password", "gps-lab-admin-only", "--query", "SELECT count() FROM gps_comparison_lab.identity"]

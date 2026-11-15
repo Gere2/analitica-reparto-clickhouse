@@ -2,7 +2,7 @@
 
 Log of Delivery Atlas installations on computers other than the development one, as requested in [TEAM-PLAN.md](TEAM-PLAN.md). Each test records system, versions, commands and results. Anyone who repeats the test on another computer can add it at the end using the same format.
 
-The path tested is Atlas without the large datasets: [ATLAS-INFRASTRUCTURE.md](ATLAS-INFRASTRUCTURE.md), section 2.
+The current reproduction path is Atlas without large datasets: [ATLAS-INSTALL.md](ATLAS-INSTALL.md). Dated tests below retain the commands and versions used at the time.
 
 ## Anuar: Windows 11, 19 October 2026
 
@@ -104,13 +104,13 @@ The dashboard's "Customers" selector did not offer 24, although the API accepts 
 | `python3` does not exist | Use `python` (or `py`) in every command of the documentation |
 | Accented characters look wrong in the console | Before running the scripts: `$env:PYTHONUTF8=1` in PowerShell or `export PYTHONUTF8=1` in Git Bash |
 | `docker compose` fails with `dockerDesktopLinuxEngine` | Open Docker Desktop and wait until the engine is running |
-| A `.sh` script fails inside a container with `/bin/bash^M: bad interpreter` | Git for Windows with `core.autocrlf=true` converts line endings to CRLF. `.gitattributes` forces LF for `.sh` files. In a clone made before that change, with no pending local changes: `git rm -r --cached . -q` and then `git reset --hard` |
+| A `.sh` script fails inside a container with `/bin/bash^M: bad interpreter` | Git for Windows can convert shell files to CRLF. Preserve local changes, pull the current `.gitattributes`, save the affected `.sh` file with LF in the editor and rerun it. Do not reset the checkout to repair line endings. |
 | An earlier stack from the repository is running (`docker-compose.yml`, with Flask and Grafana) | It shares the Compose project name with Atlas. Stop it first with `docker compose -f docker-compose.yml down`, which keeps its volumes |
 
 **Watch out:** `scripts/check_operations.py` overwrites `docs/evidencia-tracking.json` with the result of each run. If you do not want to commit that new evidence, restore it with `git checkout -- docs/evidencia-tracking.json`.
 
-## Pending
+## Status for the final presentation
 
-- Echenique's test on his computer.
-- A test on a computer without the images downloaded, to measure the full first start.
-- A longer run on this computer as the demo server, and moving the shared Vercel demo to it.
+Anuar reported another fresh Windows installation on 11 November in [ATLAS-INSTALL.md](ATLAS-INSTALL.md#tested), and a preserved-volume host/API/gateway rebuild on 15 November in [the host record](HOST-STATUS-2026-11-15.md). Long generated runs and archived exports are listed in [SIMULATION-RUNS.md](SIMULATION-RUNS.md). Those later checks supersede the earlier pending long-run/host-update items; they do not establish uninterrupted uptime.
+
+The public tunnel connection was restored and checked on 15 November; its continued availability depends on the running host/tunnel. Echenique's additional installation/CRUD record and the full four-person timed rehearsal still need confirmation. A cold start without cached images has not been timed.

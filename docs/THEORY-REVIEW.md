@@ -1,5 +1,9 @@
 # Review of the project against the professor's theory
 
+The course resource filenames below identify classroom materials; those files are not redistributed in this repository. [ASSIGNMENT.md](ASSIGNMENT.md) contains the project brief summary used for the current delivery.
+
+> Historical record: dates, results, speaker allocations and pending statements below describe their original stage. For the current implemented project, 14-slide route and delivery status use [FINAL-DELIVERY.md](FINAL-DELIVERY.md), [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md) and [DEMO-GUIDE.md](DEMO-GUIDE.md).
+
 Date: 5 October 2026. This review compares the materials in `recursos/` with `compose.yaml`, `dashboard.py`, the DDL in `sql/` and the saved measurements. The course guide describes the subject. The notes explain concepts and examples, and do not turn every component of the examples into a requirement for our project.
 
 ## Conclusion
@@ -61,11 +65,11 @@ The guide, page 5, asks us to justify and cite AI assistance and to verify its r
 
 ## Sources
 
-- [Course guide](../recursos/guia_bbdda.pdf), pages 1–5.
-- [Components](../recursos/01_1_Components.md).
-- [Concepts](../recursos/01_2_Concepts.md).
-- [Docker](../recursos/01_3_Docker.md) and [examples](../recursos/01_3_docker/INSTRUCTIONS.md).
-- [Cross-cutting concerns](../recursos/01_4_Cross_cutting_concerns.md).
+- `Course guide`, pages 1–5.
+- `Components`.
+- `Concepts`.
+- `Docker` and `examples`.
+- `Cross-cutting concerns`.
 - [Current and proposed structure](DATABASE-STRUCTURE.md), [results](RESULTS.md) and the repository code.
 - [Replication in ClickHouse](https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/replication).
 - [ClickHouse analytical architecture](https://clickhouse.com/docs/get-started/about/why-clickhouse-is-so-fast).

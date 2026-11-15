@@ -1,5 +1,7 @@
 # Delivery Atlas: visual guide to understand it quickly
 
+> Historical record: dates, results, speaker allocations and pending statements below describe their original stage. For the current implemented project, 14-slide route and delivery status use [FINAL-DELIVERY.md](FINAL-DELIVERY.md), [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md) and [DEMO-GUIDE.md](DEMO-GUIDE.md).
+
 For Jere, Anuar and Echenique. Revision: 14 October 2026. Summary of the technical document; the counts and the publication cited were verified on 7 October. It does not check that the lab is running today.
 
 ## 1. What we are doing

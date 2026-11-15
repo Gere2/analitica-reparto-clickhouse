@@ -1,5 +1,7 @@
 # Results measured on this machine
 
+> Dated measurement record. Preserve the conditions and scope below. The current GPS campaign is documented separately in [GPS-BENCHMARK.md](GPS-BENCHMARK.md); the final project entry point is [FINAL-DELIVERY.md](FINAL-DELIVERY.md).
+
 Benchmark date (UTC): 2026-10-04T22:56:43.976300+00:00.
 
 ## Provenance and size

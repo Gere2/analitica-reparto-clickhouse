@@ -1,106 +1,49 @@
 # Project brief and delivery checklist
 
-Date: 19 October 2026. This document summarizes, in our own words, what the BD2 final project brief asks for. For each requirement it shows where it is covered in the repository and its status. The original text belongs to the professor and is not copied here because the repository is public.
+Updated 15 November 2026. This maps the BD2 project requirements to the submitted Atlas code and documentation. The original professor's brief is summarised rather than republished. [Start with the final delivery index](FINAL-DELIVERY.md).
 
-**Statuses:** **Done** (covered and documented), **Partial** (exists, but needs completing or updating), **Missing** and **Optional**.
+## Assignment scope
 
-## What the brief asks for
+The group researches its assigned technology, ClickHouse, explains its fundamentals and demonstrates a practical use case. The presentation date is 15 November 2026. The slot is **20 minutes including the demo, followed by about 10 minutes for questions**. Required files are the presentation, Markdown documentation with installation and demo instructions, and supporting code/resources sufficient for another student to reproduce the example.
 
-Each group researches a NoSQL database in depth, explains its fundamentals and shows a practical use case that highlights its advantages.
+Minimum content covers context/motivation, characteristics, architecture/operation, live demonstration and critical reflection. Multiple nodes and a cross-database benchmark are not mandatory in the recorded brief. A qualitative comparison is included; PostgreSQL/DuckDB timings remain future work.
 
-- **Presentation date:** 15 November 2026.
-- **Format:** 30 minutes per group: 20 minutes of technical presentation, with the live demo included, and about 10 minutes of questions.
-- **Deliverables:**
-  1. The presentation with the demo.
-  2. `.md` documents with the documentation, step-by-step installation and a guide to run the demo. They must be enough for another student to reproduce the demo and understand the fundamentals.
-  3. Any additional files needed: code, images, `yml`, etc.
-- **Minimum content:** context and motivation, main characteristics, architecture and operation, live demo and critical reflection. The brief's sub-points are suggestions; going further is valued.
-- **Demo ideas it suggests:** a mini-app using the database as backend, a typical data flow, a real-time scenario or a visualization with filters and dashboards. Delivery Atlas combines all four.
+## Requirement mapping
 
-## Decisions confirmed with the professor
-
-| Topic | Decision |
-|---|---|
-| Technology | **ClickHouse**, assigned by the professor. This resolves the question about the "Personas" section raised in [TEAM-STATUS.md](TEAM-STATUS.md) and [THEORY-REVIEW.md](THEORY-REVIEW.md). The presentation should still explain the nuance: it is a columnar OLAP store that uses SQL ([FUNDAMENTALS.md](FUNDAMENTALS.md)). |
-| Duration | 20 minutes of presentation **including the demo** and about 10 minutes of questions. |
-| Multiple nodes | **Optional.** No cluster is set up; we explain how ClickHouse replicates and distributes data. |
-| Use case | Fictional food-delivery platform with its analytics infrastructure ([TEAM-STATUS.md](TEAM-STATUS.md)). |
-
-## Checklist by section
-
-### 1. Context and motivation
-
-| Requirement | Where | Status |
+| Requirement | Current material | Completion and scope |
 |---|---|---|
-| Type of database | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Fit with the BD2 course"; current deck slide 3 | Done |
-| Problems it solves better than other databases | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Experiment that justifies ClickHouse" and "Comparison with a transactional database" | Done |
-| Scenarios where it is commonly used | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Where ClickHouse is used": use-case families from the official documentation and companies from the official list of adopters, including some delivery companies | Done |
-
-### 2. Main characteristics
-
-| Requirement | Where | Status |
-|---|---|---|
-| Data model and representation | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Data model"; [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md); [ATLAS-INFRASTRUCTURE.md](ATLAS-INFRASTRUCTURE.md), section 3 | Done |
-| Consistency, scalability and availability | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Consistency and availability"; [APPLIED-THEORY.md](APPLIED-THEORY.md), CAP, PACELC, idempotency and fault tolerance in Atlas | Done |
-| Replication, partitioning and fault tolerance | [FUNDAMENTALS.md](FUNDAMENTALS.md); [THEORY-REVIEW.md](THEORY-REVIEW.md), "P4"; [ATLAS-RESULTS.md](ATLAS-RESULTS.md), "Integrity and recovery" | Done (explained; running several nodes is optional) |
-
-### 3. Architecture and operation
-
-| Requirement | Where | Status |
-|---|---|---|
-| Install, deploy or access | [ATLAS-INSTALL.md](ATLAS-INSTALL.md) for Delivery Atlas step by step; [INSTALLATION.md](INSTALLATION.md) for the lab with the large datasets | Done. Every step run in a fresh clone on Windows 11 on 11 November ([ATLAS-INSTALL.md](ATLAS-INSTALL.md#tested)) |
-| Main commands and queries | [DEMO-GUIDE.md](DEMO-GUIDE.md) (demo steps and SQL to type), `sql/atlas_consultas.sql`, `sql/atlas_tracking_consultas.sql`, [TRACKING-DEMO.md](TRACKING-DEMO.md) | Done |
-| Tools and client libraries | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Interfaces, clients and tools": interfaces and ports, console, `/play` and `/dashboard`, official libraries, Grafana and why Atlas uses HTTP | Done |
-
-### 4. Live demo
-
-| Requirement | Where | Status |
-|---|---|---|
-| Real or semi-real datasets | OTTO, REES46, Ele.me and Glovo: [README](../README.md) and [RESULTS.md](RESULTS.md). In Atlas, simulated traffic (`synthetic`) and manual actions (`demo_live`); without the Glovo catalog a demo catalog is used | Done. The large datasets are only loaded on Jere's computer; the part that uses them must be run from there |
-| Insert, query, update and delete | `scripts/crud_demo.py` on the scratch table `delivery.demo_events`. [TRACKING-DEMO.md](TRACKING-DEMO.md) explains why the history is not modified | Done: scratch-table CRUD in the extra live demonstration section of [DEMO-GUIDE.md](DEMO-GUIDE.md); Anuar reported a fresh-install execution on 11 November |
-| Connection from a programming language | Python API and publisher (`atlas/`); loading and query scripts (`scripts/`) | Done |
-| Simple but representative use case | Delivery Atlas: dashboard at `http://127.0.0.1:8001/`, GPS tracking, simulated and AI customers ([AI-CUSTOMERS.md](AI-CUSTOMERS.md)) and the commercial mini-app ([MINIAPP.md](MINIAPP.md)) | Done |
-| Multiple nodes | [FUNDAMENTALS.md](FUNDAMENTALS.md) explains `ReplicatedMergeTree`, ClickHouse Keeper and `Distributed` tables | Optional (explained, not set up) |
-
-### 5. Critical reflection
-
-| Requirement | Where | Status |
-|---|---|---|
-| Strengths and limitations observed | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Data quality and limits"; [APPLIED-THEORY.md](APPLIED-THEORY.md), "Advantages and disadvantages of ClickHouse here"; [ATLAS-RESULTS.md](ATLAS-RESULTS.md), where the aggregate was not faster | Done |
-| Comparison with other approaches or traditional databases | [FUNDAMENTALS.md](FUNDAMENTALS.md), "Comparison with a transactional database"; current deck slide 14 (planned comparison) | Done, qualitatively. There is no benchmark against PostgreSQL; the brief does not require one |
-| Projects it fits best | [FUNDAMENTALS.md](FUNDAMENTALS.md), comparison table | Done |
+| Context and motivation | [Fundamentals](FUNDAMENTALS.md), [project decisions](PROJECT-DECISIONS.md), slides 1–2/5–6 | Implemented fictional delivery workload; public and generated data stay distinct |
+| Type, characteristics and analytical use | [Fundamentals](FUNDAMENTALS.md), slides 3–4 | Column-oriented SQL/OLAP; clarifications accompany the retained checkpoint wording |
+| Model, physical order, partitions and views | [Current structure](DATABASE-STRUCTURE.md), four `sql/atlas*.sql` files | Applied Atlas schema, not the initial `delivery_proposal` |
+| Consistency, availability and scaling | [Applied theory](APPLIED-THEORY.md) and [fundamentals](FUNDAMENTALS.md) | One node demonstrated; replicas/shards explained, not deployed |
+| Step-by-step installation | [ATLAS-INSTALL.md](ATLAS-INSTALL.md) | Small path without large datasets; Anuar reported a fresh Windows test on 11 November |
+| Programming-language integration | `atlas/`, Python scripts and HTTP/SQL | Durable queue, batch publication, typed reads and bounded analytical requests |
+| Representative live demo | [DEMO-GUIDE.md](DEMO-GUIDE.md), operations/map, Journey, Performance, Criteo and Glovo | Implemented; local host checks reported by Anuar and five public data routes independently validated after reconnection on 15 November |
+| Insert, read, update and delete | `scripts/crud_demo.py`, [demo guide](DEMO-GUIDE.md) | Scratch-table mutations and readback; assigned one-minute slot after slide 14, with host rehearsal to confirm |
+| Data provenance | [Current structure](DATABASE-STRUCTURE.md), [host inventory](HOST-STATUS-2026-11-15.md), [source record](AI-USE-AND-SOURCES.md) | Fictional platform data, public advertising and catalog rows have separate meanings |
+| Measurement and critical reflection | [GPS-BENCHMARK.md](GPS-BENCHMARK.md), [fundamentals](FUNDAMENTALS.md), slides 11–14 | Equal answers, repeated reader levels, raw evidence and limits; no cross-engine or universal-capacity claim |
+| Reproduction and tests | [Installation records](TEAM-INSTALL-TESTS.md), [integration review](INTEGRATION-REVIEW-2026-11-13.md) | 82 Python and 33 JavaScript tests recorded on 13 November, including real ClickHouse integration; final packaging checks recorded separately |
+| Sources and AI assistance | [AI-USE-AND-SOURCES.md](AI-USE-AND-SOURCES.md) | Source/measurement attribution and human responsibility for generated work |
 
 ## Deliverables
 
-| Deliverable | Where | Status |
-|---|---|---|
-| 20-minute presentation with the demo | [PRESENTATION.md](PRESENTATION.md), [current English notes](../presentaciones/final-2026-11-11/SCRIPT-EN.md) and [14-slide web deck](../presentaciones/final-2026-11-11/Delivery-Atlas.html) | Prepared core 14:35; reserve the rest of the 20-minute slot for dashboard/CRUD additions and delays. Full timed group rehearsal still pending |
-| Documentation | [FUNDAMENTALS.md](FUNDAMENTALS.md), [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md), [ATLAS-INFRASTRUCTURE.md](ATLAS-INFRASTRUCTURE.md), [TEAM-TECHNICAL-GUIDE.md](TEAM-TECHNICAL-GUIDE.md) | Done |
-| Step-by-step installation | [ATLAS-INFRASTRUCTURE.md](ATLAS-INFRASTRUCTURE.md), section 2, and [INSTALLATION.md](INSTALLATION.md) | Done. Windows test with system, commands, results and common problems in [TEAM-INSTALL-TESTS.md](TEAM-INSTALL-TESTS.md). Echenique's test on his computer is still missing |
-| Guide to run the demo | [DEMO.md](DEMO.md) is the old OTTO lab demo; [TRACKING-DEMO.md](TRACKING-DEMO.md) covers Atlas tracking; [MINIAPP.md](MINIAPP.md), the mini-app | Partial: a single guide following the order of the final demo is missing |
-| Additional files | `compose.yaml`, `Dockerfile.atlas`, `sql/`, `atlas/`, `scripts/`, `web/`, `tests/` and screenshots in `docs/capturas/` | Done |
-
-## Evaluation criteria
-
-| Criterion | How we cover it |
+| Item | Entry point |
 |---|---|
-| Clarity and structure of the presentation | Depends on the final script and a timed rehearsal |
-| Technical understanding | [FUNDAMENTALS.md](FUNDAMENTALS.md) and [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md): `MergeTree` engines, physical order, partitions, materialized views and queue idempotency |
-| Real-world use cases, rigorous data use and strong arguments | Separate provenance: real, derived, `synthetic` and `demo_live`. Figures with their conditions in [RESULTS.md](RESULTS.md) and [ATLAS-RESULTS.md](ATLAS-RESULTS.md) |
-| Quality and relevance of the demo | Full path: mini-app → API → ClickHouse → dashboard, with an order delivered and tracked by GPS |
-| Clear and reproducible documentation | Atlas starts with one command and without large datasets; Windows test recorded ([TEAM-INSTALL-TESTS.md](TEAM-INSTALL-TESTS.md)) |
-| Real datasets, programming language and scalability | OTTO, REES46, Ele.me and Glovo; Python; a billion derived rows and an explanation of replicas and shards |
-| Creativity of the use case | Fictional delivery platform with AI customers, concurrent traffic and GPS tracking |
-| Answering questions and discussion | [ClickHouse fundamentals](FUNDAMENTALS.md), the current English script and the raw GPS evidence linked in [GPS-BENCHMARK.md](GPS-BENCHMARK.md) |
+| Approved presentation and English script | [14-slide HTML](../presentaciones/final-2026-11-11/Delivery-Atlas.html), [SCRIPT-EN.md](../presentaciones/final-2026-11-11/SCRIPT-EN.md) |
+| Speaking allocation and timing | [PRESENTATION.md](PRESENTATION.md): four speakers, 14:35 prepared core |
+| Technical documentation | [FUNDAMENTALS.md](FUNDAMENTALS.md), [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md), [ATLAS-INFRASTRUCTURE.md](ATLAS-INFRASTRUCTURE.md), [APPLIED-THEORY.md](APPLIED-THEORY.md) |
+| Installation and demo | [ATLAS-INSTALL.md](ATLAS-INSTALL.md), [DEMO-GUIDE.md](DEMO-GUIDE.md) |
+| Results and operating record | [GPS-BENCHMARK.md](GPS-BENCHMARK.md), [SIMULATION-RUNS.md](SIMULATION-RUNS.md), [HOST-STATUS-2026-11-15.md](HOST-STATUS-2026-11-15.md) |
+| Code/configuration/assets | `atlas/`, `web/`, `api/`, `sql/`, `scripts/`, `benchmarks/gps/`, `tests/`, Compose, Dockerfiles and Leaflet/license |
 
-## Pending before the presentation
+The delivery archive must contain the application/SQL/configuration as well as the deck and guides. The 13 November email bundle was rehearsal/documentation material and did not contain all source code. Private credentials, Docker volumes and massive datasets are excluded; loaders/source links and small evidence reports are retained.
 
-By priority:
+## Final rehearsal and runtime checks
 
-1. **Timed group rehearsal** of the [current 14-slide route](PRESENTATION.md) within the 20-minute slot, including the map and the additional dashboard/CRUD demonstrations. Confirm the host and gateway run the new analytical routes before the rehearsal.
-2. **A single guide for the final demo**, step by step, with CRUD included and a plan B in case something fails.
-3. **Echenique's installation test** on his computer, added to [TEAM-INSTALL-TESTS.md](TEAM-INSTALL-TESTS.md).
+The prepared HTML/script remain unchanged. Allocate 14:35 to that route, 2:00 to Journey/Performance after slide 8, 1:00 to CRUD after slide 14 and 2:25 to transitions/buffer. The complete four-person rehearsal must fit 20 minutes. The checkpoint closing on slide 10 leads into the experiment appendix.
 
-Done on 19 October: common uses and clients of ClickHouse in [FUNDAMENTALS.md](FUNDAMENTALS.md); [APPLIED-THEORY.md](APPLIED-THEORY.md) updated for Atlas; Windows installation test; LF line endings for `*.sh` in `.gitattributes`; technology confirmed in [TEAM-STATUS.md](TEAM-STATUS.md) and [THEORY-REVIEW.md](THEORY-REVIEW.md); Claude added to the AI-use statement; documentation and the app's interface translated into English.
+Anuar confirms that the integrated host and the offline presentation are available. The earlier failed tunnel was recreated, and the production connection was restored with five public data reads returning 200 at 19:28 UTC on 15 November. The host/tunnel must remain running for the talk; recheck before speaking and retain the local/recorded fallback. Deployment state and actual data access are recorded separately in [FINAL-VALIDATION.md](FINAL-VALIDATION.md).
 
-Written with Claude's help from the project brief and the repository documents; reviewed by Anuar.
+Anuar has provided independent Windows installation evidence. Echenique's additional installation/CRUD record and the complete group rehearsal still need confirmation; their absence is not presented as a failed test. The 21 run manifests and dated inventory are included; their checked sums distinguish the archive total from the 32 additional browsing events without a run ID.
+
+Historical plans, validation reports and slide decks retain their original dates and results. They are labelled as historical and do not override the current index, guides, schema or four-speaker allocation.

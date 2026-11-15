@@ -1,17 +1,17 @@
-# Delivery Atlas v1 infrastructure
+# Delivery Atlas architecture and ingestion
 
-**Extension in this version:** the v1 browsing contract is kept, and orders/GPS are added in `sql/atlas_operations.sql`, together with a demo catalog and the tracking dashboard. The root of port 8001 now serves that dashboard. Current documentation of the new routes, fields and provenance: [DATA-AND-TRACKING.md](DATA-AND-TRACKING.md). The commercial mini-app is documented in [MINIAPP.md](MINIAPP.md).
-
-Date: 7 October 2026. Implementation: `compose.yaml`, `Dockerfile.atlas`, `atlas/` and `sql/atlas.sql`. The earlier lab keeps its `delivery` database. The earlier `delivery_proposal` proposal is not the database applied by this version.
+Updated for the final delivery on 15 November 2026. The original browsing contract remains, with operations, customer decisions/orders and manual checkout applied through the four `sql/atlas*.sql` startup files. The separate `delivery_proposal` is historical. Use [the current schema](DATABASE-STRUCTURE.md), [installation](ATLAS-INSTALL.md) and [final index](FINAL-DELIVERY.md).
 
 ## 1. Short explanation for the team
 
 ![How the three kinds of data reach ClickHouse and the dashboard](atlas-data-flow.svg)
 
-Anuar builds a small fictional app. Each action creates an event with an ID. Python checks the event and records it in a persistent queue. A publisher collects batches and inserts them into ClickHouse. ClickHouse stores the details and prepares daily counts. Echenique's dashboard queries those counts through Python.
+Rule-driven customers, local AI customers and manual mini-app actions create typed events. Python validates and durably queues them. A publisher inserts batches into ClickHouse; materialized views maintain exact daily IDs and latest courier/order/customer states. The operations and analytical dashboards read those views through the API.
+
+The sketch below is the browsing branch. Customer decisions, purchases and operational snapshots also pass through the queue but are published into their corresponding event/state tables; see [the complete model](DATABASE-STRUCTURE.md).
 
 ```text
-Anuar's mini-app / Jere's generator
+Mini-app / simulated traffic / local AI
                   |
             POST /api/events
                   |
@@ -29,7 +29,7 @@ Anuar's mini-app / Jere's generator
                   |
               GET /api/summary
                   |
-          Echenique's dashboard
+          Operations and analytical dashboards
 ```
 
 SQLite is a small transport and retry log, not the store the dashboard queries. ClickHouse does the analytical work. The API runs in a container separate from the ClickHouse node. Two containers do not mean two database nodes.
@@ -85,7 +85,7 @@ SHOW CREATE TABLE delivery_atlas.app_daily_rollup_mv;
 
 The explained queries are also in `sql/atlas_consultas.sql`.
 
-## 4. Contract and endpoints for Anuar and Echenique
+## 4. Browsing contract and API routes
 
 Send an object `{"events": [...]}`. Maximum 5000 events or 5 MiB per request. Each batch is validated as a whole: one invalid entry rejects the whole batch.
 
@@ -137,11 +137,11 @@ python scripts/criteo.py load
 
 `/api/summary` accepts `from=YYYY-MM-DD`, `to`, `city_id`, `source_kind` and `event_type`. Example: `/api/summary?city_id=madrid&source_kind=synthetic`. The list of groups is limited to 10000; `events` and `groups` are the total for the filter, and `truncated` says whether groups are missing from the list.
 
-v1 actions: `search`, `filter_applied`, `restaurant_opened`, `product_opened`, `product_impression`, `cart_added` and `order_submitted`. Restaurant actions need `restaurant_id`; opening a product, impressions and cart actions also need `product_id`. A simulation requires `simulation_run_id`; a historical source requires `source_record_id`.
+Current browsing actions: `search`, `filter_applied`, `restaurant_opened`, `product_opened`, `product_impression`, `cart_added`, `cart_removed`, `session_abandoned` and `order_submitted`. Restaurant actions need `restaurant_id`; opening a product, impressions and cart actions also need `product_id`. A simulation requires `simulation_run_id`; a historical source requires `source_record_id`.
 
 Errors: 400 format/contract, 409 ID with different content, 413 size, 503 queue full or database unavailable for reads. For 503 and network errors, retry the original object with a wait. Do not retry 400/409/413 indefinitely. A full queue does not accept the batch.
 
-Serving the mini-app and dashboard files from the same port 8001 avoids the need for CORS. The final screens are the responsibility of Anuar and Echenique.
+Serving the mini-app and dashboard files from the same port 8001 avoids the need for CORS. The final speaking/operating allocation for all four teammates is in [PRESENTATION.md](PRESENTATION.md) and [DEMO-GUIDE.md](DEMO-GUIDE.md).
 
 ## 5. Acknowledgement, failures and limits
 
@@ -153,7 +153,7 @@ If ClickHouse received the batch but the response was lost, the queue may send i
 
 The lost-response test publishes an entry from a temporary queue and sends it again after reopening that queue. Those check events appear in `test-city`. The queue metrics belong only to the main publisher, not to SQL inserts or other test publishers.
 
-A single API/publisher process and one ClickHouse node. Do not run two APIs sharing the same queue, and do not claim high availability. There is no Kafka, sharding, replicas, automated backup or separate read/write permissions. The database and the API only expose ports to the local host. A shared deployment requires authentication and permissions before opening them beyond localhost.
+A single API/publisher process and one ClickHouse node. Do not run two APIs sharing the same queue, and do not claim high availability. The main host has no Kafka, sharding, replicas, automated backup policy or separate database read/write users; the isolated benchmark does create a read-only user. The database and the API only expose ports to the local host. A shared deployment requires authentication and permissions before opening them beyond localhost.
 
 ## 6. Generation and measurements
 
@@ -173,7 +173,9 @@ It saves the seed, start date, run ID, parameters, payload fingerprint and send 
 
 ## 7. What is left to close the project
 
-Anuar's complete mini-app; Echenique's dedicated dashboard; an independent test on another computer; fitting the existing CRUD into the demo; a load with more realistic abandonment/schedules; measuring delay up to the dashboard and latencies under concurrent load; documented backup and restore; a rehearsal of the 30 minutes.
+The mini-app, tracking, AI/rule customer flows and analytical portal are implemented. Anuar has supplied independent Windows installation and host checks. The public connection was restored on 15 November. The remaining operating steps are keeping the host/tunnel running, Echenique's additional reproduction/CRUD record and a full four-person rehearsal within 20 minutes plus the question period. See [the assignment checklist](ASSIGNMENT.md) and [host record](HOST-STATUS-2026-11-15.md).
+
+The isolated GPS campaign measures repeated reads with equal answers; view-maintenance cost, replicated availability and a cross-database campaign remain separate future work. [GPS-BENCHMARK.md](GPS-BENCHMARK.md) gives the completed results and their limits.
 
 **Verified on 7 October:** one million synthetic events accepted and verified in ClickHouse, retries, ID conflict, equality between detail and aggregate, and recovery of a pending entry after orderly shutdowns. The new aggregate was not faster in the local benchmark (0.703 s vs 0.498 s); studying its cost is a pending task. See [results and conditions](ATLAS-RESULTS.md) and [exported evidence](evidencia-atlas.json).
 
@@ -186,4 +188,4 @@ The local log and the exact aggregates have costs that will need measuring at la
 - [ReplacingMergeTree](https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/replacingmergetree).
 - [AggregatingMergeTree](https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/aggregatingmergetree).
 - [Retries and deduplication limits](https://clickhouse.com/docs/concepts/features/operations/insert/deduplicating-inserts-on-retries). The current documentation includes changes after 25.8; this version does not depend on those newer settings.
-- Repository code and tests; [applied theory and pending tasks](THEORY-REVIEW.md).
+- Repository code and tests; [current applied theory](APPLIED-THEORY.md) and [historical theory review](THEORY-REVIEW.md).

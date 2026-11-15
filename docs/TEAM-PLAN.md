@@ -1,5 +1,7 @@
 # Delivery Atlas: team work plan
 
+> Historical record: dates, results, speaker allocations and pending statements below describe their original stage. For the current implemented project, 14-slide route and delivery status use [FINAL-DELIVERY.md](FINAL-DELIVERY.md), [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md) and [DEMO-GUIDE.md](DEMO-GUIDE.md).
+
 Date: 7 October 2026. Team: Jere, Anuar and Echenique.
 
 **Later change of scope:** Jere decided to continue with Rayo for now and split the work when the teammates join. The split below is a proposal for that moment, not work we are waiting on. The operations dashboard and synthetic Madrid tracking are already being implemented. Current status: [DATA-AND-TRACKING.md](DATA-AND-TRACKING.md). The earlier PDF guide describes the first infrastructure delivery.

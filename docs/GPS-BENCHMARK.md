@@ -6,17 +6,17 @@ The initial corpus is the already audited run `4f297d43-7255-4c72-8b4d-0dc108280
 
 ## Separate checkout and lab
 
-Use a separate clone for these commands. This avoids changing the checkout serving the demo. During PR review, clone the branch explicitly:
+Use a separate clone of the integrated main branch for these commands. This avoids changing the checkout serving the demo and includes the reviewed loader/export fixes:
 
 ```text
-git clone --branch codex/gps-comparison-runner https://github.com/Gere2/analitica-reparto-clickhouse.git delivery-atlas-gps-lab
+git clone --branch main https://github.com/Gere2/analitica-reparto-clickhouse.git delivery-atlas-gps-lab
 cd delivery-atlas-gps-lab
 docker compose -f benchmarks/gps/compose.yaml up -d --wait --wait-timeout 120
 ```
 
 Only a new ClickHouse service starts. It has its own Compose project and volume, loopback port **18124**, 2 CPUs, 2 GiB container memory and a 1.5 GiB server memory budget. These are explicit lab settings, not a claim about Anuar's whole machine. Merges remain active. Keep this project's resource budget within the free capacity of the host and run outside a presentation rehearsal.
 
-The lab creates the actual `atlas.sql` and `atlas_operations.sql` schema and a marker in `gps_comparison_lab.identity`. It creates a SELECT-only reader. The public passwords in `benchmarks/gps/init.sql` are for this loopback lab only. Both scripts refuse the demo's port 8124, remote hosts, proxy forwarding and redirects. The identity marker must also match. Keep this port local.
+The lab applies the four actual Atlas schema files (`atlas.sql`, `atlas_operations.sql`, `atlas_agents.sql`, `atlas_miniapp.sql`) and a marker in `gps_comparison_lab.identity`. This also supplies all five event tables for the export integration check. It creates a SELECT-only reader. The public passwords in `benchmarks/gps/init.sql` are for this loopback lab only. Both scripts refuse the demo's port 8124, remote hosts, proxy forwarding and redirects. The identity marker must also match. Keep this port local.
 
 Record the environment alongside the output:
 

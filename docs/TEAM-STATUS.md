@@ -1,5 +1,7 @@
 > **Extension of 14 Oct:** the local AI customer agent now exists, with the checkout → purchase → statuses → GPS link. [Guide to the extension](AI-CUSTOMERS.md). The manual mini-app and other pending points from this earlier review remain separate.
 
+> Historical record: dates, results, speaker allocations and pending statements below describe their original stage. For the current implemented project, 14-slide route and delivery status use [FINAL-DELIVERY.md](FINAL-DELIVERY.md), [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md) and [DEMO-GUIDE.md](DEMO-GUIDE.md).
+
 # Project status for the team
 
 ## Update of 7 October 2026

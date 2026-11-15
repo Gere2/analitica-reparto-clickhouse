@@ -1,4 +1,6 @@
 # Delivery Atlas
+
+> Historical record: dates, results, speaker allocations and pending statements below describe their original stage. For the current implemented project, 14-slide route and delivery status use [FINAL-DELIVERY.md](FINAL-DELIVERY.md), [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md) and [DEMO-GUIDE.md](DEMO-GUIDE.md).
 ## Technical document for the team
 
 **Audience:** Jere, Anuar and Echenique. **Code review:** 14 October 2026. **Reviewed base:** commit `5feb407`. The measurements and screenshots kept are from 7 October; this document does not claim that the services are running today.

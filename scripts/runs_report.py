@@ -39,7 +39,8 @@ def main() -> None:
         "five gzip CSV files (one per table, `FINAL`, ordered by `event_time`) plus `summary.json`.",
         "",
         f"**{len(summaries)} runs, {total_rows:,} rows, {total_bytes / 1e9:.2f} GB compressed.** "
-        f"The exports are not in Git: download them from the [GitHub release]({RELEASE}) (one `.tar` per run). "
+        f"Compressed CSV files are not in Git. Published archives are in the [GitHub release]({RELEASE}); "
+        "newer exports may still be on the host, so check release membership before downloading. "
         "All the data is fictional and synthetic; the downloaded Criteo and Glovo datasets are not included.",
         "",
         "Times are UTC. Event span is last minus first event, including any pauses; it is not continuous uptime. "

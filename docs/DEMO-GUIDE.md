@@ -20,7 +20,7 @@ Install first with [ATLAS-INSTALL.md](ATLAS-INSTALL.md). Anuar's computer is the
 | 13 | Anuar | Server work table | Rows read, server time and query memory; view-maintenance cost remains separate |
 | 14 | Echenique | Planned comparison slide | Common corpus and resource budget; no PostgreSQL/DuckDB timing claimed |
 
-The prepared slides and notes stay in English. Add Customer Journey/Performance and the scratch-table CRUD in the remaining presentation time, without replacing the rehearsed parts or renumbering slides. The map already belongs to the core script.
+The prepared slides and notes stay in English. Add Customer Journey/Performance and the scratch-table CRUD in the remaining presentation time, without replacing the rehearsed parts or renumbering slides. The map already belongs to the core script. [Technical clarifications](DEFENCE-NOTES-EN.md) accompany the unchanged script.
 
 **20-minute slot:** the prepared core totals 14:35. Budget about 2 minutes for Journey/Performance (Anuar, after slide 8), 1 minute for the required CRUD demonstration (Echenique, after slide 14), and 2:25 for transitions and delays. Time this complete route together. An extra mini-app order or additional SQL belongs to questions if time is short.
 
@@ -63,7 +63,7 @@ Use the **existing checkout and Compose project serving the demo**. Another clon
    ```
 
    Wait for its health check. Preserve the existing token files; never print or email their values. If the Quick Tunnel is running, rebuilding the gateway alone need not replace its address. If the tunnel was stopped/recreated, start it, take its **current** HTTPS address from its logs and follow [SHARING-VERCEL.md](SHARING-VERCEL.md) to validate and publish that origin. A Vercel deployment being READY alone does not prove the host connection works.
-7. Check all three pages on the host: `/`, `/analytics.html`, `/delivery.html`. Check `/api/status`, `/api/journey`, `/api/performance`, and the read-only shared equivalents. A 404 means old API/gateway code; a 503 on the public site can mean the tunnel or host is unavailable. The public proxy is deliberately read-only.
+7. Check all three pages on the host: `/`, `/analytics.html`, `/delivery.html`. Check `/api/status`, `/api/journey`, `/api/performance`, and the read-only shared equivalents. A 404 means old API/gateway code; a 503 on the public site can mean the tunnel or host is unavailable. The public proxy is deliberately read-only. [The dated host record](HOST-STATUS-2026-11-15.md) records the local update and the later validated public reconnection.
 8. Confirm Criteo and Glovo are loaded. OTTO, REES46 and Ele.me are not required on Anuar's host. Missing datasets must remain labelled missing; do not download large files during the talk.
 9. Rehearse all fourteen slides with a clock, on the host and actual projector/browser if available. Keep the original recorded captures as fallback and label them as recorded.
 
@@ -73,10 +73,10 @@ The `WATCHDOG-PAUSE` flag stays present during rehearsal and benchmarks. A `.res
 
 1. Start Docker and the updated Atlas stack. Keep long-run producers and the watchdog paused.
 2. For the prepared 7–8 demonstration, start a fresh **hybrid run with 100 customers and 50 couriers**, with a 2-second tick if using the API. That matches the prepared narration. The old figures on slide 2 remain a dated checkpoint measurement; they are not today's live counters. If using another fleet size, state the actual value rather than claiming 50.
-3. Start near the rehearsal: the 3 AI customers have a 120-call budget and stop making model decisions after that budget. Traffic continues. Verify Ollama is available before speaking; distinguish model decisions from rule-generated actions.
+3. Start near the rehearsal: the 3 AI customers have a 120-call budget and stop making model decisions after that budget. Traffic continues. Recorded model reasons can still be shown after the budget is spent; do not describe them as fresh model calls. Verify Ollama is available before speaking and coordinate the start with the host.
 4. Open these tabs:
    - `http://127.0.0.1:8001/?view=simulated#tracking`
-   - `http://127.0.0.1:8001/analytics.html?panel=journey` (optional questions)
+   - `http://127.0.0.1:8001/analytics.html?panel=journey` (two-minute dashboard addition after slide 8)
    - `http://127.0.0.1:8001/delivery.html` (optional order)
    - `http://127.0.0.1:8124/play` (local SQL only)
    - the offline 14-slide HTML presentation.
@@ -105,12 +105,12 @@ With one reader, history client p95 is 704–750 ms and prepared state 125 ms. W
 
 Server time is a different measure: the one-reader history median is 560–562 ms and prepared state 6 ms. Explain the recorded rows read and CPU budget; query memory is not total container RAM. Do not claim that all current server rows were scanned by a query filtering a single run. The cost of maintaining views during ingestion and the cross-database comparison are separate experiments.
 
-## Extra live demonstration and questions
+## Dashboard and CRUD additions
 
 - **Customer Journey:** open `/analytics.html?panel=journey`, filter one run/cohort, expand its ClickHouse SQL and read statistics. Explain unique sessions, `FINAL` and ordered `windowFunnel` steps. Empty AI cohorts are valid for traffic-only runs.
-- **Performance:** open the performance panel, show engines/sort keys and `system.parts`, then query families from `system.query_log`. For **Compare fixed queries**, stop generators and wait for pending 0. Both answers must match before a ratio is shown. A general detail/aggregate comparison is not the separate GPS boundary experiment.
+- **Performance:** in the two-minute dashboard addition, show metadata/query history rather than starting a benchmark under active generation. Open the performance panel, show engines/sort keys and `system.parts`, then query families from `system.query_log`. For **Compare fixed queries**, stop generators and wait for pending 0. Both answers must match before a ratio is shown. A general detail/aggregate comparison is not the separate GPS boundary experiment.
 - **One order:** on the host mini-app place an order while a customer simulation is active, then follow its ID on the dashboard. A 202 response means queued, not yet visible in ClickHouse. Switch to the prepared order after 15 seconds rather than waiting through a delivery.
-- **CRUD:** `python3 scripts/crud_demo.py` uses only the scratch table `delivery.demo_events`. Explain insert/read versus part-rewriting mutations. Keep credentials out of the projector. If the assignment requires all four operations live, include this 1-minute example after slide 14. It is an add-on, not slide 14's prepared content.
+- **CRUD:** include the required one-minute `python3 scripts/crud_demo.py` example after slide 14. Its row changes use `delivery.demo_events`; it also temporarily stops merges on three existing large legacy tables and restarts them in `finally`. Rehearse outside the GPS benchmark, explain insert/read versus mutations, and keep credentials out of the projector. Slide 14 itself remains the planned comparison slide.
 
 ### Optional SQL on the local host
 
@@ -144,5 +144,7 @@ Use a run present in that local instance; the benchmark lab and demo have indepe
 | Queue grows | Wait or reduce the workload; pending data is not a proof of permanent loss or successful publication |
 | A query stalls beyond 15 s | Switch to the prepared screenshot/output, clearly marked recorded |
 | A public dataset is missing | Skip it or show its missing state; never present simulation as that dataset |
+
+Live street tiles still need network access even on the local host. If tiles or the host are unavailable, use the embedded recorded map capture and identify it as recorded. The presentation's static resources work offline.
 
 After rehearsal, stop the fresh run, wait for pending 0 and keep its archive. Restore long-run generation only intentionally; never delete ClickHouse or queue volumes to reset the demo. To stop services while keeping data, use `docker compose -f compose.yaml --profile atlas --profile ai stop`.

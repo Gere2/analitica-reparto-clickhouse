@@ -1,5 +1,7 @@
 # Dashboard validation — 27 October 2026
 
+> Historical record: dates, results, speaker allocations and pending statements below describe their original stage. For the current implemented project, 14-slide route and delivery status use [FINAL-DELIVERY.md](FINAL-DELIVERY.md), [DATABASE-STRUCTURE.md](DATABASE-STRUCTURE.md) and [DEMO-GUIDE.md](DEMO-GUIDE.md).
+
 The English portal adds Customer Journey, ClickHouse Performance and five historical source explorers beside the existing operations dashboard. The Madrid map implementation is unchanged.
 
 ## Automated checks
