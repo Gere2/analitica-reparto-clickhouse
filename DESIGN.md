@@ -22,3 +22,13 @@ Seven structures were considered (full map, list with map, status lanes, timelin
 - Separate sections with space and lines; do not nest cards. Buttons and controls with visible focus, explicit loading and error states.
 - Two columns for tracking on desktop; one on mobile, with a horizontally scrollable table and the map visible.
 - No decorative animation. The marker only changes when positions are received from the server. Reduced motion keeps the same behaviour.
+
+## Classroom ordering and live room, 16 November
+
+The classroom mini-app and room-specific live view use the liquid glass direction requested by Geremi. The ordering task leads on phones, with a short nickname field, three dishes from one demo venue, real radio controls and an order summary beside the primary action. Existing receipts retain their original product even when it belongs to another venue.
+
+DM Sans is served locally with its font license. Pale sage, pearl and warm neutral backgrounds provide depth behind translucent surfaces. Main text uses dark forest green. Glass surfaces use an inset light edge, a soft offset shadow and bounded backdrop blur. Contrast mode makes surfaces opaque. Reduced-motion mode removes control transitions.
+
+The received-order view explains the queue, publication in ClickHouse and delivery through a four-stage timeline. It retains the saved request across interrupted responses and reloads. Mobile map controls have generous touch targets. The class roster preserves keyboard focus when status changes and uses a scrollable region for large classes.
+
+Food imagery is AI-generated illustrative photography, encoded as one WebP asset reused across the menu and live roster. A caption identifies the imagery and fictional prices. Product names and prices come from the actual demo catalog.

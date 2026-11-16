@@ -17,3 +17,5 @@ await Promise.all(['html','css','js'].map(ext=>copyFile('web/classroom.'+ext,'sh
 
 await copyFile('web/classroom-live.js','shared-public/classroom-live.js');
 await cp('web/vendor/qrcode','shared-public/vendor/qrcode',{recursive:true});
+
+await cp('web/assets','shared-public/assets',{recursive:true});

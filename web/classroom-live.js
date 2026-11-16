@@ -17,17 +17,37 @@
   let room = query.get("room"),
     markers,
     selectedOrder = query.get("order"),
-    busy = false;
+    busy = false,
+    feedKey = "";
   if (!readOnly && !room) {
     try {
       room = localStorage.getItem("atlas-host-room");
     } catch {}
   }
   panel.hidden = readOnly && !room;
+  if (room || !readOnly) document.body.classList.add("classroom-live");
+  document.getElementById("rate").setAttribute("role", "img");
+  if (room) {
+    document.body.dataset.classroomView = "room";
+    document.querySelectorAll(".table-wrap").forEach((table) => {
+      table.tabIndex = 0;
+      table.setAttribute("role", "region");
+      table.setAttribute("aria-label", "Scrollable order details");
+    });
+    document.querySelector(".heading h1").textContent = "Live in Madrid.";
+    document.querySelector(".heading p").textContent =
+      "Orders, couriers and GPS, live from ClickHouse.";
+    const nav = document.querySelector('nav[aria-label="Sections"]');
+    nav.innerHTML =
+      '<a href="#classroom-panel">Class orders</a><a href="#tracking">Live map</a><a href="/analytics.html?panel=performance">ClickHouse</a><a class="live-order-link" href="/classroom.html">Place an order</a>';
+  }
   const host = panel.querySelector(".classroom-host");
   host.hidden = readOnly;
   const feed = panel.querySelector(".classroom-feed"),
     note = document.getElementById("classroom-note");
+  feed.tabIndex = 0;
+  feed.setAttribute("role", "region");
+  feed.setAttribute("aria-label", "Class order list");
   const statuses = {
     created: "Waiting for a courier",
     preparing: "Preparing",
@@ -98,35 +118,73 @@
         data.orders.filter((o) => o.published).length +
         " published in ClickHouse · " +
         (data.open ? "ordering open" : "ordering paused or closed");
-      feed.replaceChildren(
-        ...data.orders.map((o) => {
-          const button = document.createElement("button");
-          button.className = "classroom-ticket";
-          button.dataset.order = o.order_id;
-          button.innerHTML =
-            "<b>" +
-            esc(o.alias) +
-            "</b><span>" +
-            esc(o.product_name) +
-            '</span><span class="ticket-state">' +
-            esc(
-              o.published
-                ? statuses[o.status] || o.status
-                : "Accepted · waiting for ClickHouse",
-            ) +
-            "</span><small>Order " +
-            esc(o.order_id.slice(0, 8)) +
-            "</small>";
-          button.onclick = () => {
-            selectedOrder = o.order_id;
-            follow(o);
-            document
-              .getElementById("tracking")
-              .scrollIntoView({ behavior: "instant", block: "start" });
-          };
-          return button;
-        }),
+      const newKey = JSON.stringify(
+        data.orders.map((o) => [
+          o.order_id,
+          o.alias,
+          o.product_name,
+          o.published,
+          o.status,
+        ]),
       );
+      const focusId = feed.contains(document.activeElement)
+        ? document.activeElement.dataset.order
+        : null;
+      if (newKey !== feedKey) {
+        feedKey = newKey;
+        feed.replaceChildren(
+          ...data.orders.map((o) => {
+            const button = document.createElement("button");
+            button.className = "classroom-ticket";
+            button.dataset.order = o.order_id;
+            button.setAttribute(
+              "aria-pressed",
+              String(o.order_id === selectedOrder),
+            );
+            const position = /salad/i.test(o.product_name)
+              ? "right"
+              : /house|menu/i.test(o.product_name)
+                ? "center"
+                : "left";
+            button.innerHTML =
+              '<span class="meal-thumb" style="--meal-position:' +
+              position +
+              '" aria-hidden="true"></span><b>' +
+              esc(o.alias) +
+              "</b><span>" +
+              esc(o.product_name) +
+              '</span><span class="ticket-state">' +
+              esc(
+                o.published
+                  ? statuses[o.status] || o.status
+                  : "Accepted · waiting for ClickHouse",
+              ) +
+              "</span><small>Order " +
+              esc(o.order_id.slice(0, 8)) +
+              "</small>";
+            button.onclick = () => {
+              selectedOrder = o.order_id;
+              feed
+                .querySelectorAll("button")
+                .forEach((item) =>
+                  item.setAttribute(
+                    "aria-pressed",
+                    String(item.dataset.order === selectedOrder),
+                  ),
+                );
+              follow(o);
+              document
+                .getElementById("tracking")
+                .scrollIntoView({ behavior: "instant", block: "start" });
+            };
+            return button;
+          }),
+        );
+        if (focusId)
+          feed
+            .querySelector('[data-order="' + focusId + '"]')
+            ?.focus({ preventScroll: true });
+      }
       if (data.run_id === lastData?.run_id && fleetMap.map) {
         markers ||= L.layerGroup().addTo(fleetMap.map);
         markers.clearLayers();

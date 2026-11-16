@@ -32,3 +32,9 @@ The [classroom presentation](../presentaciones/classroom-2026-11-16/Delivery-Atl
 ## Validation
 
 On 16 November, three independent mobile browser contexts placed orders against a disposable ClickHouse 25.8.33.6 instance. All three appeared in the queried order state and as labelled markers on the Madrid map. A reload restored the first receipt. The host closed ordering and retained the receipts. Automated checks passed 87 Python tests with real SQL integration and 35 JavaScript tests. Gateway HTTP checks covered authenticated checkout, rejection of controls and other write methods, body limits and forwarding a closed-room response. Classroom tests cover retries after a lost response, concurrent retries, changed content, capacity and expiry.
+
+## Mobile ordering design
+
+The classroom menu now shows three illustrated choices from the first demo venue, each with its catalog price. Select a dish, enter a nickname and place the order. A progress timeline shows receipt, publication, travel and completion. The live roster uses matching thumbnails and nickname labels on the map. The interface uses self-hosted DM Sans and a liquid glass material with high-contrast and reduced-motion fallbacks.
+
+Visual checks covered 320, 390, 768 and 1440-pixel layouts. A keyboard selection followed by a deliberately lost response and page reload produced one order on retry. Automated accessibility checks were run on the public mobile menu and live room, and the existing JavaScript suite passed 35 tests.
