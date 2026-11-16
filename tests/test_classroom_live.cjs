@@ -6,7 +6,7 @@ const vm=require('node:vm');
 
 // Exercise the shipped controller with browser/Leaflet boundaries, including
 // the general-map URL that originally omitted every classmate's marker.
-function fixture(search='?view=simulated',initial='room-a'){
+function fixture(search='?view=simulated',initial='room-a',phone=false){
   class Element{
     constructor(tag='div'){this.tag=tag;this.children=[];this.dataset={};this.attrs={};this.hidden=false;this.textContent='';this.value='';this.style={setProperty(){}};this.classList={add(){}};}
     setAttribute(k,v){this.attrs[k]=v;}
@@ -36,11 +36,11 @@ function fixture(search='?view=simulated',initial='room-a'){
     location:{search,hash:'#tracking'},readOnly:true,lastData:state,
     document:{hidden:false,body:node('body'),activeElement:null,getElementById:node,querySelector:node,querySelectorAll:()=>[],createElement:tag=>new Element(tag)},
     localStorage:{getItem(){return null;}},addEventListener(){},
-    matchMedia:()=>({matches:false}),selectCourier(){},
+    matchMedia:()=>({matches:phone}),selectCourier(){},
     fleetMap:{map:{panTo(){}}},
     L:{layerGroup:()=>group,divIcon:x=>x,marker:(_,options)=>{
       const el=new Element();
-      const marker={options,el,bindTooltip(){return this;},on(){return this;},addTo(){visibleMarkers.push(this);return this;},getElement(){return el;}};
+      const marker={options,el,bindTooltip(label,tooltipOptions){this.label=label.textContent;this.tooltipOptions=tooltipOptions;return this;},on(){return this;},addTo(){visibleMarkers.push(this);return this;},getElement(){return el;}};
       return marker;
     }},
     request:async path=>{
@@ -53,7 +53,7 @@ function fixture(search='?view=simulated',initial='room-a'){
   });
   vm.runInContext(readFileSync(join(__dirname,'../web/classroom-live.js'),'utf8'),ctx);
   const settle=()=>new Promise(resolve=>setImmediate(resolve));
-  return {node,calls,visibleMarkers,settle,
+  return {node,calls,visibleMarkers,settle,rooms,
     async tick(){clock+=12000;await poll();await settle();},
     setActive(room){active=room;if(room)state.run_id=rooms[room].run_id;},
     setUnavailable(value){unavailable=value;},
@@ -98,4 +98,17 @@ test('room discovery retries after a temporary failure',async()=>{
   const f=fixture();await f.settle();f.setUnavailable(true);await f.tick();
   f.setUnavailable(false);f.setActive('room-b');await f.tick();
   assert.equal(f.visibleMarkers[0].el.attrs['aria-label'],'Anuar · On the way');
+});
+
+for(const phone of [false,true])test(`seven classmates retain permanent name labels without selection (${phone?'phone':'desktop'})`,async()=>{
+  const f=fixture('?view=simulated','room-a',phone);
+  const aliases=['Lulu','Anuar','Geremi','Echenique','Juanro','Alex','Maria'];
+  const sample=f.rooms['room-a'].orders[0];
+  f.rooms['room-a'].orders=aliases.map((alias,i)=>({...sample,alias,order_id:'order-'+i}));
+  await f.settle();
+  assert.equal(f.visibleMarkers.length,7);
+  assert.deepEqual(f.visibleMarkers.map(m=>m.label),aliases);
+  assert.ok(f.visibleMarkers.every(m=>m.tooltipOptions.permanent&&m.tooltipOptions.opacity===1));
+  assert.equal(new Set(f.visibleMarkers.map(m=>m.tooltipOptions.direction)).size,4);
+  assert.ok(f.visibleMarkers.every(m=>m.options.icon.iconSize[0]===44));
 });

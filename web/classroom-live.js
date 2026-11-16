@@ -376,7 +376,7 @@
       if (data.run_id === lastData?.run_id && fleetMap.map) {
         markers ||= L.layerGroup().addTo(fleetMap.map);
         markers.clearLayers();
-        for (const o of data.orders.filter((o) => o.published)) {
+        for (const [index, o] of data.orders.filter((o) => o.published).entries()) {
           const c = lastData.couriers.find(
             (c) => c.courier_id === o.courier_id && c.order_id === o.order_id,
           );
@@ -385,7 +385,7 @@
           if (!Number.isFinite(Number(lat)) || !Number.isFinite(Number(lon)))
             continue;
           const label = document.createElement("span");
-          label.textContent = o.alias + (c ? "" : " · destination");
+          label.textContent = o.alias;
           const active = o.order_id === selectedOrder;
           const initials = o.alias
             .trim()
@@ -401,16 +401,18 @@
                 '<span class="classroom-pin' +
                 (active ? " is-selected" : "") +
                 '">' + esc(initials) + "</span>",
-              iconSize: [36, 36],
-              iconAnchor: [18, 18],
+              iconSize: [44, 44],
+              iconAnchor: [22, 22],
             }),
             zIndexOffset: active ? 2400 : 1800,
             title: o.alias,
           })
             .bindTooltip(label, {
-              permanent: !matchMedia("(max-width: 720px)").matches || active,
-              direction: "top",
-              className: "classroom-label",
+              permanent: true,
+              direction: ["top", "bottom", "right", "left"][index % 4],
+              offset: [[0, -20], [0, 20], [20, 0], [-20, 0]][index % 4],
+              opacity: 1,
+              className: "classroom-label" + (active ? " is-selected" : ""),
             })
             .on("click", () => {
               selectedOrder = o.order_id;
