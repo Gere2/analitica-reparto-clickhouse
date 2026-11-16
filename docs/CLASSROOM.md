@@ -10,6 +10,8 @@ Start a customer simulation locally. In **Class orders**, set the public demo UR
 
 Students open https://delivery-atlas-demo.vercel.app/classroom.html, which discovers the active room, or scan the room-specific QR. Each browser keeps a random device ID and its submitted order locally. A nickname appears on the projection alongside the dish and status. A new room gives each device another order. These are anonymous classroom identities.
 
+The general public dashboard also discovers the active classroom automatically and overlays its published participant initials on the existing fleet map. It keeps the operations dashboards visible and provides a **Class orders** link to the dedicated room view. It checks for a replacement room every ten seconds. Explicit room/receipt links remain pinned to their original room.
+
 Opening another room replaces the active roster. A changed or stopped simulation pauses new orders. Test with three phones before the class.
 
 ## Explain ClickHouse while the class participates

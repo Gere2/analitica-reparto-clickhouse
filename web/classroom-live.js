@@ -21,7 +21,10 @@
     feedKey = "",
     classroomData,
     lessonKey = "",
-    initialMapLink = location.hash === "#tracking";
+    initialMapLink = location.hash === "#tracking",
+    discoveredAt = 0,
+    discoveredRoomLink;
+  const discoverRoom = readOnly && !room;
   if (!readOnly && !room) {
     try {
       room = localStorage.getItem("atlas-host-room");
@@ -255,9 +258,37 @@
   document.getElementById("classroom-open").onclick = () => manage("open");
   document.getElementById("classroom-close").onclick = () => manage("close");
   async function pollClass() {
-    if (busy || !room || document.hidden) return;
+    if (busy || document.hidden) return;
     busy = true;
     try {
+      // The general map also carries class orders. Explicit room links stay
+      // pinned to their receipt; the general view follows the active room.
+      if (discoverRoom && (!room || Date.now() - discoveredAt >= 10000)) {
+        const current = await request("/api/classroom");
+        discoveredAt = Date.now();
+        if (current.room_id && current.room_id !== room) {
+          room = current.room_id;
+          classroomData = undefined;
+          selectedOrder = null;
+          feedKey = "";
+          lessonKey = "";
+          markers?.clearLayers();
+          feed.replaceChildren();
+          renderSelected();
+          renderLesson();
+          document.body.classList.add("classroom-live");
+          title.textContent = "Class orders";
+          if (!discoveredRoomLink) {
+            discoveredRoomLink = document.createElement("a");
+            discoveredRoomLink.textContent = "Class orders";
+            document.querySelector('nav[aria-label="Sections"]')
+              .append(discoveredRoomLink);
+          }
+          discoveredRoomLink.href =
+            "/?room=" + encodeURIComponent(room) + "#classroom-panel";
+        }
+      }
+      if (!room) return;
       const data = await request(
         "/api/classroom?room_id=" + encodeURIComponent(room),
       );
@@ -426,7 +457,7 @@
       });
     }
   }
-  if (room) {
+  if (room || discoverRoom) {
     if (!readOnly) join();
     pollClass();
   }
