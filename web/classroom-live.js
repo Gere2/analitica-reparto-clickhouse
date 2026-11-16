@@ -393,7 +393,7 @@
         markers ||= L.layerGroup().addTo(fleetMap.map);
         markers.clearLayers();
         const classEntries = [];
-        for (const [index, o] of data.orders.filter((o) => o.published).entries()) {
+        for (const o of data.orders.filter((o) => o.published)) {
           const c = lastData.couriers.find(
             (c) => c.courier_id === o.courier_id && c.order_id === o.order_id,
           );
@@ -448,7 +448,7 @@
         focusClass.hidden = !classEntries.length;
         classMap.setMarkers(classEntries);
         const selected = data.orders.find((o) => o.order_id === selectedOrder);
-        if (selected) follow(selected);
+        if (selected) follow(selected, false);
       } else if (markers) {
         markers.clearLayers();
         classMap?.clear();
@@ -468,7 +468,7 @@
       busy = false;
     }
   }
-  function follow(order) {
+  function follow(order, center = true) {
     if (
       order.courier_id &&
       lastData?.couriers.some(
@@ -477,7 +477,7 @@
       )
     ) {
       selectCourier(order.courier_id);
-    } else if (fleetMap.map && order.published && !classMap?.focused) {
+    } else if (center && fleetMap.map && order.published && !classMap?.focused) {
       fleetMap.map.panTo([order.dropoff_lat, order.dropoff_lon], {
         animate: false,
       });
