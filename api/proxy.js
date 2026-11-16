@@ -1,10 +1,11 @@
 'use strict';
-const routes = new Set(['simulation','operations','status','track','summary','inventory','catalog','datasets','journey','performance','benchmark','historical']);
+const routes = new Set(['simulation','operations','status','track','summary','inventory','catalog','datasets','journey','performance','benchmark','historical','classroom','classroom-order']);
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control','no-store');
-  if(req.method !== 'GET') return res.status(405).json({error:'The shared demo is read-only'});
   const query = new URL(req.url, 'https://atlas.invalid').searchParams;
   const endpoint = req.query?.endpoint || query.get('endpoint') || req.url.split('?')[0].replace('/api/','');
+  const orderWrite=endpoint==='classroom-order'&&req.method==='POST';
+  if(req.method!=='GET'&&!orderWrite||endpoint==='classroom-order'&&!orderWrite) return res.status(405).json({error:'Method unavailable'});
   if(!routes.has(endpoint)) return res.status(404).json({error:'Route not available'});
   const origin = process.env.ATLAS_SHARE_ORIGIN;
   const token = process.env.ATLAS_SHARE_TOKEN;
@@ -13,7 +14,7 @@ module.exports = async (req, res) => {
     const base = new URL(origin);
     if(base.protocol !== 'https:' || !base.hostname.endsWith('.trycloudflare.com')) throw new Error('Invalid origin');
     const target = new URL('/api/' + endpoint, base);
-    const allowed = new Set(({track:['run_id','courier_id'],summary:['city_id','source_kind'],journey:['run_id','kind'],benchmark:['workload'],historical:['dataset','period','country','city']})[endpoint]||[]);
+    const allowed = new Set(({classroom:['room_id'],track:['run_id','courier_id'],summary:['city_id','source_kind'],journey:['run_id','kind'],benchmark:['workload'],historical:['dataset','period','country','city']})[endpoint]||[]);
     for(const [key,value] of query) {
       if(key==='endpoint') continue;
       if(!allowed.has(key) || target.searchParams.has(key)) return res.status(400).json({error:'Parameters not available'});
@@ -30,8 +31,14 @@ module.exports = async (req, res) => {
       if(p.has('country')&&!/^(ALL|[A-Z]{2})$/.test(p.get('country')))return invalid();
       if(p.has('city')&&((p.get('country')||'ES')==='ALL'||! /^[A-Z0-9_-]{2,10}$/.test(p.get('city'))))return invalid();
     }
+    let payload;
+    if(orderWrite){
+      payload=typeof req.body==='string'?req.body:JSON.stringify(req.body);
+      if(!payload||Buffer.byteLength(payload)>2048)return res.status(413).json({error:'Order is too large'});
+    }
     const analytical=['journey','performance','benchmark','historical'].includes(endpoint);
-    const response = await fetch(target,{headers:{Authorization:'Bearer '+token},signal:AbortSignal.timeout(analytical?25000:12000),redirect:'error'});
+    const response = await fetch(target,{method:orderWrite?'POST':'GET',body:payload,headers:{Authorization:'Bearer '+token,...(orderWrite?{'Content-Type':'application/json'}:{})},signal:AbortSignal.timeout(analytical?25000:12000),redirect:'error'});
+    if(['classroom','classroom-order'].includes(endpoint))return res.status(response.status).json(await response.json());
     if(!response.ok) return res.status(503).json({error:'The demo server is not available. It will be retried.'});
     res.status(200).json(await response.json());
   } catch(error) {

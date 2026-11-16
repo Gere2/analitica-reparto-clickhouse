@@ -4,9 +4,9 @@ const vm=require('node:vm');
 const {readFileSync}=require('node:fs');
 const {join}=require('node:path');
 function fixture(){
-  const calls=[],context=vm.createContext({module:{exports:{}},URL,AbortSignal,
+  const calls=[],context=vm.createContext({module:{exports:{}},URL,AbortSignal,Buffer,
     process:{env:{ATLAS_SHARE_ORIGIN:'https://validation-only.trycloudflare.com',ATLAS_SHARE_TOKEN:'test-only-server-token'}},
-    fetch:async(url,options)=>{calls.push({url:String(url),options});return{ok:true,json:async()=>({criteo:null,glovo:null})};}});
+    fetch:async(url,options)=>{calls.push({url:String(url),options});return{ok:true,status:200,json:async()=>({criteo:null,glovo:null})};}});
   vm.runInContext(readFileSync(join(__dirname,'../api/proxy.js'),'utf8'),context);
   const response={code:200,headers:{},setHeader(k,v){this.headers[k]=v;},status(code){this.code=code;return this;},json(body){this.body=body;return this;}};
   return {proxy:context.module.exports,response,calls};
@@ -30,4 +30,16 @@ for(const endpoint of ['journey?kind=ai','performance','benchmark?workload=atlas
 for(const endpoint of ['performance?sql=SELECT+1','journey?kind=all&kind=ai','journey?run_id=no','benchmark?workload=system.users','historical?dataset=otto&period=ALL','historical?dataset=glovo&country=ALL&city=MAD'])test('analytical filters reject unsafe or incompatible scope: '+endpoint,async()=>{
   const {proxy,response,calls}=fixture();await proxy({method:'GET',query:{endpoint:endpoint.split('?')[0]},url:'/api/'+endpoint},response);
   assert.equal(response.code,400);assert.equal(calls.length,0);
+});
+
+test('classroom checkout forwards one bounded write with server-side credentials',async()=>{
+  const {proxy,response,calls}=fixture();const body={room_id:'room',client_id:'client',alias:'Alex',product_id:'bowl'};
+  await proxy({method:'POST',query:{endpoint:'classroom-order'},url:'/api/classroom-order',body},response);
+  assert.equal(response.code,200);assert.equal(calls.length,1);assert.equal(calls[0].options.method,'POST');
+  assert.deepEqual(JSON.parse(calls[0].options.body),body);assert.doesNotMatch(JSON.stringify(response),/test-only-server-token/);
+});
+test('classroom POST size and unrelated write routes remain bounded',async()=>{
+  const {proxy,response,calls}=fixture();
+  await proxy({method:'POST',query:{endpoint:'classroom-order'},url:'/api/classroom-order',body:'x'.repeat(2049)},response);
+  assert.equal(response.code,413);assert.equal(calls.length,0);
 });

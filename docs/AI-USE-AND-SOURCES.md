@@ -32,6 +32,10 @@ During project planning, the assistant suggested showing where a query misses a 
 
 Both queries ran against the same frozen run of 4,371,300 GPS positions. The runner compared their complete answers before timing them. To check the interpretation, we recomputed the p95 for each of the twelve phases from the request samples and matched all 2,400 measured query IDs to server records. With two concurrent readers, the historical query missed the one-second target in every repetition (client p95: 1.625–1.969 s); the prepared-state query met it (0.266–0.281 s). We therefore report a boundary for this query, data and machine. The experiment does not establish ClickHouse’s maximum capacity or how much the materialized view costs to maintain during insertion. See the [experiment and original evidence](GPS-BENCHMARK.md) and the [verification record](FINAL-VALIDATION.md).
 
+## Classroom image asset
+
+The classroom menu illustration in web/assets/classroom/lunch-menu.webp was generated with ImageGen on 16 November 2026. It depicts the fictional vegetable bowl, house menu and salad, and is labelled as illustrative on the ordering page. The source generation was reviewed for matching dish types and encoded as WebP. Menu prices and purchase records still come from the application catalog and checkout pipeline.
+
 ## Software and media attribution
 
 The map retains Leaflet's license in `web/vendor/leaflet/LICENSE` and OpenStreetMap attribution in its interface. The prepared HTML embeds its font license/source media and remains unchanged. Preserve those notices when redistributing the package. No private token or browser authentication state belongs in the archive.

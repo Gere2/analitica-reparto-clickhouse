@@ -1,4 +1,4 @@
-"""Authenticated read-only gateway for the temporary classroom demo."""
+"""Authenticated demo gateway with a bounded classroom checkout route."""
 import hmac
 import json
 import os
@@ -7,11 +7,12 @@ import time
 from collections import OrderedDict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlencode, urlsplit
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError
 from uuid import UUID
 from atlas.analytics import ROUTES as ANALYTICS_ROUTES, validate_filters
 
-ROUTES = {'simulation', 'operations', 'status', 'track', 'summary', 'inventory', 'catalog', 'datasets'} | ANALYTICS_ROUTES
+ROUTES = {'simulation', 'operations', 'status', 'track', 'summary', 'inventory', 'catalog', 'datasets', 'classroom'} | ANALYTICS_ROUTES
 CACHE = OrderedDict()
 LOCK = threading.Lock()
 READ_LOCKS = {endpoint: threading.Lock() for endpoint in ROUTES}
@@ -29,11 +30,11 @@ def canonical_path(raw):
         filters = validate_filters(endpoint, query)
         suffix = urlencode(sorted(filters.items()))
         return endpoint, '/api/' + endpoint + ('?' + suffix if suffix else '')
-    allowed = {'track': {'run_id', 'courier_id'}, 'summary': {'city_id', 'source_kind'}}.get(endpoint, set())
+    allowed = {'classroom': {'room_id'}, 'track': {'run_id', 'courier_id'}, 'summary': {'city_id', 'source_kind'}}.get(endpoint, set())
     if set(query) - allowed or any(len(v) != 1 for v in query.values()):
         raise ValueError('Parameters not available')
-    if endpoint == 'track':
-        if set(query) != allowed:
+    if endpoint in {'track','classroom'}:
+        if endpoint == 'track' and set(query) != allowed:
             raise ValueError('Missing track identifier')
         query = {k: [str(UUID(v[0]))] for k, v in query.items()}
     if endpoint == 'summary':
@@ -59,9 +60,35 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(payload)
 
     def do_POST(self):
-        self.send_json(405, {'error': 'The shared demo is read-only'})
+        if self.path != '/api/classroom-order':
+            return self.send_json(405, {'error': 'Write route unavailable'})
+        if not hmac.compare_digest(self.headers.get('Authorization', ''), 'Bearer ' + TOKEN):
+            return self.send_json(401, {'error': 'Unauthorized access'})
+        self.connection.settimeout(15)
+        try:
+            size = int(self.headers.get('Content-Length', '0'))
+            if not 0 < size <= 2048:
+                return self.send_json(413, {'error': 'Order is too large'})
+            payload = self.rfile.read(size)
+            body = json.loads(payload)
+            if not isinstance(body, dict):
+                raise ValueError('Send an order object')
+            req = Request(BACKEND + '/api/classroom-order', data=payload,
+                          headers={'Content-Type': 'application/json'}, method='POST')
+            with urlopen(req, timeout=12) as response:
+                self.send_json(response.status, json.load(response))
+        except HTTPError as error:
+            with error:
+                self.send_json(error.code, json.loads(error.read()))
+        except (ValueError, TypeError):
+            self.send_json(400, {'error': 'Invalid classroom order'})
+        except Exception:
+            self.send_json(503, {'error': 'Connection interrupted. Retry the same order.'})
 
-    do_PUT = do_PATCH = do_DELETE = do_POST
+    def do_PUT(self):
+        self.send_json(405, {'error': 'Method unavailable'})
+
+    do_PATCH = do_DELETE = do_PUT
 
     def do_GET(self):
         if not hmac.compare_digest(self.headers.get('Authorization', ''), 'Bearer ' + TOKEN):
@@ -98,6 +125,9 @@ class Handler(BaseHTTPRequestHandler):
                         while len(CACHE) > 128:
                             CACHE.popitem(last=False)
             self.send_json(200, body)
+        except HTTPError as error:
+            with error:
+                self.send_json(error.code, json.loads(error.read()))
         except Exception:
             self.send_json(503, {'error': 'The demo server is not responding. It will be retried.'})
 
@@ -105,5 +135,5 @@ class Handler(BaseHTTPRequestHandler):
 if __name__ == '__main__':
     if len(TOKEN) < 32:
         raise SystemExit('ATLAS_SHARE_TOKEN must contain at least 32 characters')
-    print('Read-only share gateway listening on 8080', flush=True)
+    print('Atlas share gateway listening on 8080', flush=True)
     ThreadingHTTPServer(('0.0.0.0', 8080), Handler).serve_forever()

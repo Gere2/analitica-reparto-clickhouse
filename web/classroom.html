@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#edf3ee" />
+    <title>Your class order · Delivery Atlas</title>
+    <link
+      rel="preload"
+      href="/assets/fonts/dm-sans-400.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/classroom/lunch-menu.webp"
+      as="image"
+      fetchpriority="high"
+    />
+    <link rel="stylesheet" href="/classroom.css" />
+    <link rel="stylesheet" href="/classroom-mobile.css" />
+    <script defer src="/classroom.js"></script>
+  </head>
+  <body class="classroom-app">
+    <main class="class-order">
+      <header class="order-nav">
+        <a class="wordmark" href="/" aria-label="Delivery Atlas home"
+          ><svg viewBox="0 0 32 36" aria-hidden="true">
+            <path d="M4 30 16 5l12 25M9 22h14M12 29v-5m4 5v-9m4 9V16" />
+            <circle cx="16" cy="5" r="2" /></svg
+          >Delivery <b>Atlas</b></a
+        >
+        <a id="class-board" class="board-link"
+          >Live map
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 18 18 6M7 6h11v11" /></svg
+        ></a>
+      </header>
+      <div class="order-layout">
+        <section class="order-intro" id="class-intro">
+          <h1>Lunch, meet Madrid.</h1>
+          <div
+            class="intro-image"
+            role="img"
+            aria-label="Illustrative vegetable bowl, house menu and fresh salad"
+          ></div>
+        </section>
+        <p id="class-error" role="alert" tabindex="-1" hidden></p>
+        <form id="class-form" class="order-sheet">
+          <div class="nickname-field">
+            <label for="class-alias">Name for your map pin</label>
+            <input
+              id="class-alias"
+              name="alias"
+              maxlength="24"
+              autocomplete="nickname"
+              placeholder="e.g. Alex"
+              required
+            />
+          </div>
+          <fieldset class="dish-fieldset">
+            <legend>Today’s menu</legend>
+            <div id="class-menu" class="dish-menu" aria-busy="true">
+              <p class="menu-loading">Getting the kitchen ready…</p>
+            </div>
+            <select
+              id="class-product"
+              hidden
+              aria-hidden="true"
+              tabindex="-1"
+              disabled
+            >
+              <option value="">Choose a dish</option>
+            </select>
+          </fieldset>
+          <div class="order-action">
+            <div class="order-total">
+              <span id="class-choice">Choose your dish</span
+              ><b id="class-total">—</b>
+            </div>
+            <button id="class-submit" disabled>
+              Place my order
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h14m-6-6 6 6-6 6" />
+              </svg>
+            </button>
+          </div>
+          <p class="order-disclaimer">
+            Illustrative menu · one order per device · no payment.
+          </p>
+        </form>
+        <section id="class-receipt" class="receipt-sheet" hidden>
+          <div class="receipt-icon" aria-hidden="true">
+            <svg viewBox="0 0 40 40">
+              <path d="m10 21 7 7 14-15" />
+              <circle cx="20" cy="20" r="18" />
+            </svg>
+          </div>
+          <h2 id="class-name" tabindex="-1"></h2>
+          <div class="receipt-meal">
+            <span class="meal-thumb" id="receipt-meal-image" aria-hidden="true"></span>
+            <p id="class-dish"></p>
+          </div>
+          <div class="receipt-state" role="status" aria-live="polite">
+            <span class="state-dot"></span><strong id="class-state"></strong>
+          </div>
+          <ol class="delivery-timeline" aria-label="Order progress">
+            <li data-stage="queued">
+              <span class="timeline-check" aria-hidden="true"></span>
+              <div>
+                <b>Received</b>
+              </div>
+            </li>
+            <li data-stage="published">
+              <span class="timeline-check" aria-hidden="true"></span>
+              <div>
+                <b>In ClickHouse</b>
+              </div>
+            </li>
+            <li data-stage="travelling">
+              <span class="timeline-check" aria-hidden="true"></span>
+              <div>
+                <b>On the way</b>
+              </div>
+            </li>
+            <li data-stage="delivered">
+              <span class="timeline-check" aria-hidden="true"></span>
+              <div>
+                <b>Delivered</b>
+              </div>
+            </li>
+          </ol>
+          <a id="class-map" class="class-button"
+            >Follow my delivery
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14m-6-6 6 6-6 6" /></svg
+          ></a>
+          <p id="class-progress" class="receipt-note"></p>
+          <p id="class-id" class="receipt-reference"></p>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

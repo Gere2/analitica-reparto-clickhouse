@@ -1,0 +1,1476 @@
+@font-face {
+  font-family: "DM Sans";
+  src: url("/assets/fonts/dm-sans-400.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DM Sans";
+  src: url("/assets/fonts/dm-sans-700.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+:root {
+  --glass-ink: #15372d;
+  --glass-muted: #52665e;
+  --glass-green: #245a43;
+  --glass-shadow: 0 16px 44px -24px rgba(23, 58, 43, 0.28);
+  --glass-surface: rgba(255, 255, 255, 0.74);
+}
+* {
+  box-sizing: border-box;
+}
+.classroom-app,
+.classroom-live {
+  background: #edf3ee;
+  background-image:
+    radial-gradient(ellipse at 4% 12%, #d4e8dc 0, transparent 53%),
+    radial-gradient(ellipse at 96% 40%, #f1e5d9 0, transparent 52%),
+    radial-gradient(ellipse at 30% 100%, #e0e5f1 0, transparent 50%);
+  background-attachment: fixed;
+  color: var(--glass-ink);
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+.classroom-app {
+  margin: 0;
+  min-height: 100svh;
+}
+.class-order {
+  max-width: 1120px;
+  margin: auto;
+  padding: 24px 40px 18px;
+}
+.class-order a {
+  color: var(--glass-green);
+  text-decoration: none;
+}
+.class-order svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+.order-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 19px;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+}
+.wordmark > svg {
+  width: 24px;
+  height: 29px;
+  margin-right: 5px;
+}
+.board-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 15px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 28px;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.9),
+    0 4px 14px -9px #354d3b50;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  font-size: 14px;
+}
+.order-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 54px;
+  align-items: start;
+  margin: 52px 0 30px;
+}
+.order-intro {
+  padding-top: 15px;
+  position: sticky;
+  top: 25px;
+}
+.order-intro h1 {
+  font-size: clamp(42px, 5.2vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin: 0 0 20px;
+  font-weight: 700;
+}
+.order-intro > p {
+  font-size: 20px;
+  line-height: 1.5;
+  color: #486455;
+  margin: 0;
+}
+.intro-image {
+  margin: 36px 0 12px;
+  height: 220px;
+  border-radius: 100px 100px 70px 70px;
+  background-image: url("/assets/classroom/lunch-menu.webp");
+  background-size: 300% 100%;
+  background-position: left;
+  box-shadow: 0 22px 30px -25px #43533d66;
+  max-width: 250px;
+}
+.order-intro .intro-caption {
+  font-size: 13px;
+  color: var(--glass-muted);
+}
+.order-sheet,
+.receipt-sheet {
+  padding: 28px;
+  background: var(--glass-surface);
+  border-radius: 24px;
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  min-width: 0;
+}
+.nickname-field label {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.nickname-field input {
+  font: inherit;
+  font-size: 17px;
+  color: var(--glass-ink);
+  caret-color: var(--glass-green);
+  background: rgba(255, 255, 255, 0.62);
+  width: 100%;
+  border: 1px solid #b8c8bc;
+  border-radius: 12px;
+  min-height: 52px;
+  padding: 12px 15px;
+  transition: border-color 0.15s;
+}
+.nickname-field input::placeholder {
+  color: #64776b;
+  opacity: 1;
+}
+.nickname-field input:focus {
+  border-color: var(--glass-green);
+}
+.nickname-field > p {
+  font-size: 12px;
+  color: var(--glass-muted);
+  margin: 8px 0 0;
+}
+.dish-fieldset {
+  border: 0;
+  margin: 28px 0 0;
+  padding: 0;
+  min-width: 0;
+}
+.dish-fieldset legend {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  padding: 0;
+}
+.menu-note {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--glass-muted);
+  margin: 6px 0 15px;
+}
+.dish-menu {
+  display: grid;
+  gap: 11px;
+}
+.dish-option {
+  display: block;
+  position: relative;
+  cursor: pointer;
+}
+.dish-option input {
+  position: absolute;
+  inset: auto 15px auto auto;
+  top: calc(50% - 9px);
+  width: 18px;
+  height: 18px;
+  accent-color: var(--glass-green);
+  z-index: 2;
+  cursor: pointer;
+}
+.dish-face {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  min-height: 100px;
+  padding: 6px 38px 6px 6px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid #cbd7cd;
+  border-radius: 16px;
+  transition:
+    background 0.18s,
+    border-color 0.18s;
+}
+.dish-option:hover .dish-face {
+  background: #fff;
+}
+.dish-option input:checked + .dish-face {
+  border-color: #537c62;
+  background: #e6efe3;
+}
+.dish-option input:disabled + .dish-face {
+  opacity: 0.6;
+}
+.meal-thumb {
+  width: 88px;
+  height: 86px;
+  border-radius: 12px;
+  background-image: url("/assets/classroom/lunch-menu.webp");
+  background-size: 300% 100%;
+  background-position: var(--meal-position, left);
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+}
+.dish-copy {
+  min-width: 0;
+}
+.dish-copy b {
+  display: block;
+  font-size: 16px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+.dish-copy small {
+  display: block;
+  font-size: 12px;
+  color: var(--glass-muted);
+  line-height: 1.3;
+  margin: 5px 0;
+}
+.dish-copy strong {
+  display: block;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.order-action {
+  margin-top: 23px;
+}
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--glass-muted);
+  margin-bottom: 12px;
+}
+.order-total b {
+  color: var(--glass-ink);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.class-order button,
+.class-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+  font:
+    700 16px "DM Sans",
+    sans-serif;
+  background: #245a43;
+  color: white;
+  border: 0;
+  border-radius: 15px;
+  min-height: 54px;
+  padding: 14px 18px;
+  cursor: pointer;
+  box-shadow: 0 8px 18px -12px #153b2b99;
+  transition:
+    background 0.15s,
+    transform 0.15s;
+}
+.class-order .class-button {
+  color: white;
+}
+.class-order button:hover,
+.class-button:hover {
+  background: #173e2d;
+}
+.class-order button:active,
+.class-button:active {
+  transform: scale(0.985);
+}
+.class-order button:disabled {
+  background: #b3c2b7;
+  color: #344b3d;
+  box-shadow: none;
+  cursor: default;
+}
+.class-order .order-disclaimer {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--glass-muted);
+  margin: 12px 0 0;
+  text-align: center;
+}
+#class-error {
+  grid-column: 2;
+  padding: 14px 18px;
+  margin: 0 0 -25px;
+  border-radius: 12px;
+  background: #fff1e8;
+  color: #793921;
+  font-size: 14px;
+  line-height: 1.5;
+}
+#class-error:not([hidden]) ~ .order-sheet,
+#class-error:not([hidden]) ~ .receipt-sheet {
+  grid-column: 2;
+}
+.classroom-app [hidden],
+.classroom-panel [hidden] {
+  display: none !important;
+}
+.order-footer {
+  font-size: 12px;
+  color: var(--glass-muted);
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 35px;
+}
+.receipt-icon {
+  width: 54px;
+  height: 54px;
+  padding: 9px;
+  border-radius: 50%;
+  background: #e0eddd;
+  color: #306144;
+  margin-bottom: 19px;
+}
+.receipt-icon svg {
+  width: 36px;
+  height: 36px;
+}
+#class-name {
+  font-size: 32px;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  margin: 0 0 10px;
+  overflow-wrap: anywhere;
+}
+#class-dish {
+  font-size: 16px;
+  color: var(--glass-muted);
+  margin: 0;
+}
+.receipt-state {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 22px 0 12px;
+  padding: 12px 13px;
+  background: #e9f0e5;
+  border-radius: 12px;
+  font-size: 14px;
+}
+.state-dot {
+  height: 7px;
+  width: 7px;
+  border-radius: 50%;
+  background: #306144;
+  flex-shrink: 0;
+}
+.delivery-timeline {
+  padding: 0;
+  margin: 24px 0;
+  list-style: none;
+  display: grid;
+  gap: 0;
+}
+.delivery-timeline li {
+  display: flex;
+  gap: 13px;
+  position: relative;
+  padding: 0 0 23px;
+  color: #607064;
+}
+.delivery-timeline li:last-child {
+  padding-bottom: 0;
+}
+.delivery-timeline li:not(:last-child):before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 20px;
+  bottom: 0;
+  width: 1px;
+  background: #c8d6c8;
+}
+.timeline-check {
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 1px solid #acbeac;
+  background: #f5f8f2;
+  position: relative;
+  flex-shrink: 0;
+}
+.delivery-timeline .complete {
+  color: #234d37;
+}
+.delivery-timeline .complete .timeline-check {
+  background: #245a43;
+  border-color: #245a43;
+}
+.delivery-timeline .complete .timeline-check:after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 3px;
+  border-bottom: 1.5px solid white;
+  border-left: 1.5px solid white;
+  transform: rotate(-45deg);
+  left: 5px;
+  top: 6px;
+}
+.delivery-timeline b {
+  font-size: 14px;
+  display: block;
+}
+.delivery-timeline small {
+  display: block;
+  font-size: 12px;
+  color: var(--glass-muted);
+  margin-top: 5px;
+  line-height: 1.35;
+}
+.receipt-note {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--glass-muted);
+  margin: 16px 0 0;
+}
+.receipt-reference {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--glass-muted);
+  margin: 9px 0 0;
+}
+.class-order :focus-visible {
+  outline: 3px solid #9d7125;
+  outline-offset: 4px;
+}
+.classroom-app ::selection,
+.classroom-live ::selection {
+  background: #cfdfbd;
+  color: #15372d;
+}
+.classroom-app {
+  scrollbar-color: #8da68b transparent;
+}
+@media (max-width: 760px) {
+  .class-order {
+    max-width: 490px;
+    padding: 18px 20px calc(22px + env(safe-area-inset-bottom));
+  }
+  .wordmark {
+    font-size: 17px;
+    gap: 5px;
+  }
+  .wordmark > svg {
+    width: 21px;
+    height: 25px;
+    margin-right: 3px;
+  }
+  .board-link {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+  .order-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 29px 0 0;
+  }
+  .order-intro {
+    position: static;
+    padding: 0 4px;
+    width: 100%;
+    margin-bottom: 23px;
+  }
+  .order-intro h1 {
+    font-size: 42px;
+    margin-bottom: 12px;
+    line-height: 1.04;
+  }
+  .order-intro > p {
+    font-size: 15px;
+    line-height: 1.4;
+    max-width: 30ch;
+  }
+  .desktop-break {
+    display: none;
+  }
+  .intro-image,
+  .order-intro .intro-caption {
+    display: none;
+  }
+  .order-sheet,
+  .receipt-sheet {
+    width: 100%;
+    padding: 19px;
+    border-radius: 22px;
+  }
+  .nickname-field label {
+    font-size: 15px;
+  }
+  .nickname-field input {
+    font-size: 16px;
+    min-height: 48px;
+  }
+  .nickname-field > p {
+    font-size: 11px;
+  }
+  .dish-fieldset {
+    margin-top: 22px;
+  }
+  .dish-fieldset legend {
+    font-size: 20px;
+  }
+  .menu-note {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+  .dish-face {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 12px;
+    min-height: 91px;
+    padding-right: 32px;
+  }
+  .meal-thumb {
+    width: 76px;
+    height: 76px;
+  }
+  .dish-copy b {
+    font-size: 15px;
+  }
+  .dish-copy small {
+    font-size: 11px;
+  }
+  .dish-copy strong {
+    font-size: 14px;
+  }
+  .dish-option input {
+    right: 12px;
+    width: 17px;
+    height: 17px;
+  }
+  .order-action {
+    position: sticky;
+    bottom: 12px;
+    z-index: 4;
+    margin: 18px -8px -5px;
+    padding: 12px;
+    border-radius: 20px;
+    background: rgba(247, 250, 244, 0.92);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow:
+      0 10px 30px -16px #3c5b3a55,
+      inset 0 1px white;
+  }
+  .order-total {
+    margin-bottom: 8px;
+  }
+  .class-order button,
+  .class-button {
+    min-height: 52px;
+  }
+  #class-error {
+    margin: 0 0 15px;
+    order: 0;
+    width: 100%;
+  }
+  .order-footer {
+    font-size: 11px;
+    margin-top: 24px;
+  }
+  .classroom-app[data-order-state="receipt"] .order-intro {
+    display: none;
+  }
+  .classroom-app[data-order-state="receipt"] .order-layout {
+    margin-top: 30px;
+  }
+  #class-name {
+    font-size: 31px;
+  }
+  .receipt-sheet {
+    padding: 25px 23px;
+  }
+  .delivery-timeline {
+    margin: 25px 0;
+  }
+}
+@media (max-width: 350px) {
+  .class-order {
+    padding-inline: 13px;
+  }
+  .wordmark {
+    font-size: 16px;
+  }
+  .board-link {
+    font-size: 12px;
+    padding-inline: 10px;
+  }
+  .dish-copy small {
+    display: none;
+  }
+  .order-intro h1 {
+    font-size: 38px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .class-order * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (prefers-contrast: more) {
+  .order-sheet,
+  .receipt-sheet,
+  .board-link,
+  .order-action {
+    background: #fff;
+    backdrop-filter: none;
+  }
+  .dish-face {
+    border-color: #527358;
+  }
+  .nickname-field input {
+    border-color: #527358;
+  }
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .order-sheet,
+  .receipt-sheet,
+  .board-link,
+  .order-action {
+    background: #f9fbf6;
+  }
+}
+
+.classroom-panel {
+  border-block: 2px solid #b4cdb1;
+  padding: 25px 0;
+  margin: 28px 0;
+}
+.classroom-panel h2 {
+  font-size: 28px;
+  margin: 0 0 12px;
+}
+.classroom-panel [hidden] {
+  display: none !important;
+}
+.classroom-host {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+}
+.classroom-host label {
+  font-size: 14px;
+  margin: 0;
+  flex: 1;
+  min-width: 240px;
+}
+.classroom-host input {
+  display: block;
+  margin-top: 6px;
+}
+.classroom-host button {
+  font-size: 16px;
+}
+.classroom-join {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-top: 22px;
+}
+.classroom-qr {
+  flex-shrink: 0;
+  background: white;
+  padding: 8px;
+}
+.classroom-qr svg {
+  width: 190px;
+  height: 190px;
+  display: block;
+}
+.classroom-link {
+  overflow-wrap: anywhere;
+}
+.classroom-feed {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0 22px;
+  margin-top: 22px;
+}
+.classroom-ticket {
+  display: grid;
+  gap: 7px;
+  text-align: left;
+  background: transparent;
+  color: var(--ink);
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  padding: 18px 0;
+  min-width: 0;
+}
+.classroom-ticket:hover {
+  background: #e7eee5;
+  color: var(--ink);
+}
+.classroom-ticket b {
+  font-size: 26px;
+  overflow-wrap: anywhere;
+}
+.classroom-ticket small {
+  font-size: 15px;
+  color: #52645b;
+}
+.classroom-ticket .ticket-state {
+  font-size: 19px;
+  color: var(--green);
+}
+.classroom-pin {
+  background: #24553d;
+  color: white;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px #0004;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-weight: 750;
+  font-size: 15px;
+  white-space: nowrap;
+}
+.leaflet-tooltip.classroom-label {
+  background: #24553d;
+  color: white;
+  border: 1px solid white;
+  font-size: 16px;
+  font-weight: 650;
+}
+.classroom-pipeline {
+  font-size: 16px !important;
+  color: #365743;
+  line-height: 1.5;
+}
+@media (max-width: 600px) {
+  .classroom-join {
+    align-items: start;
+    flex-direction: column;
+  }
+  .classroom-feed {
+    grid-template-columns: 1fr;
+  }
+  .classroom-host button {
+    flex: 1;
+  }
+  .classroom-panel {
+    padding: 20px 0;
+  }
+}
+/* Classroom live view inherits the same glass material as the mobile menu. */
+.classroom-live .shell {
+  max-width: 1440px;
+}
+.classroom-live > .shell > header {
+  margin-top: 14px;
+  min-height: 64px;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.74);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px white;
+}
+.classroom-live header nav {
+  gap: 19px;
+}
+.classroom-live header a {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+}
+.classroom-live .heading {
+  padding: 36px 4px 16px;
+}
+.classroom-live .heading h1 {
+  font:
+    700 clamp(30px, 3vw, 44px) / 1.12 "DM Sans",
+    sans-serif;
+  letter-spacing: -0.035em;
+  color: var(--glass-ink);
+}
+.classroom-live .heading p {
+  font-size: 15px;
+  line-height: 1.5;
+  max-width: 60ch;
+}
+.classroom-live .metrics {
+  padding: 22px 24px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 0;
+  border-radius: 20px;
+  gap: 15px;
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px white;
+}
+.classroom-live .metrics dd {
+  font-size: 29px;
+}
+.classroom-live .metrics dt {
+  color: #496455;
+}
+.classroom-live .classroom-panel {
+  background: rgba(255, 255, 255, 0.72);
+  border: 0;
+  border-radius: 24px;
+  padding: 24px;
+  margin: 24px 0;
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px white;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.classroom-live .classroom-panel h2 {
+  font-size: 27px;
+  letter-spacing: -0.025em;
+}
+.classroom-live #classroom-note {
+  font-size: 14px;
+  color: #47604e;
+  margin-bottom: 8px;
+}
+.classroom-live .classroom-pipeline {
+  font-size: 13px !important;
+  max-width: 70ch;
+  color: #47604e;
+}
+.classroom-live .classroom-feed {
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+.classroom-live .classroom-ticket {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-content: start;
+  gap: 3px 13px;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid #c4d2c3;
+  border-radius: 16px;
+  padding: 14px;
+  text-align: left;
+  font-family: "DM Sans", system-ui;
+}
+.classroom-live .classroom-ticket b {
+  font-size: 22px;
+  grid-column: 2;
+  line-height: 1.2;
+}
+.classroom-live .classroom-ticket > span,
+.classroom-live .classroom-ticket > small {
+  grid-column: 2;
+}
+.classroom-live .classroom-ticket > span {
+  font-size: 13px;
+}
+.classroom-live .classroom-ticket .ticket-state {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 5px;
+}
+.classroom-live .classroom-ticket small {
+  font-size: 11px;
+}
+.classroom-live .classroom-ticket .meal-thumb {
+  width: 56px;
+  height: 62px;
+  grid-column: 1;
+  grid-row: 1/5;
+}
+.classroom-live .classroom-ticket:hover,
+.classroom-live .classroom-ticket[aria-pressed="true"] {
+  background: #e4eee0;
+  border-color: #648264;
+}
+.classroom-live .classroom-ticket:focus-visible {
+  outline: 3px solid #9d7125;
+  outline-offset: 3px;
+}
+.classroom-live .tracking-grid {
+  border: 0;
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 24px;
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px white;
+  gap: 26px;
+}
+.classroom-live #map {
+  border: 0;
+  border-radius: 16px;
+  height: 560px;
+}
+.classroom-live .map-tools {
+  padding: 8px 0 15px;
+  gap: 10px;
+}
+.classroom-live .map-tools button {
+  min-height: 44px;
+  border-radius: 24px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #a8bda9;
+}
+.classroom-live .map-tools button[aria-pressed="true"] {
+  background: #245a43;
+  color: white;
+}
+.classroom-live .detail {
+  padding-top: 0;
+}
+.classroom-live .classroom-pin {
+  background: #245a43;
+  border-radius: 50%;
+  padding: 5px 8px;
+  box-shadow: 0 4px 8px #243e3c33;
+}
+.classroom-live .leaflet-tooltip.classroom-label {
+  background: rgba(255, 255, 255, 0.96);
+  color: #163c2a;
+  border: 1px solid #c0d0bd;
+  border-radius: 18px;
+  padding: 6px 12px;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 700;
+  box-shadow: 0 6px 15px -9px #26472c66;
+}
+.classroom-live .leaflet-tooltip.classroom-label:before {
+  border-top-color: #c0d0bd;
+}
+.classroom-live[data-classroom-view="room"] .data-views,
+.classroom-live[data-classroom-view="room"] #view-note,
+.classroom-live[data-classroom-view="room"] #customers {
+  display: none;
+}
+.classroom-live[data-classroom-view="room"] .status {
+  font-size: 12px;
+  color: #52685b;
+  margin: 4px 3px 15px;
+}
+.classroom-live .live-order-link {
+  background: #245a43;
+  color: white;
+  border-radius: 22px;
+  padding: 8px 15px;
+}
+.classroom-live .table-wrap {
+  border-radius: 12px;
+  background: #ffffff88;
+}
+@media (max-width: 720px) {
+  .classroom-live .shell {
+    padding-inline: 12px;
+  }
+  .classroom-live > .shell > header {
+    margin-top: 10px;
+    padding: 12px 15px;
+    border-radius: 20px;
+    gap: 5px;
+  }
+  .classroom-live header nav {
+    width: 100%;
+    display: flex;
+    gap: 15px;
+    flex-wrap: nowrap;
+    overflow: auto;
+    padding-bottom: 2px;
+  }
+  .classroom-live header nav a {
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .classroom-live .heading {
+    padding-top: 25px;
+  }
+  .classroom-live .heading h1 {
+    font-size: 32px;
+  }
+  .classroom-live .metrics {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 18px 16px;
+    gap: 18px 10px;
+    border-radius: 20px;
+  }
+  .classroom-live .metrics dd {
+    font-size: 24px;
+  }
+  .classroom-live .metrics dt {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  .classroom-live .classroom-panel {
+    padding: 20px 17px;
+    border-radius: 20px;
+  }
+  .classroom-live .classroom-feed {
+    grid-template-columns: 1fr;
+  }
+  .classroom-live .classroom-panel h2 {
+    font-size: 25px;
+  }
+  .classroom-live .tracking-grid {
+    padding: 16px 12px;
+    border-radius: 20px;
+  }
+  .classroom-live #map {
+    height: 420px;
+    border-radius: 13px;
+  }
+  .classroom-live .map-tools {
+    flex-wrap: wrap;
+  }
+  .classroom-live .map-tools > span {
+    font-size: 12px;
+  }
+  .classroom-live .map-tools > div {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+  }
+  .classroom-live .map-tools button {
+    flex: 1;
+    min-height: 46px;
+  }
+  .classroom-live .detail {
+    padding: 14px 4px 0;
+  }
+  .classroom-live #freshness {
+    font-size: 11px;
+  }
+  .classroom-live #classroom-note {
+    line-height: 1.5;
+  }
+  .classroom-live .classroom-pipeline {
+    font-size: 12px !important;
+  }
+}
+.classroom-live .classroom-feed {
+  max-height: 360px;
+  overflow: auto;
+  padding: 3px;
+  scrollbar-color: #a2b89d transparent;
+  scrollbar-width: thin;
+}
+.classroom-live .classroom-feed button {
+  cursor: pointer;
+}
+@media (max-width: 720px) {
+  .classroom-live .classroom-feed {
+    max-height: 300px;
+  }
+}
+@media (max-width: 760px) {
+  .order-layout {
+    margin-top: 23px;
+  }
+  .order-intro {
+    margin-bottom: 17px;
+  }
+  .order-intro h1 {
+    font-size: 39px;
+    margin-bottom: 10px;
+  }
+  .order-intro > p {
+    font-size: 14px;
+  }
+  .dish-fieldset {
+    margin-top: 18px;
+  }
+  .dish-menu {
+    gap: 9px;
+  }
+  .dish-face {
+    grid-template-columns: 70px minmax(0, 1fr);
+    min-height: 84px;
+  }
+  .meal-thumb {
+    width: 70px;
+    height: 70px;
+  }
+}
+/* Keep supporting copy readable on compact phones. */
+.class-order .nickname-field > p,
+.class-order .order-disclaimer,
+.class-order .order-footer,
+.class-order .dish-copy small {
+  font-size: 12px;
+}
+.classroom-live .classroom-ticket small,
+.classroom-live .metrics dt,
+.classroom-live #freshness {
+  font-size: 12px;
+}
+@media (prefers-reduced-transparency: reduce) {
+  .order-sheet,
+  .receipt-sheet,
+  .board-link,
+  .order-action,
+  .classroom-live .classroom-panel,
+  .classroom-live > .shell > header,
+  .classroom-live .tracking-grid {
+    background: #f9fbf6;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+/* Put the order and its dot first; unfold the SQL when teaching. */
+.classroom-live[data-classroom-view="room"] .metrics,
+.classroom-live[data-classroom-view="room"] #metrics-note,
+.classroom-live[data-classroom-view="room"] #status,
+.classroom-live[data-classroom-view="room"] #orders,
+.classroom-live[data-classroom-view="room"] #navigation,
+.classroom-live[data-classroom-view="room"] .schema {
+  display: none;
+}
+.classroom-live .heading {
+  padding-bottom: 8px;
+}
+.classroom-live .heading p {
+  display: none;
+}
+.classroom-live .classroom-panel {
+  margin-top: 18px;
+}
+.room-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.room-toolbar h2 {
+  margin-bottom: 0 !important;
+}
+.room-toolbar input {
+  font:
+    14px "DM Sans",
+    sans-serif;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid #a8bfaa;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #15372d;
+  min-width: 210px;
+  max-width: 300px;
+}
+.room-toolbar input::placeholder {
+  color: #52665e;
+  opacity: 1;
+}
+.room-toolbar input:focus-visible {
+  outline: 3px solid #9d7125;
+  outline-offset: 3px;
+}
+.classroom-live .classroom-ticket .ticket-state {
+  margin-top: 6px;
+}
+.classroom-live .classroom-ticket .meal-thumb {
+  grid-row: 1/4;
+}
+.room-empty {
+  font-size: 14px;
+  color: #52665e;
+  padding: 12px 0;
+}
+.classroom-lesson {
+  margin-top: 21px;
+  border-top: 1px solid #c7d6c6;
+  padding-top: 5px;
+}
+.classroom-lesson summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 2px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  list-style: none;
+}
+.classroom-lesson summary::-webkit-details-marker {
+  display: none;
+}
+.classroom-lesson summary:focus-visible {
+  outline: 3px solid #9d7125;
+  outline-offset: 2px;
+}
+.classroom-lesson summary svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  transition: transform 0.2s;
+}
+.classroom-lesson[open] summary svg {
+  transform: rotate(180deg);
+}
+.lesson-body {
+  padding: 4px 0 5px;
+  max-width: 880px;
+}
+.lesson-route {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: #345f43;
+  padding: 4px 0 13px;
+}
+.lesson-route i {
+  font-style: normal;
+  color: #6c816b;
+}
+#lesson-selection {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 8px 0 10px;
+}
+#lesson-sql-wrap {
+  background: #1c352a;
+  color: #eff5e9;
+  padding: 18px 20px;
+  border-radius: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font:
+    13px/1.75 ui-monospace,
+    monospace;
+  margin: 0;
+}
+#lesson-result {
+  margin: 13px 0 0;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1.5fr;
+  gap: 12px;
+}
+#lesson-result dt {
+  font-size: 12px;
+  color: #52665e;
+}
+#lesson-result dd {
+  margin: 5px 0 0;
+  font:
+    13px/1.5 ui-monospace,
+    monospace;
+  overflow-wrap: anywhere;
+  color: #193d29;
+}
+.classroom-live .lesson-takeaway {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 18px 0 0;
+  color: #3e5d48;
+}
+.class-order .dish-fieldset {
+  margin-top: 22px;
+}
+.class-order .dish-fieldset legend {
+  margin-bottom: 14px;
+}
+.class-order .order-intro h1 {
+  max-width: 7.2em;
+}
+.class-order .dish-copy strong {
+  margin-top: 10px;
+}
+.delivery-timeline li {
+  padding-bottom: 18px;
+}
+.delivery-timeline li:last-child {
+  padding-bottom: 0;
+}
+.delivery-timeline b {
+  font-size: 15px;
+}
+.receipt-sheet[data-delivered="true"] .receipt-icon {
+  border-radius: 5px;
+  transform: rotate(-6deg);
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  gap: 8px;
+  border: 1px solid #749775;
+  background: #e8f1e2;
+}
+.receipt-sheet[data-delivered="true"] .receipt-icon:after {
+  content: "Delivered";
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.receipt-sheet[data-delivered="true"] .receipt-icon svg {
+  width: 25px;
+  height: 25px;
+}
+@media (max-width: 720px) {
+  .room-toolbar {
+    display: block;
+  }
+  .room-toolbar input {
+    width: 100%;
+    max-width: none;
+    margin-top: 15px;
+  }
+  .classroom-live .heading {
+    padding-top: 24px;
+  }
+  .classroom-live .heading h1 {
+    font-size: 32px;
+  }
+  .classroom-live .classroom-panel {
+    margin-top: 14px;
+  }
+  #lesson-result {
+    grid-template-columns: 1fr;
+  }
+  #lesson-result > div {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+  }
+  #lesson-result dd {
+    margin: 0;
+  }
+  .lesson-route {
+    gap: 8px;
+    font-size: 12px;
+  }
+  #lesson-sql-wrap {
+    font-size: 12px;
+    padding: 13px 14px;
+  }
+  .classroom-lesson summary {
+    font-size: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .classroom-lesson summary svg {
+    transition: none;
+  }
+}
+.detail[data-class-order="true"] > h3,
+.detail[data-class-order="true"] > label,
+.detail[data-class-order="true"] > #courier,
+.detail[data-class-order="true"] > #courier-detail,
+.detail[data-class-order="true"] > #rate,
+.detail[data-class-order="true"] > #rate-note {
+  display: none;
+}
+.class-order-detail .selected-meal {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  margin: 0 0 20px;
+}
+.class-order-detail h3 {
+  font-size: 31px;
+  letter-spacing: -0.025em;
+  margin: 0 0 10px;
+  overflow-wrap: anywhere;
+}
+#selected-status {
+  font-size: 20px;
+  color: #245a43;
+  display: block;
+  margin: 0 0 12px;
+}
+#selected-dish {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+#selected-proof {
+  font-size: 12px;
+  color: #52665e;
+  line-height: 1.5;
+}
+.selected-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+.selected-actions button {
+  min-height: 44px;
+  border-radius: 23px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+.selected-actions button:first-child {
+  background: #245a43;
+  color: white;
+  border-color: #245a43;
+}
+@media (max-width: 720px) {
+  .class-order-detail .selected-meal {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 14px;
+  }
+  .class-order-detail h3 {
+    font-size: 28px;
+  }
+  .selected-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+  .selected-actions button {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+.detail[data-class-order="true"] > h2 {
+  display: none;
+}
+.meal-thumb {
+  background-color: #e5ebdc;
+}
+
+.classroom-live #follow-courier[hidden] {
+  display: none;
+}

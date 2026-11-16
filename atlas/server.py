@@ -9,6 +9,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from atlas.classroom import Classroom
 from atlas.clickhouse import ClickHouse
 from atlas.contract import validate, KINDS, ACTIONS
 from atlas.store import Store, Conflict, Full
@@ -107,6 +108,7 @@ class Publisher:
                 self.stop.wait(2)
 
 def make_handler(store, ch, publisher, simulator):
+    classroom = Classroom(store, simulator, ch)
     operations_reader = OperationsReader(ch)
     analytics_reader = AnalyticsReader(ch)
     class Handler(BaseHTTPRequestHandler):
@@ -126,7 +128,7 @@ def make_handler(store, ch, publisher, simulator):
 
         def do_POST(self):
             route=urlparse(self.path).path
-            if route not in {'/api/events','/api/operations','/api/simulation/start','/api/simulation/stop','/api/checkout'}:
+            if route not in {'/api/events','/api/operations','/api/simulation/start','/api/simulation/stop','/api/checkout','/api/classroom-order','/api/classroom-open','/api/classroom-close'}:
                 return self.send_json({'error':'Unknown route'}, 404)
             self.connection.settimeout(15)
             try:
@@ -137,6 +139,15 @@ def make_handler(store, ch, publisher, simulator):
                 if len(raw) != size:
                     raise ValueError('Incomplete body')
                 data = json.loads(raw)
+                if route.startswith('/api/classroom-'):
+                    try:
+                        if route == '/api/classroom-order':
+                            return self.send_json(classroom.submit(data), 202)
+                        if data != {}:
+                            raise ValueError('Send an empty object.')
+                        return self.send_json(classroom.manage(route.rsplit('-', 1)[1]))
+                    except LookupError as error:
+                        return self.send_json({'error':str(error)},409)
                 if route=='/api/simulation/start':
                     if not isinstance(data,dict) or set(data)-{'fleet','interval','seed','mode','customers','agent_mode'}:
                         raise ValueError('Unknown simulation configuration.')
@@ -177,6 +188,16 @@ def make_handler(store, ch, publisher, simulator):
         def do_GET(self):
             parsed = urlparse(self.path)
             try:
+                if parsed.path == '/api/classroom':
+                    q=parse_qs(parsed.query,keep_blank_values=True,max_num_fields=2)
+                    if not q:
+                        return self.send_json(classroom.current())
+                    if set(q)!={'room_id'} or len(q['room_id'])!=1:
+                        raise ValueError('Send room_id once.')
+                    try:
+                        return self.send_json(classroom.snapshot(q['room_id'][0]))
+                    except LookupError as error:
+                        return self.send_json({'error':str(error)},404)
                 if parsed.path == '/health':
                     ch.query('SELECT 1')
                     return self.send_json({'ok': True, 'publisher_error':publisher.error})

@@ -2,7 +2,7 @@
 
 Use the **14-slide web presentation dated 11 November**, [Delivery-Atlas.html](../presentaciones/final-2026-11-11/Delivery-Atlas.html), and its [English script](../presentaciones/final-2026-11-11/SCRIPT-EN.md). [PRESENTATION.md](PRESENTATION.md) has the exact four-speaker allocation and timings. The old 16-slide outline is archived; its slides 10–14 do not describe this version.
 
-Install first with [ATLAS-INSTALL.md](ATLAS-INSTALL.md). Anuar's computer is the **host**: ClickHouse, API, queue, simulation and authenticated gateway run there. Vercel hosts the read-only frontend and GET proxy. Rebuilding Vercel cannot add routes to an old API or gateway.
+Install first with [ATLAS-INSTALL.md](ATLAS-INSTALL.md). Anuar's computer is the **host**: ClickHouse, API, queue, simulation and authenticated gateway run there. Vercel hosts the shared frontend and authenticated proxy. The Classroom extension adds one bounded checkout route; all other shared operations remain read-only. See [CLASSROOM-ACTIVATION.md](CLASSROOM-ACTIVATION.md) for its host setup. Rebuilding Vercel cannot add routes to an old API or gateway.
 
 ## Which slide uses which screen
 
@@ -63,7 +63,7 @@ Use the **existing checkout and Compose project serving the demo**. Another clon
    ```
 
    Wait for its health check. Preserve the existing token files; never print or email their values. If the Quick Tunnel is running, rebuilding the gateway alone need not replace its address. If the tunnel was stopped/recreated, start it, take its **current** HTTPS address from its logs and follow [SHARING-VERCEL.md](SHARING-VERCEL.md) to validate and publish that origin. A Vercel deployment being READY alone does not prove the host connection works.
-7. Check all three pages on the host: `/`, `/analytics.html`, `/delivery.html`. Check `/api/status`, `/api/journey`, `/api/performance`, and the read-only shared equivalents. A 404 means old API/gateway code; a 503 on the public site can mean the tunnel or host is unavailable. The public proxy is deliberately read-only. [The dated host record](HOST-STATUS-2026-11-15.md) records the local update and the later validated public reconnection.
+7. Check all three pages on the host: `/`, `/analytics.html`, `/delivery.html`. Check `/api/status`, `/api/journey`, `/api/performance`, and the read-only shared equivalents. A 404 means old API/gateway code; a 503 on the public site can mean the tunnel or host is unavailable. The public proxy rejects control writes; the Classroom extension permits only its bounded order checkout. [The dated host record](HOST-STATUS-2026-11-15.md) records the local update and the later validated public reconnection.
 8. Confirm Criteo and Glovo are loaded. OTTO, REES46 and Ele.me are not required on Anuar's host. Missing datasets must remain labelled missing; do not download large files during the talk.
 9. Rehearse all fourteen slides with a clock, on the host and actual projector/browser if available. Keep the original recorded captures as fallback and label them as recorded.
 
