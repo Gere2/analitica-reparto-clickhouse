@@ -38,3 +38,9 @@ On 16 November, three independent mobile browser contexts placed orders against 
 The classroom menu now shows three illustrated choices from the first demo venue, each with its catalog price. Select a dish, enter a nickname and place the order. A progress timeline shows receipt, publication, travel and completion. The live roster uses matching thumbnails and nickname labels on the map. The interface uses self-hosted DM Sans and a liquid glass material with high-contrast and reduced-motion fallbacks.
 
 Visual checks covered 320, 390, 768 and 1440-pixel layouts. A keyboard selection followed by a deliberately lost response and page reload produced one order on retry. Automated accessibility checks were run on the public mobile menu and live room, and the existing JavaScript suite passed 35 tests.
+
+## Teach with a classmate’s order
+
+Ask a classmate to order and find their nickname using the room search. Select that order to show its current state and location. Open **What reached ClickHouse?** or choose **See the ClickHouse row** beside the map. The SQL uses the actual selected run and order IDs. Its displayed fields come from the ClickHouse classroom response. Explain that events preserve history while the latest-state view supplies the current answer. The disclosure reuses the existing read snapshot.
+
+Student-facing copy is short. The mobile receipt identifies receipt, publication, travel and completion. Once delivered, its action takes the participant to their drop-off. **Explore fleet** restores the generic courier details for a broader GPS demonstration.

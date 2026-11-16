@@ -29,7 +29,7 @@
     preparing: "Your dish is being prepared",
     picked_up: "Your courier has collected it",
     en_route: "On the way through Madrid",
-    delivered: "Delivered. Enjoy your virtual lunch!",
+    delivered: "Your virtual lunch has landed.",
     cancelled: "Cancelled in the simulation",
   };
 
@@ -152,15 +152,9 @@
         text.className = "dish-copy";
         const title = document.createElement("b");
         title.textContent = product.product_name;
-        const description = document.createElement("small");
-        description.textContent = /salad/i.test(product.product_name)
-          ? "Crisp, colourful and fresh"
-          : /house|menu/i.test(product.product_name)
-            ? "A lunch-time favourite"
-            : "A bowl full of good things";
         const price = document.createElement("strong");
         price.textContent = money(product.price_minor);
-        text.append(title, description, price);
+        text.append(title, price);
         face.append(image, text);
         label.append(radio, face);
         radio.addEventListener("change", () => {
@@ -182,7 +176,10 @@
     $("class-receipt").hidden = false;
     document.body.dataset.orderState = "receipt";
     $("class-name").textContent =
-      "Order received, " + (row?.alias || submission.alias) + ".";
+      (row?.status === "delivered" ? "Delivered, " : "Order in, ") +
+      (row?.alias || submission.alias) +
+      ".";
+    $("class-receipt").dataset.delivered = String(row?.status === "delivered");
     const product = products.find((p) => p.product_id === saved?.product_id);
     $("class-dish").textContent =
       (row?.product_name || product?.product_name || "Your class order") +
@@ -195,6 +192,7 @@
     $("class-progress").textContent = row?.published
       ? "Published in ClickHouse. Your courier and delivery are simulated."
       : "Your order is safely queued. The publisher will add it to ClickHouse in the next batch.";
+    $("class-progress").hidden = Boolean(row?.published);
     const complete = new Set(["queued"]);
     if (row?.published) complete.add("published");
     if (["picked_up", "en_route", "delivered"].includes(row?.status))
@@ -203,6 +201,8 @@
     document.querySelectorAll("[data-stage]").forEach((item) => {
       item.classList.toggle("complete", complete.has(item.dataset.stage));
     });
+    $("class-map").firstChild.textContent =
+      row?.status === "delivered" ? "See my drop-off " : "Follow my delivery ";
     $("class-map").href =
       "/?room=" +
       encodeURIComponent(room) +

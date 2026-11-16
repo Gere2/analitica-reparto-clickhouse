@@ -18,7 +18,9 @@
     markers,
     selectedOrder = query.get("order"),
     busy = false,
-    feedKey = "";
+    feedKey = "",
+    classroomData,
+    lessonKey = "";
   if (!readOnly && !room) {
     try {
       room = localStorage.getItem("atlas-host-room");
@@ -29,6 +31,8 @@
   document.getElementById("rate").setAttribute("role", "img");
   if (room) {
     document.body.dataset.classroomView = "room";
+    document.querySelector(".brand").href =
+      "/?room=" + encodeURIComponent(room) + "#classroom-panel";
     document.querySelectorAll(".table-wrap").forEach((table) => {
       table.tabIndex = 0;
       table.setAttribute("role", "region");
@@ -48,6 +52,140 @@
   feed.tabIndex = 0;
   feed.setAttribute("role", "region");
   feed.setAttribute("aria-label", "Class order list");
+  const toolbar = document.createElement("div");
+  toolbar.className = "room-toolbar";
+  const title = panel.querySelector("h2");
+  title.before(toolbar);
+  toolbar.append(title);
+  const search = document.createElement("input");
+  search.type = "search";
+  search.placeholder = "Find your name";
+  search.setAttribute("aria-label", "Find an order by nickname");
+  toolbar.append(search);
+  const empty = document.createElement("p");
+  empty.className = "room-empty";
+  empty.hidden = true;
+  empty.setAttribute("role", "status");
+  empty.textContent = "No names match. Try a shorter name.";
+  feed.after(empty);
+  function filterOrders() {
+    const term = search.value.trim().toLocaleLowerCase();
+    let count = 0;
+    for (const button of feed.querySelectorAll("button")) {
+      button.hidden = !button.dataset.alias.toLocaleLowerCase().includes(term);
+      if (!button.hidden) count++;
+    }
+    empty.hidden = Boolean(count) || !feed.children.length;
+  }
+  search.addEventListener("input", filterOrders);
+  const lesson = document.createElement("details");
+  lesson.className = "classroom-lesson";
+  lesson.innerHTML =
+    '<summary>What reached ClickHouse?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></summary><div class="lesson-body"><div class="lesson-route"><span>Your tap</span><i>→</i><span>Queue</span><i>→</i><span>Batch INSERT</span><i>→</i><b>Latest state</b></div><p id="lesson-selection">Place an order to inspect its row.</p><pre id="lesson-sql-wrap" hidden><code id="lesson-sql"></code></pre><dl id="lesson-result" hidden></dl><p class="lesson-takeaway">New events keep the history. The latest-state view answers the map.</p></div>';
+  panel.append(lesson);
+  const detail = document.querySelector(".detail");
+  const own = document.createElement("section");
+  own.className = "class-order-detail";
+  own.hidden = true;
+  own.innerHTML =
+    '<div class="selected-meal meal-thumb" aria-hidden="true"></div><h3 id="selected-alias"></h3><strong id="selected-status"></strong><p id="selected-dish"></p><p id="selected-proof"></p><div class="selected-actions"><button id="selected-query" class="secondary" type="button">See the ClickHouse row</button><button id="selected-fleet" class="secondary" type="button">Explore fleet</button></div>';
+  detail.prepend(own);
+  document.getElementById("selected-query").onclick = () => {
+    lesson.open = true;
+    lesson.scrollIntoView({ behavior: "instant", block: "start" });
+  };
+  document.getElementById("selected-fleet").onclick = () => {
+    selectedOrder = null;
+    renderSelected();
+    feed
+      .querySelectorAll("button")
+      .forEach((b) => b.setAttribute("aria-pressed", "false"));
+  };
+  function renderSelected() {
+    const order = classroomData?.orders.find(
+      (o) => o.order_id === selectedOrder,
+    );
+    own.hidden = !order;
+    detail.dataset.classOrder = String(Boolean(order));
+    const matchingCourier =
+      order &&
+      lastData?.couriers.some(
+        (c) => c.courier_id === order.courier_id && c.order_id === order.order_id,
+      );
+    document.getElementById("follow-courier").hidden = Boolean(
+      order && !matchingCourier,
+    );
+    document.querySelector(".map-tools > span").textContent = order
+      ? order.alias +
+        (matchingCourier ? " · courier on the move" : " · delivery destination")
+      : "Select a courier to explore its delivery";
+    if (!order) return;
+    document.getElementById("selected-alias").textContent = order.alias;
+    document.getElementById("selected-status").textContent = order.published
+      ? statuses[order.status] || order.status
+      : "Waiting for ClickHouse";
+    document.getElementById("selected-dish").textContent = order.product_name;
+    document.getElementById("selected-proof").textContent = order.published
+      ? "Order " + order.order_id.slice(0, 8) + " · in ClickHouse"
+      : "Waiting for publication";
+    own
+      .querySelector(".selected-meal")
+      .style.setProperty(
+        "--meal-position",
+        /salad/i.test(order.product_name)
+          ? "right"
+          : /house|menu/i.test(order.product_name)
+            ? "center"
+            : "left",
+      );
+  }
+  function renderLesson() {
+    const order =
+      classroomData?.orders.find((o) => o.order_id === selectedOrder) ||
+      classroomData?.orders.at(-1);
+    const selection = document.getElementById("lesson-selection"),
+      code = document.getElementById("lesson-sql");
+    const result = document.getElementById("lesson-result");
+    if (!order) {
+      selection.textContent = "Place an order to inspect its row.";
+      result.hidden = true;
+      document.getElementById("lesson-sql-wrap").hidden = true;
+      return;
+    }
+    selection.textContent =
+      order.alias +
+      " · " +
+      (order.published ? "Current order state" : "Waiting for ClickHouse");
+    const sql =
+      "SELECT status, courier_id, event_time\nFROM delivery_atlas.order_latest\nWHERE simulation_run_id = '" +
+      classroomData.run_id +
+      "'\n  AND order_id = '" +
+      order.order_id +
+      "';";
+    if (code.textContent !== sql) code.textContent = sql;
+    document.getElementById("lesson-sql-wrap").hidden = false;
+    result.hidden = !order.published;
+    const key = JSON.stringify([
+      order.order_id,
+      order.published,
+      order.status,
+      order.courier_id,
+      order.event_time,
+    ]);
+    if (key === lessonKey) return;
+    lessonKey = key;
+    result.replaceChildren(
+      ...["status", "courier_id", "event_time"].map((key) => {
+        const group = document.createElement("div"),
+          term = document.createElement("dt"),
+          value = document.createElement("dd");
+        term.textContent = key + (key === "event_time" ? " (UTC)" : "");
+        value.textContent = order[key] ?? "—";
+        group.append(term, value);
+        return group;
+      }),
+    );
+  }
   const statuses = {
     created: "Waiting for a courier",
     preparing: "Preparing",
@@ -112,12 +250,14 @@
         "/api/classroom?room_id=" + encodeURIComponent(room),
       );
       panel.hidden = false;
+      classroomData = data;
       note.textContent =
         data.orders.length +
-        " class orders · " +
-        data.orders.filter((o) => o.published).length +
-        " published in ClickHouse · " +
-        (data.open ? "ordering open" : "ordering paused or closed");
+        " " +
+        (data.orders.length === 1 ? "order" : "orders") +
+        " · " +
+        (data.open ? "Kitchen open" : "Ordering paused");
+      document.querySelector(".classroom-pipeline").hidden = true;
       const newKey = JSON.stringify(
         data.orders.map((o) => [
           o.order_id,
@@ -137,6 +277,7 @@
             const button = document.createElement("button");
             button.className = "classroom-ticket";
             button.dataset.order = o.order_id;
+            button.dataset.alias = o.alias;
             button.setAttribute(
               "aria-pressed",
               String(o.order_id === selectedOrder),
@@ -157,11 +298,9 @@
               esc(
                 o.published
                   ? statuses[o.status] || o.status
-                  : "Accepted · waiting for ClickHouse",
+                  : "Waiting for ClickHouse",
               ) +
-              "</span><small>Order " +
-              esc(o.order_id.slice(0, 8)) +
-              "</small>";
+              "</span>";
             button.onclick = () => {
               selectedOrder = o.order_id;
               feed
@@ -172,6 +311,8 @@
                     String(item.dataset.order === selectedOrder),
                   ),
                 );
+              renderSelected();
+              renderLesson();
               follow(o);
               document
                 .getElementById("tracking")
@@ -185,6 +326,9 @@
             .querySelector('[data-order="' + focusId + '"]')
             ?.focus({ preventScroll: true });
       }
+      filterOrders();
+      renderSelected();
+      renderLesson();
       if (data.run_id === lastData?.run_id && fleetMap.map) {
         markers ||= L.layerGroup().addTo(fleetMap.map);
         markers.clearLayers();
@@ -214,6 +358,8 @@
             })
             .on("click", () => {
               selectedOrder = o.order_id;
+              renderSelected();
+              renderLesson();
               follow(o);
             })
             .addTo(markers);

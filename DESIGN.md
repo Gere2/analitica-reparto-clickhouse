@@ -32,3 +32,9 @@ DM Sans is served locally with its font license. Pale sage, pearl and warm neutr
 The received-order view explains the queue, publication in ClickHouse and delivery through a four-stage timeline. It retains the saved request across interrupted responses and reloads. Mobile map controls have generous touch targets. The class roster preserves keyboard focus when status changes and uses a scrollable region for large classes.
 
 Food imagery is AI-generated illustrative photography, encoded as one WebP asset reused across the menu and live roster. A caption identifies the imagery and fictional prices. Product names and prices come from the actual demo catalog.
+
+## Classroom focus and teaching disclosure
+
+The mobile menu leads with “Lunch, meet Madrid.” A map-pin name, three dishes and the order action carry the task. Supporting sentences that repeat labels and status stages are removed. Completion uses the same Delivered stamp idea as the presentation.
+
+The room defaults to class orders, nickname search and the map. Selecting a class order replaces the generic courier metadata with that participant’s dish and current state. Explore fleet restores the courier controls. A native disclosure titled “What reached ClickHouse?” shows the selected order’s query and returned status, courier ID and UTC event time. It reuses the classroom snapshot, and preserves text selection when values are unchanged.

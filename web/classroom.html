@@ -15,6 +15,12 @@
       type="font/ttf"
       crossorigin
     />
+    <link
+      rel="preload"
+      href="/assets/classroom/lunch-menu.webp"
+      as="image"
+      fetchpriority="high"
+    />
     <link rel="stylesheet" href="/classroom.css" />
     <script defer src="/classroom.js"></script>
   </head>
@@ -35,37 +41,28 @@
       </header>
       <div class="order-layout">
         <section class="order-intro" id="class-intro">
-          <h1>A little lunch.<br />A live delivery.</h1>
-          <p>
-            Pick your dish. See your name<br class="desktop-break" />
-            travel across Madrid.
-          </p>
+          <h1>Lunch, meet Madrid.</h1>
           <div
             class="intro-image"
             role="img"
             aria-label="Illustrative vegetable bowl, house menu and fresh salad"
           ></div>
-          <p class="intro-caption">A classroom menu, made for the demo.</p>
         </section>
         <p id="class-error" role="alert" tabindex="-1" hidden></p>
         <form id="class-form" class="order-sheet">
           <div class="nickname-field">
-            <label for="class-alias">What shall we call you?</label>
+            <label for="class-alias">Name for your map pin</label>
             <input
               id="class-alias"
               name="alias"
               maxlength="24"
               autocomplete="nickname"
-              placeholder="Your nickname"
+              placeholder="e.g. Alex"
               required
             />
-            <p>Your nickname appears on the class map.</p>
           </div>
           <fieldset class="dish-fieldset">
             <legend>Today’s menu</legend>
-            <p class="menu-note">
-              Choose one dish for your simulated delivery.
-            </p>
             <div id="class-menu" class="dish-menu" aria-busy="true">
               <p class="menu-loading">Getting the kitchen ready…</p>
             </div>
@@ -92,8 +89,7 @@
             </button>
           </div>
           <p class="order-disclaimer">
-            One order per device. Fictional prices and delivery. Illustrative
-            food images.
+            Illustrative menu · one order per device · no payment.
           </p>
         </form>
         <section id="class-receipt" class="receipt-sheet" hidden>
@@ -112,29 +108,25 @@
             <li data-stage="queued">
               <span class="timeline-check" aria-hidden="true"></span>
               <div>
-                <b>Order received</b
-                ><small>Your click starts the journey</small>
+                <b>Received</b>
               </div>
             </li>
             <li data-stage="published">
               <span class="timeline-check" aria-hidden="true"></span>
               <div>
-                <b>Published in ClickHouse</b
-                ><small>Your order joins the live view</small>
+                <b>In ClickHouse</b>
               </div>
             </li>
             <li data-stage="travelling">
               <span class="timeline-check" aria-hidden="true"></span>
               <div>
-                <b>Out for delivery</b
-                ><small>Follow your courier through Madrid</small>
+                <b>On the way</b>
               </div>
             </li>
             <li data-stage="delivered">
               <span class="timeline-check" aria-hidden="true"></span>
               <div>
-                <b>Delivered</b
-                ><small>Your simulated delivery is complete</small>
+                <b>Delivered</b>
               </div>
             </li>
           </ol>
@@ -147,9 +139,6 @@
           <p id="class-id" class="receipt-reference"></p>
         </section>
       </div>
-      <footer class="order-footer">
-        Built around ClickHouse. Brought to life by your class.
-      </footer>
     </main>
   </body>
 </html>
