@@ -38,3 +38,7 @@ Food imagery is AI-generated illustrative photography, encoded as one WebP asset
 The mobile menu leads with “Lunch, meet Madrid.” A map-pin name, three dishes and the order action carry the task. Supporting sentences that repeat labels and status stages are removed. Completion uses the same Delivered stamp idea as the presentation.
 
 The room defaults to class orders, nickname search and the map. Selecting a class order replaces the generic courier metadata with that participant’s dish and current state. Explore fleet restores the courier controls. A native disclosure titled “What reached ClickHouse?” shows the selected order’s query and returned status, courier ID and UTC event time. It reuses the classroom snapshot, and preserves text selection when values are unchanged.
+
+## Phone visual refinement
+
+`web/classroom-mobile.css` refines the existing glass system without replacing the desktop layout. Menu dishes use larger photographs, quiet separators and a sage selection state. The receipt carries the same dish photo. The room has a compact horizontal roster and a safe-area-aware bottom navigation. The selected order appears above the mobile map. Participant pins use initials, a warm selected state and only the selected permanent name label on phones to avoid overlapping names; every pin retains its full accessible name. Desktop permanent labels remain available. Direct map links scroll after live data has made the layout ready.

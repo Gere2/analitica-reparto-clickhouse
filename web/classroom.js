@@ -184,6 +184,10 @@
     $("class-dish").textContent =
       (row?.product_name || product?.product_name || "Your class order") +
       (product ? " · " + money(product.price_minor) : "");
+    $("receipt-meal-image").style.setProperty(
+      "--meal-position",
+      dishPosition(row?.product_name || product?.product_name || ""),
+    );
     const status = row?.published
       ? states[row.status] || row.status
       : "Accepted. Joining the live view…";

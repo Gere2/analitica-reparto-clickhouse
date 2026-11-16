@@ -20,7 +20,8 @@
     busy = false,
     feedKey = "",
     classroomData,
-    lessonKey = "";
+    lessonKey = "",
+    initialMapLink = location.hash === "#tracking";
   if (!readOnly && !room) {
     try {
       room = localStorage.getItem("atlas-host-room");
@@ -42,8 +43,18 @@
     document.querySelector(".heading p").textContent =
       "Orders, couriers and GPS, live from ClickHouse.";
     const nav = document.querySelector('nav[aria-label="Sections"]');
+    nav.classList.add("room-nav");
     nav.innerHTML =
-      '<a href="#classroom-panel">Class orders</a><a href="#tracking">Live map</a><a href="/analytics.html?panel=performance">ClickHouse</a><a class="live-order-link" href="/classroom.html">Place an order</a>';
+      '<a href="#classroom-panel">Orders</a><a href="#tracking">Live map</a><a href="/analytics.html?panel=performance">ClickHouse</a><a class="live-order-link" href="/classroom.html">Order lunch</a>';
+    function markSection() {
+      for (const link of nav.querySelectorAll('a[href^="#"]')) {
+        if (link.hash === (location.hash || "#classroom-panel"))
+          link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      }
+    }
+    addEventListener("hashchange", markSection);
+    markSection();
   }
   const host = panel.querySelector(".classroom-host");
   host.hidden = readOnly;
@@ -57,6 +68,7 @@
   const title = panel.querySelector("h2");
   title.before(toolbar);
   toolbar.append(title);
+  if (room) title.textContent = "Class orders";
   const search = document.createElement("input");
   search.type = "search";
   search.placeholder = "Find your name";
@@ -314,6 +326,7 @@
               renderSelected();
               renderLesson();
               follow(o);
+              location.hash = "tracking";
               document
                 .getElementById("tracking")
                 .scrollIntoView({ behavior: "instant", block: "start" });
@@ -342,17 +355,29 @@
             continue;
           const label = document.createElement("span");
           label.textContent = o.alias + (c ? "" : " · destination");
-          L.marker([lat, lon], {
+          const active = o.order_id === selectedOrder;
+          const initials = o.alias
+            .trim()
+            .split(/\s+/)
+            .slice(0, 2)
+            .map((word) => word[0])
+            .join("")
+            .toLocaleUpperCase();
+          const marker = L.marker([lat, lon], {
             icon: L.divIcon({
               className: "classroom-marker",
-              html: '<span class="classroom-pin">★</span>',
-              iconSize: [30, 30],
+              html:
+                '<span class="classroom-pin' +
+                (active ? " is-selected" : "") +
+                '">' + esc(initials) + "</span>",
+              iconSize: [36, 36],
+              iconAnchor: [18, 18],
             }),
-            zIndexOffset: 1800,
+            zIndexOffset: active ? 2400 : 1800,
             title: o.alias,
           })
             .bindTooltip(label, {
-              permanent: true,
+              permanent: !matchMedia("(max-width: 720px)").matches || active,
               direction: "top",
               className: "classroom-label",
             })
@@ -363,11 +388,22 @@
               follow(o);
             })
             .addTo(markers);
+          marker.getElement()?.setAttribute(
+            "aria-label",
+            o.alias + " · " + (statuses[o.status] || o.status),
+          );
         }
         const selected = data.orders.find((o) => o.order_id === selectedOrder);
         if (selected) follow(selected);
       } else if (markers) {
         markers.clearLayers();
+      }
+      if (initialMapLink && lastData && fleetMap.map) {
+        initialMapLink = false;
+        document.getElementById("tracking").scrollIntoView({
+          behavior: "instant",
+          block: "start",
+        });
       }
     } catch (e) {
       note.textContent = e.message + " Retrying…";

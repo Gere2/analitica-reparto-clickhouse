@@ -1,0 +1,509 @@
+/* Phone refinements share Atlas's glass, sage and photographic material. */
+.receipt-meal {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 18px 0;
+}
+.receipt-meal .meal-thumb {
+  width: 64px;
+  height: 64px;
+}
+.receipt-meal p {
+  line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+  .classroom-app {
+    -webkit-tap-highlight-color: transparent;
+  }
+  .class-order {
+    padding: max(16px, env(safe-area-inset-top)) 20px
+      calc(24px + env(safe-area-inset-bottom));
+  }
+  .order-nav {
+    gap: 12px;
+    min-height: 44px;
+  }
+  .wordmark {
+    gap: 4px;
+    font-size: 17px;
+    letter-spacing: -0.025em;
+    min-height: 44px;
+  }
+  .board-link {
+    background: #ffffffad;
+    font-size: 13px;
+    padding-inline: 14px;
+  }
+  .order-layout {
+    margin-top: 25px;
+  }
+  .order-intro {
+    padding-inline: 2px;
+    margin-bottom: 24px;
+  }
+  .class-order .order-intro h1 {
+    font-size: clamp(32px, 9.7vw, 40px);
+    line-height: 1.06;
+    letter-spacing: -0.035em;
+    margin: 0;
+  }
+  .order-sheet,
+  .receipt-sheet {
+    padding: 21px 18px 18px;
+    border-radius: 24px;
+    background: #ffffffb8;
+    box-shadow: 0 18px 36px -25px #2e53423d, inset 0 1px #fff;
+  }
+  .nickname-field label {
+    font-size: 14px;
+    margin-bottom: 9px;
+    color: #345748;
+  }
+  .nickname-field input {
+    min-height: 50px;
+    padding-inline: 14px;
+    border-radius: 12px;
+    border-color: #b8c9bd;
+    background: #ffffffa8;
+  }
+  .class-order .dish-fieldset {
+    margin-top: 23px;
+  }
+  .class-order .dish-fieldset legend {
+    font-size: 21px;
+    margin-bottom: 12px;
+  }
+  .dish-menu {
+    gap: 6px;
+  }
+  .dish-face {
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 13px;
+    padding: 6px 30px 6px 6px;
+    min-height: 90px;
+    border-color: transparent;
+    background: transparent;
+    border-radius: 14px;
+  }
+  .dish-option:not(:last-child)::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: -3px;
+    left: 97px;
+    right: 12px;
+    height: 1px;
+    background: #d6dfd4;
+  }
+  .dish-option .meal-thumb {
+    width: 78px;
+    height: 78px;
+    border-radius: 12px;
+  }
+  .dish-copy b {
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  .class-order .dish-copy strong {
+    font-size: 14px;
+    margin-top: 7px;
+    color: #365b47;
+  }
+  .dish-option input {
+    width: 19px;
+    height: 19px;
+    right: 9px;
+    top: calc(50% - 10px);
+    margin: 0;
+  }
+  .dish-option input:checked + .dish-face {
+    background: #e4edde;
+    border-color: #739170;
+  }
+  .dish-option input:focus-visible + .dish-face {
+    outline: 3px solid #9d7125;
+    outline-offset: 2px;
+  }
+  .order-action {
+    margin: 19px -5px 0;
+    padding: 13px 10px 10px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    border-radius: 18px;
+    background: #f8fbf4ed;
+    box-shadow: 0 12px 22px -20px #254c3b80, inset 0 1px #fff;
+  }
+  .order-total {
+    align-items: center;
+    min-height: 25px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .order-total b {
+    font-size: 20px;
+    letter-spacing: -0.025em;
+  }
+  .class-order button,
+  .class-order .class-button {
+    border-radius: 14px;
+    min-height: 54px;
+    gap: 12px;
+  }
+  .class-order .order-disclaimer {
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 13px 4px 0;
+    text-wrap: balance;
+  }
+  .classroom-app[data-order-state="receipt"] .order-layout {
+    margin-top: 32px;
+  }
+  .receipt-sheet {
+    padding: 25px 23px 22px;
+  }
+  #class-name {
+    font-size: clamp(29px, 8vw, 34px);
+    letter-spacing: -0.03em;
+    margin-top: 20px;
+  }
+  .receipt-meal {
+    border-block: 1px solid #d5dfd1;
+    padding-block: 14px;
+    margin-block: 21px 16px;
+  }
+  .receipt-meal #class-dish {
+    font-size: 15px;
+    color: #345748;
+  }
+  .receipt-state {
+    padding: 0;
+    background: transparent;
+    margin: 16px 0 22px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .delivery-timeline {
+    margin-block: 22px 26px;
+  }
+  .delivery-timeline li {
+    gap: 14px;
+    padding-bottom: 22px;
+  }
+  .receipt-reference {
+    text-align: center;
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 720px) {
+  .classroom-live[data-classroom-view="room"] {
+    -webkit-tap-highlight-color: transparent;
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+  .classroom-live[data-classroom-view="room"] .shell {
+    padding-inline: 16px;
+  }
+  .classroom-live[data-classroom-view="room"] > .shell > header {
+    min-height: 48px;
+    margin-top: max(12px, env(safe-area-inset-top));
+    padding: 0 4px;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .classroom-live .brand {
+    font-size: 19px;
+    letter-spacing: -0.025em;
+  }
+  .classroom-live .brand strong {
+    margin-left: 4px;
+  }
+  .classroom-live[data-classroom-view="room"] header .room-nav {
+    position: fixed;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    width: auto;
+    z-index: 1100;
+    display: grid;
+    grid-template-columns: 0.85fr 1fr 1.1fr 1.1fr;
+    gap: 3px;
+    margin: 0;
+    padding: 6px;
+    overflow: visible;
+    border-radius: 22px;
+    background: #f8fbf4ed;
+    box-shadow: 0 10px 30px -12px #15372d50, inset 0 1px #fff;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+  .classroom-live header .room-nav a {
+    justify-content: center;
+    min-width: 0;
+    min-height: 48px;
+    padding: 9px 2px;
+    font-size: 12px;
+    line-height: 1.25;
+    white-space: normal;
+    text-align: center;
+    border-radius: 16px;
+    color: #365b47;
+  }
+  .classroom-live header .room-nav a[aria-current="location"] {
+    color: #193d2c;
+    background: #e0eadb;
+  }
+  .classroom-live header .room-nav .live-order-link {
+    color: #fff;
+    background: #245a43;
+  }
+  .classroom-live .heading {
+    padding: 20px 3px 8px;
+  }
+  .classroom-live .heading h1 {
+    font-size: 34px;
+    line-height: 1.08;
+    margin-bottom: 8px;
+  }
+  .classroom-live .classroom-panel {
+    padding: 21px 17px 8px;
+    margin-block: 18px;
+    border-radius: 24px;
+    box-shadow: 0 16px 32px -26px #2e53423d, inset 0 1px #fff;
+  }
+  .classroom-live .classroom-panel h2 {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+  .room-toolbar input {
+    margin-top: 14px;
+    font-size: 16px;
+    border-radius: 12px;
+    min-width: 0;
+    min-height: 48px;
+    background: #ffffffb8;
+    border-color: #b5c7b9;
+  }
+  .classroom-live #classroom-note {
+    font-size: 12px;
+    margin: 11px 1px 12px;
+  }
+  .classroom-live .classroom-feed {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(218px, 78%);
+    gap: 10px;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    margin-top: 0;
+    padding: 4px 3px 12px;
+    scroll-padding-inline: 3px;
+    scrollbar-width: thin;
+  }
+  .classroom-live .classroom-ticket {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 3px 11px;
+    padding: 12px;
+    min-height: 92px;
+    border-radius: 14px;
+    border-color: #c8d6c5;
+    scroll-snap-align: start;
+    background: #ffffff7a;
+  }
+  .classroom-live .classroom-ticket b {
+    font-size: 18px;
+  }
+  .classroom-live .classroom-ticket .meal-thumb {
+    width: 48px;
+    height: 58px;
+    border-radius: 10px;
+  }
+  .classroom-live .classroom-ticket > span {
+    font-size: 12px;
+  }
+  .classroom-live .classroom-ticket .ticket-state {
+    margin-top: 3px;
+    font-size: 12px;
+  }
+  .classroom-lesson {
+    margin-top: 2px;
+    padding-top: 0;
+    border-color: #d3dfce;
+  }
+  .classroom-lesson summary {
+    min-height: 56px;
+    padding-block: 15px;
+  }
+  .classroom-live .tracking-grid {
+    padding: 19px 12px 12px;
+    border-radius: 24px;
+    gap: 18px;
+    scroll-margin-top: 12px;
+  }
+  .classroom-live .map-panel .section-head h2 {
+    font-size: 22px;
+  }
+  .classroom-live .map-panel .section-head {
+    gap: 6px;
+    padding-inline: 4px;
+  }
+  .classroom-live .map-panel > .caption {
+    padding-inline: 4px;
+    line-height: 1.5;
+  }
+  .classroom-live .map-tools {
+    margin-block: 10px 8px;
+    padding: 0 3px 6px;
+    gap: 9px;
+  }
+  .classroom-live .map-tools button {
+    min-height: 46px;
+    border-radius: 12px;
+    font-size: 13px;
+  }
+  .classroom-live #map {
+    height: clamp(310px, 48svh, 440px);
+    border-radius: 15px;
+  }
+  .classroom-live .map-legend {
+    font-size: 12px;
+    gap: 10px 14px;
+    line-height: 1.4;
+    padding: 0 3px;
+  }
+  .classroom-live .leaflet-tooltip.classroom-label {
+    font-size: 13px;
+    padding: 5px 9px;
+  }
+  .classroom-live .classroom-pin {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font: 700 11px "DM Sans", sans-serif;
+    background: #345e49;
+    border-width: 2px;
+    box-shadow: 0 3px 7px #17372d33;
+  }
+  .classroom-live .classroom-pin.is-selected {
+    background: #e8c36c;
+    color: #243f2d;
+    border-color: #fff;
+    box-shadow: 0 4px 9px #17372d55;
+  }
+  .tracking-grid:has(.detail[data-class-order="true"]) #freshness,
+  .tracking-grid:has(.detail[data-class-order="true"]) .map-tools > span {
+    display: none;
+  }
+  .tracking-grid:has(.detail[data-class-order="true"]) .detail {
+    grid-row: 1;
+    border-top: 0;
+    padding: 0 4px 17px;
+    border-bottom: 1px solid #d4dfd0;
+  }
+  .class-order-detail {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 2px 14px;
+    align-items: center;
+  }
+  .class-order-detail[hidden] {
+    display: none;
+  }
+  .class-order-detail .selected-meal {
+    width: 58px;
+    height: 68px;
+    border-radius: 12px;
+    margin: 0;
+    grid-row: 1/4;
+  }
+  .class-order-detail h3 {
+    grid-column: 2;
+    font-size: 27px;
+    line-height: 1.15;
+    margin: 0;
+  }
+  .class-order-detail #selected-status {
+    font-size: 16px;
+    margin: 2px 0 0;
+  }
+  .class-order-detail #selected-dish {
+    font-size: 14px;
+    margin: 0;
+  }
+  .class-order-detail #selected-proof {
+    grid-column: 1/-1;
+    margin: 13px 0 0;
+  }
+  .selected-actions {
+    grid-column: 1/-1;
+    grid-template-columns: 1.4fr 1fr;
+    margin-top: 12px;
+    gap: 8px;
+  }
+  .selected-actions button {
+    border-radius: 12px;
+    min-height: 46px;
+    font-size: 12px;
+  }
+  .classroom-live footer {
+    padding-inline: 4px;
+    font-size: 12px;
+  }
+  #classroom-panel {
+    scroll-margin-top: 16px;
+  }
+}
+
+@media (max-width: 350px) {
+  .class-order {
+    padding-inline: 14px;
+  }
+  .wordmark {
+    font-size: 15px;
+  }
+  .board-link {
+    padding-inline: 10px;
+  }
+  .dish-face {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 10px;
+    min-height: 80px;
+  }
+  .dish-option .meal-thumb {
+    width: 64px;
+    height: 66px;
+  }
+  .dish-copy b {
+    font-size: 14px;
+  }
+  .dish-option:not(:last-child)::after {
+    left: 81px;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .order-sheet,
+  .receipt-sheet,
+  .classroom-live[data-classroom-view="room"] header .room-nav {
+    background: #f9fbf6;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .order-sheet,
+  .receipt-sheet,
+  .order-action,
+  .board-link,
+  .classroom-live[data-classroom-view="room"] header .room-nav {
+    background: #f9fbf6;
+  }
+}

@@ -22,6 +22,7 @@
       fetchpriority="high"
     />
     <link rel="stylesheet" href="/classroom.css" />
+    <link rel="stylesheet" href="/classroom-mobile.css" />
     <script defer src="/classroom.js"></script>
   </head>
   <body class="classroom-app">
@@ -100,7 +101,10 @@
             </svg>
           </div>
           <h2 id="class-name" tabindex="-1"></h2>
-          <p id="class-dish"></p>
+          <div class="receipt-meal">
+            <span class="meal-thumb" id="receipt-meal-image" aria-hidden="true"></span>
+            <p id="class-dish"></p>
+          </div>
           <div class="receipt-state" role="status" aria-live="polite">
             <span class="state-dot"></span><strong id="class-state"></strong>
           </div>
