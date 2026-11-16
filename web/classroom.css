@@ -988,6 +988,7 @@
   font-size: 15px;
   font-weight: 700;
   line-height: 1.35;
+  width: max-content;
   max-width: 190px;
   white-space: normal;
   overflow-wrap: anywhere;
