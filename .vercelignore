@@ -26,3 +26,5 @@
 !web/assets/**
 !web/vendor/qrcode
 !web/vendor/qrcode/**
+
+!web/classroom-map.js

@@ -16,6 +16,7 @@
     );
   let room = query.get("room"),
     markers,
+    classMap,
     selectedOrder = query.get("order"),
     busy = false,
     feedKey = "",
@@ -99,6 +100,18 @@
     '<summary>What reached ClickHouse?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></summary><div class="lesson-body"><div class="lesson-route"><span>Your tap</span><i>→</i><span>Queue</span><i>→</i><span>Batch INSERT</span><i>→</i><b>Latest state</b></div><p id="lesson-selection">Place an order to inspect its row.</p><pre id="lesson-sql-wrap" hidden><code id="lesson-sql"></code></pre><dl id="lesson-result" hidden></dl><p class="lesson-takeaway">New events keep the history. The latest-state view answers the map.</p></div>';
   panel.append(lesson);
   const detail = document.querySelector(".detail");
+  const focusClass = document.createElement("button");
+  focusClass.type = "button";
+  focusClass.className = "secondary";
+  focusClass.textContent = "Fit class orders";
+  focusClass.disabled = true;
+  focusClass.hidden = true;
+  document.querySelector(".map-tools > div").prepend(focusClass);
+  focusClass.onclick = () => classMap?.focus();
+  for (const id of ["fit-fleet", "follow-courier"])
+    document.getElementById(id).addEventListener("click", () => {
+      if (classMap) classMap.focused = false;
+    });
   const own = document.createElement("section");
   own.className = "class-order-detail";
   own.hidden = true;
@@ -273,6 +286,8 @@
           feedKey = "";
           lessonKey = "";
           markers?.clearLayers();
+          classMap?.clear();
+          if (classMap) classMap.focused = true;
           feed.replaceChildren();
           renderSelected();
           renderLesson();
@@ -374,8 +389,10 @@
       renderSelected();
       renderLesson();
       if (data.run_id === lastData?.run_id && fleetMap.map) {
+        classMap ||= new AtlasClassroomMap(fleetMap.map, () => fleetMap.setFollow(false));
         markers ||= L.layerGroup().addTo(fleetMap.map);
         markers.clearLayers();
+        const classEntries = [];
         for (const [index, o] of data.orders.filter((o) => o.published).entries()) {
           const c = lastData.couriers.find(
             (c) => c.courier_id === o.courier_id && c.order_id === o.order_id,
@@ -409,8 +426,8 @@
           })
             .bindTooltip(label, {
               permanent: true,
-              direction: ["top", "bottom", "right", "left"][index % 4],
-              offset: [[0, -20], [0, 20], [20, 0], [-20, 0]][index % 4],
+              direction: "center",
+              offset: [0, 0],
               opacity: 1,
               className: "classroom-label" + (active ? " is-selected" : ""),
             })
@@ -425,11 +442,18 @@
             "aria-label",
             o.alias + " · " + (statuses[o.status] || o.status),
           );
+          classEntries.push({id:o.order_id, marker});
         }
+        focusClass.disabled = !classEntries.length;
+        focusClass.hidden = !classEntries.length;
+        classMap.setMarkers(classEntries);
         const selected = data.orders.find((o) => o.order_id === selectedOrder);
         if (selected) follow(selected);
       } else if (markers) {
         markers.clearLayers();
+        classMap?.clear();
+        focusClass.disabled = true;
+        focusClass.hidden = true;
       }
       if (initialMapLink && lastData && fleetMap.map) {
         initialMapLink = false;
@@ -453,7 +477,7 @@
       )
     ) {
       selectCourier(order.courier_id);
-    } else if (fleetMap.map && order.published) {
+    } else if (fleetMap.map && order.published && !classMap?.focused) {
       fleetMap.map.panTo([order.dropoff_lat, order.dropoff_lon], {
         animate: false,
       });

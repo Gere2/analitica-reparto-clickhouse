@@ -16,6 +16,7 @@ await cp('web/vendor/leaflet','shared-public/vendor/leaflet',{recursive:true});
 await Promise.all(['html','css','js'].map(ext=>copyFile('web/classroom.'+ext,'shared-public/classroom.'+ext)));
 
 await copyFile('web/classroom-live.js','shared-public/classroom-live.js');
+await copyFile('web/classroom-map.js','shared-public/classroom-map.js');
 await copyFile('web/classroom-mobile.css','shared-public/classroom-mobile.css');
 await cp('web/vendor/qrcode','shared-public/vendor/qrcode',{recursive:true});
 

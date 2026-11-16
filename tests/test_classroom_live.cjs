@@ -37,7 +37,8 @@ function fixture(search='?view=simulated',initial='room-a',phone=false){
     document:{hidden:false,body:node('body'),activeElement:null,getElementById:node,querySelector:node,querySelectorAll:()=>[],createElement:tag=>new Element(tag)},
     localStorage:{getItem(){return null;}},addEventListener(){},
     matchMedia:()=>({matches:phone}),selectCourier(){},
-    fleetMap:{map:{panTo(){}}},
+    fleetMap:{map:{panTo(){}},setFollow(){}},
+    AtlasClassroomMap:class{constructor(){this.focused=true;}setMarkers(entries){this.entries=entries;}clear(){}focus(){this.focused=true;}},
     L:{layerGroup:()=>group,divIcon:x=>x,marker:(_,options)=>{
       const el=new Element();
       const marker={options,el,bindTooltip(label,tooltipOptions){this.label=label.textContent;this.tooltipOptions=tooltipOptions;return this;},on(){return this;},addTo(){visibleMarkers.push(this);return this;},getElement(){return el;}};
@@ -109,6 +110,6 @@ for(const phone of [false,true])test(`seven classmates retain permanent name lab
   assert.equal(f.visibleMarkers.length,7);
   assert.deepEqual(f.visibleMarkers.map(m=>m.label),aliases);
   assert.ok(f.visibleMarkers.every(m=>m.tooltipOptions.permanent&&m.tooltipOptions.opacity===1));
-  assert.equal(new Set(f.visibleMarkers.map(m=>m.tooltipOptions.direction)).size,4);
+  assert.ok(f.visibleMarkers.every(m=>m.tooltipOptions.direction==='center'));
   assert.ok(f.visibleMarkers.every(m=>m.options.icon.iconSize[0]===44));
 });
