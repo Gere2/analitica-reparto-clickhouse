@@ -16,7 +16,7 @@ Opening another room replaces the active roster. A changed or stopped simulation
 
 1. Show a nickname on the order receipt. It initially says the order was accepted into the durable queue.
 2. Wait for the published status. Python validates the checkout contract and the publisher inserts events into ClickHouse.
-3. Select a class order on the projection. A labelled star follows its courier. After delivery it marks the simulated destination.
+3. Select a class order on the projection. Its initials identify the map marker following the courier. After delivery it marks the simulated destination.
 4. Show the latest-state query and the route history. These are different read patterns over the incoming GPS stream.
 
 Nicknames and room receipts are stored in SQLite metadata on the host. Purchase events, order state and GPS are published and queried in ClickHouse. A published label is based on the order appearing in ClickHouse. This addition uses the existing tables and views.
@@ -24,6 +24,8 @@ Nicknames and room receipts are stored in SQLite metadata on the host. Purchase 
 The new public write route is /api/classroom-order. Opening rooms, simulation controls and arbitrary event writes stay on the local host. Public order bodies are limited to 2 KiB. Rooms expire after one hour. Clients can retry the same order after a lost response. Limits apply to browser identities and the room.
 
 The public URL becomes operational when the updated Atlas API and gateway are running. An older gateway rejects writes. A changed tunnel requires updating the existing Vercel origin.
+
+For the exact host activation sequence and handoff to Rayo, see [CLASSROOM-ACTIVATION.md](CLASSROOM-ACTIVATION.md).
 
 ## Presentation resources
 

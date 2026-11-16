@@ -17,3 +17,12 @@
 !web/vendor
 !web/vendor/leaflet
 !web/vendor/leaflet/**
+!web/classroom.html
+!web/classroom.css
+!web/classroom-mobile.css
+!web/classroom.js
+!web/classroom-live.js
+!web/assets
+!web/assets/**
+!web/vendor/qrcode
+!web/vendor/qrcode/**

@@ -13,9 +13,9 @@ delay. Earlier verification: [public-flow evidence](evidencia-vercel.json).
 ## Architecture of this demo
 
 ```text
-Teammate's browser -> web and GET function on Vercel
+Teammate's browser -> web and bounded proxy on Vercel
                    -> temporary Cloudflare HTTPS
-                   -> authenticated read gateway
+                   -> authenticated gateway
                    -> local Atlas API -> local ClickHouse
 ```
 
@@ -25,7 +25,7 @@ The website is visible to anyone who has its link. Vercel and Cloudflare carry *
 
 ## What it can read
 
-`simulation`, `operations`, `status`, `track`, `summary` (Madrid), `inventory`, `catalog` and `datasets` (the summary of the downloaded Criteo and Glovo datasets). The gateway validates routes and parameters, rejects POST/PUT/PATCH/DELETE and requires a token. `status` and `simulation` are reduced to the fields the dashboard needs. The Vercel function also rejects writes. The shared dashboard has no simulation controls and no insert button. Access to ClickHouse's SQL stays local.
+`simulation`, `operations`, `status`, `track`, `summary` (Madrid), `inventory`, `catalog`, `datasets`, the registered analytical routes, and `classroom`. The gateway validates routes and parameters and requires a token. `status` and `simulation` are reduced to the fields the dashboard needs. The Classroom extension permits only `POST /api/classroom-order` with a body of at most 2 KiB. Other POST routes and PUT/PATCH/DELETE are rejected by the gateway and public proxy. Room opening/closing and simulation controls stay local; no arbitrary SQL or event insertion is exposed. Follow [CLASSROOM-ACTIVATION.md](CLASSROOM-ACTIVATION.md) to update the host before publishing the extension.
 
 There is a cache in the gateway: 1.5 s for tracking/status, 10 s for browsing and 60 s for catalog/inventory/datasets, with a maximum of 128 keys. It groups queries from several viewers; it adds delay compared with the local dashboard. The visual interval is still not a latency guarantee.
 
