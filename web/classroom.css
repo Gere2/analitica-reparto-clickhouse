@@ -961,23 +961,50 @@
   padding-top: 0;
 }
 .classroom-live .classroom-pin {
-  background: #245a43;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 2px;
+  background: #f1cc78;
+  color: #193d2d;
+  border: 3px solid white;
   border-radius: 50%;
-  padding: 5px 8px;
-  box-shadow: 0 4px 8px #243e3c33;
+  padding: 0;
+  font: 700 14px "DM Sans", sans-serif;
+  box-shadow: 0 4px 9px #243e3c55;
+}
+.classroom-live .classroom-pin.is-selected {
+  border-color: #193d2d;
 }
 .classroom-live .leaflet-tooltip.classroom-label {
-  background: rgba(255, 255, 255, 0.96);
-  color: #163c2a;
-  border: 1px solid #c0d0bd;
-  border-radius: 18px;
-  padding: 6px 12px;
+  background: #193d2d;
+  color: #fff8e8;
+  border: 1px solid #f1cc78;
+  border-radius: 10px;
+  padding: 7px 11px;
   font-family: "DM Sans", sans-serif;
+  font-size: 15px;
   font-weight: 700;
-  box-shadow: 0 6px 15px -9px #26472c66;
+  line-height: 1.35;
+  max-width: 190px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  box-shadow: 0 5px 12px -6px #17372d70;
 }
-.classroom-live .leaflet-tooltip.classroom-label:before {
-  border-top-color: #c0d0bd;
+.classroom-live .leaflet-tooltip-top.classroom-label:before {
+  border-top-color: #193d2d;
+}
+.classroom-live .leaflet-tooltip-bottom.classroom-label:before {
+  border-bottom-color: #193d2d;
+}
+.classroom-live .leaflet-tooltip-right.classroom-label:before {
+  border-right-color: #193d2d;
+}
+.classroom-live .leaflet-tooltip-left.classroom-label:before {
+  border-left-color: #193d2d;
 }
 .classroom-live[data-classroom-view="room"] .data-views,
 .classroom-live[data-classroom-view="room"] #view-note,
