@@ -28,10 +28,10 @@ const steps = [
     instruction: "Point to one customer’s action and reason in the AI agents view.",
   },
   {
-    title: "Show the public datasets",
+    title: "Two public datasets",
     route: "/?view=real#datasets",
-    selector: "#datasets .datasets article:first-child",
-    instruction: "Point to Criteo’s rows read and query time. Glovo is a separate product catalogue.",
+    selector: "#datasets .datasets",
+    instruction: "Compare Criteo and Glovo: rows, query times and contents.",
   },
   {
     title: "Customer Journey",
