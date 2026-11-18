@@ -117,6 +117,14 @@ function placeGuide(p) {
 }
 function positionGuide() {
   if (!desktop.matches) return;
+  // The two-column dataset is taller than the available space. Reserve a
+  // separate strip for its controls instead of correcting the user's scroll.
+  if (index === 4) {
+    document.querySelector('.demo-stage').style.paddingTop = (guide.offsetHeight + 40) + 'px';
+    placeGuide({x: innerWidth - guide.offsetWidth - 20, y:20});
+    return;
+  }
+  document.querySelector('.demo-stage').style.paddingTop = '';
   const rect = highlighted?.getBoundingClientRect();
   if (!rect) {
     placeGuide({x: innerWidth - guide.offsetWidth - 20, y:20});
@@ -173,8 +181,8 @@ function reveal(scroll = false) {
     targetResize.observe(target);
   }
   const rect = target.getBoundingClientRect();
-  if (scroll || (Date.now() < focusUntil && (rect.top >= innerHeight || rect.bottom <= 0))) {
-    target.scrollIntoView({behavior: "instant", block: "center"});
+  if (scroll || (index !== 4 && Date.now() < focusUntil && (rect.top >= innerHeight || rect.bottom <= 0))) {
+    target.scrollIntoView({behavior: "instant", block: index === 4 ? "start" : "center"});
   }
   const doc = frame.contentDocument;
   const error = [...doc.querySelectorAll("#error, #analytics-error")].find(el => !el.hidden && el.textContent.trim());
