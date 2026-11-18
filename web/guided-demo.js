@@ -62,7 +62,7 @@ const steps = [
     instruction: "Point to the GPS table’s engine, row count and sorting key.",
   },
   {
-    title: "Hand over to Juanro",
+    title: "Completed query performance",
     route: "/analytics.html?panel=performance",
     selector: ".analysis-figure",
     text: "Completed query families",
