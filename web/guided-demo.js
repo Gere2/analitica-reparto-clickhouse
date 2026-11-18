@@ -75,10 +75,6 @@ const status = document.getElementById("status");
 const guide = document.querySelector(".guide");
 const desktop = matchMedia("(min-width: 1200px)");
 let index = 0;
-try {
-  const saved = Number(sessionStorage.getItem("atlas-local-tour-step"));
-  if (Number.isInteger(saved) && saved >= 0 && saved < steps.length) index = saved;
-} catch {}
 let observer, timer, generation = 0;
 let highlighted = null;
 let currentRoute = "";
@@ -258,7 +254,6 @@ function showStep(next) {
   status.textContent = "Opening the dashboard…";
   document.querySelector(".route-menu").open = false;
   positionGuide();
-  try { sessionStorage.setItem("atlas-local-tour-step", String(index)); } catch {}
   const wanted = new URL(step.route, location.origin);
   const loaded = new URL(currentRoute || "/unloaded", location.origin);
   if (ready && loaded.pathname === wanted.pathname && loaded.search === wanted.search) {
@@ -277,8 +272,7 @@ function nextStep() {
     showStep(index + 1);
     document.getElementById("step-content").focus();
   } else {
-    try { sessionStorage.removeItem("atlas-local-tour-step"); } catch {}
-    location.href = "/";
+    location.href = "/?tour=off";
   }
 }
 function shortcuts(event) {
