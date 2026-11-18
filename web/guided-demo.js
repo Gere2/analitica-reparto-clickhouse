@@ -117,14 +117,6 @@ function placeGuide(p) {
 }
 function positionGuide() {
   if (!desktop.matches) return;
-  // The two-column dataset is taller than the available space. Reserve a
-  // separate strip for its controls instead of correcting the user's scroll.
-  if (index === 4) {
-    document.querySelector('.demo-stage').style.paddingTop = (guide.offsetHeight + 40) + 'px';
-    placeGuide({x: innerWidth - guide.offsetWidth - 20, y:20});
-    return;
-  }
-  document.querySelector('.demo-stage').style.paddingTop = '';
   const rect = highlighted?.getBoundingClientRect();
   if (!rect) {
     placeGuide({x: innerWidth - guide.offsetWidth - 20, y:20});
@@ -134,6 +126,9 @@ function positionGuide() {
   if (free) {
     guide.hidden = false;
     placeGuide(free);
+  } else if (index === 4) {
+    // Keep the bubble floating; never move the page while the user scrolls.
+    placeGuide({x: innerWidth - guide.offsetWidth - 20, y:20});
   } else {
     // Reframe the page so the guide sits above a large target, never on its content.
     const win = frame.contentWindow;
@@ -183,6 +178,9 @@ function reveal(scroll = false) {
   const rect = target.getBoundingClientRect();
   if (scroll || (index !== 4 && Date.now() < focusUntil && (rect.top >= innerHeight || rect.bottom <= 0))) {
     target.scrollIntoView({behavior: "instant", block: index === 4 ? "start" : "center"});
+    if (index === 4 && scroll) {
+      frame.contentWindow.scrollBy({top: -(guide.offsetHeight + 44), behavior: "instant"});
+    }
   }
   const doc = frame.contentDocument;
   const error = [...doc.querySelectorAll("#error, #analytics-error")].find(el => !el.hidden && el.textContent.trim());
