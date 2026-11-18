@@ -259,13 +259,17 @@ function showStep(next) {
   document.querySelector(".route-menu").open = false;
   positionGuide();
   try { sessionStorage.setItem("atlas-local-tour-step", String(index)); } catch {}
-  if (currentRoute !== step.route) {
+  const wanted = new URL(step.route, location.origin);
+  const loaded = new URL(currentRoute || "/unloaded", location.origin);
+  if (ready && loaded.pathname === wanted.pathname && loaded.search === wanted.search) {
+    currentRoute = step.route;
+    frame.contentWindow.history.replaceState(null, "", step.route);
+    waitForTarget();
+  } else {
     ready = false;
     observer?.disconnect();
     currentRoute = step.route;
     frame.src = step.route;
-  } else {
-    waitForTarget();
   }
 }
 function nextStep() {
