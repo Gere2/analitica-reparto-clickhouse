@@ -21,3 +21,5 @@ await copyFile('web/classroom-mobile.css','shared-public/classroom-mobile.css');
 await cp('web/vendor/qrcode','shared-public/vendor/qrcode',{recursive:true});
 
 await cp('web/assets','shared-public/assets',{recursive:true});
+
+await Promise.all(['html','css','js'].map(ext=>copyFile('web/guided-demo.'+ext,'shared-public/guided-demo.'+ext)));

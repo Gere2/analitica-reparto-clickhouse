@@ -28,3 +28,7 @@
 !web/vendor/qrcode/**
 
 !web/classroom-map.js
+
+!web/guided-demo.html
+!web/guided-demo.css
+!web/guided-demo.js

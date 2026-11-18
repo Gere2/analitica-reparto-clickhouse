@@ -1,0 +1,54 @@
+:root{color-scheme:light;--ink:#182b23;--green:#24553d;--muted:#53645a;--paper:#f5f5ee;--line:#ced8cd}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif}
+.tour-shell,.demo-stage{height:100dvh;width:100%}
+iframe{border:0;width:100%;height:100%;display:block}
+.guide{position:fixed;z-index:10;left:calc(100% - 354px);top:24px;width:330px;padding:20px 22px 0;background:#fffef9;border-radius:14px;box-shadow:0 12px 42px #15282230;max-height:calc(100dvh - 32px);overflow:auto}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+a{color:var(--green);text-underline-offset:4px}.exit{font-size:13px}
+.route-menu{position:relative;font-size:13px;color:var(--muted)}
+summary{cursor:pointer;padding:4px 0}
+select{display:block;max-width:245px;margin-top:8px;font:inherit;padding:8px;background:white;color:var(--ink);border:1px solid var(--line);border-radius:6px}
+h1{font-size:23px;line-height:1.18;letter-spacing:-.025em;text-wrap:balance;margin:0 0 12px}
+.instruction{font-size:16px;line-height:1.5;margin:0 0 16px}
+#status{font-size:13px;color:var(--muted);line-height:1.4;margin:0 0 12px}
+#status:empty{display:none}
+button{font:inherit;font-size:14px;padding:10px 14px;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--ink);cursor:pointer;min-height:42px}
+button:hover{background:#e7eee2}button:disabled{opacity:.4;cursor:default}
+.navigation{display:flex;align-items:center;gap:8px;margin-bottom:19px}
+#next{margin-left:auto;min-width:82px}
+#reveal{border:0;padding-inline:5px;color:var(--green);font-size:13px}
+.primary{background:var(--green);border-color:var(--green);color:#fff}.primary:hover{background:#193e2b}
+progress{display:block;width:calc(100% + 44px);height:4px;margin:0 -22px;appearance:none;border:0;background:#dce4d8}
+progress::-webkit-progress-bar{background:#dce4d8}progress::-webkit-progress-value{background:var(--green)}
+progress::-moz-progress-bar{background:var(--green)}
+:focus-visible{outline:3px solid #9c7426;outline-offset:3px}
+#step-content:focus{outline:none}
+.desktop-message{display:none}
+::selection{background:#c2dcb5;color:#152822}
+@media(max-width:1199px){.tour-shell{display:none}.desktop-message{display:block;max-width:600px;padding:55px 30px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+
+/* Frosted controls keep the dashboard visible around the active teaching point. */
+.guide{
+  width:320px;padding:18px 20px 0;
+  background:rgba(249,253,249,.88);
+  -webkit-backdrop-filter:blur(24px) saturate(145%);
+  backdrop-filter:blur(24px) saturate(145%);
+  border:1px solid rgba(255,255,255,.85);
+  border-radius:20px;
+  box-shadow:0 18px 48px rgba(16,48,33,.18),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.guide header{margin-bottom:13px}
+.guide h1{font-size:22px}
+.guide .instruction{font-size:15px;line-height:1.45;margin-bottom:16px}
+.guide button{border-radius:11px;background:rgba(255,255,255,.5)}
+.guide button:hover{background:rgba(227,239,225,.95)}
+.guide .primary{background:#24553d;color:white;border-color:transparent;box-shadow:0 3px 8px #24553d20}
+.guide .primary:hover{background:#193e2b}
+.guide #reveal{background:transparent}
+.guide progress{width:calc(100% + 40px);margin:0 -20px;background:rgba(215,230,216,.65)}
+.guide:before{content:"";display:block;position:absolute;top:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,transparent,white,transparent)}
+@supports not (backdrop-filter:blur(1px)){.guide{background:#f7faf5}}
+@media(prefers-reduced-transparency:reduce){.guide{background:#f7faf5;backdrop-filter:none;-webkit-backdrop-filter:none}}
+@media(prefers-contrast:more){.guide{background:white;border:2px solid #24553d;box-shadow:none}}

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guided demo · Delivery Atlas</title>
+<link rel="stylesheet" href="/guided-demo.css">
+<script src="/guided-demo.js" defer></script>
+</head>
+<body>
+<div class="desktop-message"><h1>Open this rehearsal on your computer.</h1><p>The guided demo needs a window at least 1200 pixels wide.</p><a href="/">Open the dashboard</a></div>
+<div class="tour-shell">
+<aside class="guide" aria-label="Guided demo" aria-describedby="instruction">
+<header><details class="route-menu"><summary id="step-count">Step 1 of 10</summary><select id="step-picker" aria-label="Choose a demo step"></select></details><a class="exit" href="/" title="Exit guided demo">Exit</a></header>
+<div id="step-content" tabindex="-1">
+<h1 id="step-title"></h1>
+<p id="instruction" class="instruction"></p>
+</div>
+<p id="status" role="status"></p>
+<div class="navigation"><button id="back">Back</button><button id="reveal" title="Return to the highlighted area">Locate</button><button id="next" class="primary">Next</button></div>
+<progress id="progress" max="10" value="1" aria-label="Demo progress"></progress>
+</aside>
+<main class="demo-stage"><iframe id="demo" title="Live Delivery Atlas dashboard"></iframe></main>
+</div>
+</body>
+</html>
